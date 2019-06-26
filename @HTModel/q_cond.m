@@ -1,8 +1,9 @@
 
-function [q] = q_cond(htmodel,T,dp)
 % Q_COND Rate of free-molecular conduction energy loss from the nanoparticle.
 % Author: Timothy Sipkens, 2018-12-17
-%
+%=========================================================================%
+
+function [q] = q_cond(htmodel,T,dp)
 %-------------------------------------------------------------------------%
 % Inputs:
 %   T       Vector of nanoparticle temperature, [K]

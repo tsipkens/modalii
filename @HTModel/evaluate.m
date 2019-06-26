@@ -1,9 +1,10 @@
 
-function [Tout] = evaluate(htmodel,x)
-% EVALUATE Evaluates the heat transfer model for x.
+% EVALUATE Primary function to evaluate the heat transfer model at provided x.
 % Author: Timothy Sipkens, 2018-11-28
-%
-% Acts as a wrapper for DE_SOLVE, updating the values of x.
+%=========================================================================%
+
+function [Tout] = evaluate(htmodel,x)
+% Note: Acts as a wrapper for DE_SOLVE, updating the values of x.
 %-------------------------------------------------------------------------%
 % Inputs:
 %   x       Vector of numbers with one entry corresponding to each parameter in htmodel.x
@@ -27,7 +28,7 @@ end
 
 
 %-- Solve ode using DE_SOLVE function ------------------------------------%
-%   Note: Ti is assigned in deSolve directly from the props struct.
+%   Note: Ti is assigned in deSolve directly from the prop structure.
 Tout = htmodel.de_solve(htmodel.prop.dp0);
 %-------------------------------------------------------------------------%
 

@@ -1,13 +1,18 @@
-classdef Prop < handle & dynamicprops
-% PROP Container used for handling of material and experimental properties.
+
+% PROP Container class used for handling of material and experimental properties.
 % Author: T. A. Sipkens, 11/28/2018
-%
-% NOTE: Prop is a handle class and changes to an instance affect all copies
+%=========================================================================%
+% 
+% Notes:
+% 1 Prop is a handle class and changes to an instance affect all copies
 %   of the instance. Use Prop.copy to create a copy of the class that will
 %   update independently.
-%
-% NOTE: Prop is a dynamicprops class, meaning that the property list can be
+% 2 Prop is a dynamicprops class, meaning that the property list can be
 %   alterred used the addprop(Prop,'variablename') function.
+% 
+%=========================================================================%
+
+classdef Prop < handle & dynamicprops
     
     properties
         h = 6.62606957e-34; % Planck's constant [m^2.kg/s]
@@ -16,7 +21,7 @@ classdef Prop < handle & dynamicprops
         R = 8.3144621; % Universal gas constant [J/mol/K]
         phi = 0.0143877696; % Constant for Planck's law, phi = h*c/kb
         
-        % Sensible energy properties **************************************
+        %-- Sensible energy properties -----------------------------------%
         M = [];
         Tm = [];
         rho = [];
@@ -31,7 +36,7 @@ classdef Prop < handle & dynamicprops
         Dcp = [];
         Ecp = [];
         
-        % Conduction properties *******************************************
+        %-- Conduction properties ----------------------------------------%
         alpha = []; % thermal accommodation coefficient (TAC)
         alpha_std = []; % standard deviation on the TAC
         Tg = []; % gas temperature
@@ -43,7 +48,7 @@ classdef Prop < handle & dynamicprops
         zeta_rot = []; % rotational degrees of freedom
         T_del = [];
         
-        % Evaporation properties ******************************************
+        %-- Evaporation properties ---------------------------------------%
         mv = []; % mass of the vapor [kg]
         Mv = []; % molar mass of the vapor [kg/mol]
         pv = []; % vapor pressure [Pa]
@@ -87,7 +92,7 @@ classdef Prop < handle & dynamicprops
         c4 = []; % model parameter (Mv)
         
         
-        % Optical properties **********************************************
+        %-- Optical properties -------------------------------------------%
         % Consider grouping these for passing later on
         Em = [];
         Emr = [];
@@ -101,14 +106,14 @@ classdef Prop < handle & dynamicprops
         omega_p = []; % Drude parameter
         tau = []; % Drude parameter
         
-        % Absorption properties *******************************************
+        %-- Absorption properties ----------------------------------------%
         Eml = []; % E(m) at laser wavelength
         F0 = []; % flunece [J/cm2]
         tlp = []; % laser pulse length [s]
         tlm = []; % laser pulse center [s]
         l_laser = 1064; % laser wavelength [nm]
         
-        % Particle size and signal properties *****************************
+        %-- Particle size and signal properties --------------------------%
         dpg = []; % geometric mean particle size [nm]
         dp0 = []; % mean particle size [nm]
         sigma = 0; % size distribution std. dev., Note: sg=1.5 > sigma=0.4055
@@ -117,12 +122,14 @@ classdef Prop < handle & dynamicprops
         l = []; % measurement wavelengths [nm]
         C_J = 1; % constant scaling blackbody distribution (different than smodel.data_sc)
         
-        % One color, volume fraction calcs. *******************************
+        %-- One color, volume fraction calcs. ----------------------------%
         fv = [];
         Tpeak = [];
         eta = [];
         we = [];
         
+        
+        %-- Options structure --------------------------------------------%
         opts@struct = struct(...
             'rho','default',... 
             'cp','default',... 
@@ -139,21 +146,22 @@ classdef Prop < handle & dynamicprops
     methods
         
         %-- Constructor method -------------------------------------------%
-        function prop = Prop(file,opts)
+        function prop = Prop(file,varargin)
             disp('Reading material properties...');
             
-            if nargin>1 % update opts
-                for fn = fieldnames(opts)
-                   prop.opts.(fn{1}) = opts.(fn{1});
+            %-- Load properties from files -------------------------------%
+            if exist('file','var')
+                if ~isempty(file)
+                    for ii=1:length(file)
+                        [~,name,~] = fileparts(file{ii});
+                        eval([name,'(prop);']);
+                    end
                 end
             end
+            %-------------------------------------------------------------%
             
-            if nargin>0 % load properties from files
-                for ii=1:length(file)
-                    [~,name,~] = fileparts(file{ii});
-                    eval([name,'(prop);']);
-                end
-            end
+            prop = tools.parse_varargin(prop);
+                % handle additional options (see function in tools package)
             
             disp('Material properties loaded.');
             disp(' ');
@@ -161,7 +169,7 @@ classdef Prop < handle & dynamicprops
         %-----------------------------------------------------------------%
         
         
-        %-- Other methods ------------------------------------------------%
+        %-- Helper methods -----------------------------------------------%
         [hv] = watsonEqn(prop,T); % Watson equation
         [pv] = clausClap(prop,T,dp,hv); % Clausius-Clapeyron equation
         [pv] = antoineEqn(prop,T,dp,hv); % Antione equation

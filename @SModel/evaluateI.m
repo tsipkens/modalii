@@ -1,20 +1,24 @@
+
+% EVALAUTEI Bridge function to evaluate spectroscopic inverse model (J > T). 
+% Author:   Timothy Sipkens
+%=========================================================================%
+
 function [Tout] = evaluateI(smodel,x)
-% EVALAUTEI Evaluate spectroscopic inverse model (J -> T). 
 
-J = smodel.J; % experimental or stored incandescence
-prop = smodel.prop; % update x values
+J = smodel.J; % local copy of stored incandescence
+prop = smodel.prop; % local copy of matl/experimental properties
 
-if nargin > 1 % update x values
+if nargin > 1 % check if there is a mismatch in size of x
     if length(x)==length(smodel.x)
         for ii=1:length(smodel.x)
             prop.(smodel.x{ii}) = x(ii);
         end
     else
-        disp('Warning: QoIs parameter size mismatch.');
+        warning('Warning: QoIs parameter size mismatch.');
     end
 end
 
-Tout = smodel.IModel(J);
+Tout = smodel.IModel(J); % call IModel function
 
 end
 

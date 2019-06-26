@@ -1,9 +1,9 @@
-function [q,h] = sig_q(htmodel,T,dp,opts_rad)
+
 % SIG_Q Evaluates and plots the different heat transfer modes for the current model.
 % Author: Timothy Sipkens, 2018-12-17
-%
-% Includes a sub-function that evaluates Planck's law.
-% Note: May include extrapolation for E(m) with restriciton that E(m) >= 0.
+%+========================================================================%
+
+function [q,h] = sig_q(htmodel,T,dp,opts_rad)
 %-------------------------------------------------------------------------%
 % Inputs:
 %   T           Vector of nanoparticle temperature, [K]
@@ -14,7 +14,6 @@ function [q,h] = sig_q(htmodel,T,dp,opts_rad)
 %   q           Rate of losses, one column per mode [W]
 %   h           Figure handle
 %-------------------------------------------------------------------------%
-
 
 if nargin<4
     opts_rad = true;

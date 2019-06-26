@@ -1,8 +1,9 @@
 
-function [q,rad,l] = q_rad(htmodel,T,dp)
 % Q_RAD Rate of radiative energy loss from the nanoparticle. 
 % Author: Timothy Sipkens, 2018-12-20
-%
+%=========================================================================%
+
+function [q,rad,l] = q_rad(htmodel,T,dp)
 % Includes a sub-function that evaluates Planck's law.
 % Note: May include extrapolation for E(m) with restriciton that E(m) >= 0.
 %-------------------------------------------------------------------------%

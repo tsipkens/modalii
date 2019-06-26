@@ -1,3 +1,8 @@
+
+% SMODEL    Class for the spectroscopic model and pyrometry calculations.
+% Author:   Timothy Sipkens, 2017
+%=========================================================================%
+
 classdef SModel
     
     properties
@@ -19,26 +24,27 @@ classdef SModel
     end
     
     methods
+        %-- Constructor method -------------------------------------------%
         function smodel = SModel(prop,x,t,l,varargin)
             smodel.prop = prop;
             smodel.x = x;
             smodel.t = t;
             smodel.l = l;
             
-            % parse additional innputs
+            %-- Parse additional innputs ---------------------%
             ii = 1;
             while ii<=length(varargin)
-                if isprop(smodel,varargin{ii}) % manually set property
-                    smodel.(varargin{ii}) = varargin{ii+1};
-                    ii = ii+2; % skip an input
-                    
-                elseif isa(varargin{ii},'Signal') % derive paramters from signal
+                if isa(varargin{ii},'Signal') % derive paramters from signal
                     smodel.J = varargin{ii}.data;
                     ii = ii+1;
                     
                 elseif isa(varargin{ii},'HTModel') % derive paramters from heat transfer model
                     smodel.htmodel = varargin{ii};
                     ii = ii+1;
+                    
+                elseif isprop(smodel,varargin{ii}) % manually set property
+                    smodel.(varargin{ii}) = varargin{ii+1};
+                    ii = ii+2; % skip an input
                     
                 else  % incorporate opts variable
                     aa = fieldnames(varargin{ii});
@@ -53,11 +59,12 @@ classdef SModel
                 end
             end
             
-            T_sc = 3000; % temperature used fro scaling/stability in K
+            T_sc = 3000; % temperature used for scaling/stability, [K]
             smodel.data_sc = smodel.blackbody(T_sc,1064).*...
                 prop.Em(1064,30)/(1064e-9); % scale Planck's law about T_sc for stability
                     % use dp = 30 nm for data scaling (used for stability)
         end
+        %-----------------------------------------------------------------%
         
         %-- Modeling functions -------------------------------------------%
         [Jout] = FModel(smodel,T,Em) % calculates J given T, Em is function handle
@@ -78,9 +85,7 @@ classdef SModel
     
     methods(Static)
         [J] = blackbody(T,l);
-        [] = textbar(pct);
         [b] = outlier(b); % remove outlier by Thomson-Tau procedure
-        
     end
     
 end

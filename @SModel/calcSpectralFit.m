@@ -107,9 +107,9 @@ for ii = 1:ntime % Time loop
     end
     if ii==1
         fprintf('Calculating temperatures... ');
-        smodel.textbar(0);
+        tools.textbar(0);
     elseif (mod(ii,50)==0)
-        smodel.textbar(ii/length(J(:,1,1)));
+        tools.textbar(ii/length(J(:,1,1)));
         %disp([num2str(round(100*ii/length(J(:,1,1)),1)),'% complete.']);
     end
 end
