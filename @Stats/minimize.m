@@ -4,7 +4,7 @@ if or(nargin<2,isempty(x0))
     x0 = ones(length(htmodel.x),1);
 end
 
-if nargin<3;
+if nargin<3
     opts = stats.opts;
 end
 
@@ -29,7 +29,7 @@ switch opts.minimize
         [mle,~,~,~,~,~,jcb] = lsqnonlin(min_fun,x0,lb,ub,options);
         
     case {'trust-region-reflective','trr'}
-        if opts.display==1;
+        if opts.display==1
             options = optimset('MaxFunEvals',10000,...
                 'Algorithm','trust-region-reflective');
         else
@@ -39,7 +39,7 @@ switch opts.minimize
         [mle,~,~,~,~,~,jcb] = lsqnonlin(min_fun,x0,[],[],options);
         
     case {'fminsearch'}
-        if opts.display==1;
+        if opts.display==1
             options = optimset('MaxFunEvals',10000,'Display','iter');
         else
             options = optimset('MaxFunEvals',10000);

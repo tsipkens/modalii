@@ -64,7 +64,7 @@ classdef Stats < handle
             end
             
             % if the covariance was already specified
-            if ~isempty(stats.Lb_i);
+            if ~isempty(stats.Lb_i)
                 stats.b = nanmean(b,2);
             else
                 [stats.b,stats.Lb_i,stats.sb,stats.Gb_i] = stats.getNoiseInfo(b);
