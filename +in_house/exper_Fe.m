@@ -1,4 +1,5 @@
-function [] = experMo(prop)
+
+function [] = exper_Fe(prop)
 
 % Conduction properties **************************************
 prop.Tg = 298;

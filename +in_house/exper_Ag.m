@@ -1,4 +1,5 @@
-function [] = experAg(prop)
+
+function [] = exper_Ag(prop)
 
 % Conduction properties **************************************
 prop.Tg = 298;

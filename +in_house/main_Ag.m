@@ -10,26 +10,29 @@ opts.estimator = 'likelihood';
 opts.prior = 'independent';
 opts.bFun = 1;
 
-% Load data *******************************************
-import('inHouse.*');
-load('+inHouse\AgAr_sig1.mat');
-% load('+inHouse\FeNe_sig72.mat');
-% load('+inHouse\FeHe_sig43.mat');
-prop = Prop({['inHouse.exper',signal.matl,'.m'],...
+
+%-- Load data ------------------------------------------------------------%
+import('in_house.*');
+load('+in_house\AgAr_sig1.mat');
+% load('+in_house\FeNe_sig72.mat');
+% load('+in_house\FeHe_sig43.mat');
+prop = Prop({['in_house.exper_',signal.matl,'.m'],...
     ['',signal.gas,'.m'],['',signal.matl,'.m']},opts);
 prop.l = [442,716];
 
-% Model ***********************************************
+
+%-- Model ----------------------------------------------------------------%
 x_fields = {'dp0','alpha'};
 x0 = [35,0.18];
 
 htmodel = HTModel(prop,x_fields,signal.t,opts);
 smodel = SModel(prop,x_fields,signal.t,signal.l,signal,htmodel,opts);
-prop.Ti = signal.getPeakTemp(smodel); % only used to get Ti to start
+prop.Ti = signal.get_peak_temp(smodel); % only used to get Ti to start
 bModel = @smodel.evaluateI;
 AModel = @smodel.evaluateIF;
 
-% Analysis ******************************************
+
+%-- Analysis -------------------------------------------------------------%
 tic;
 stats = Stats(AModel,bModel,opts);
 [mle,jcb] = stats.minimize(x0);
@@ -41,7 +44,8 @@ figure(2);
 stats.plotmle(mle,signal.t);
 [G_po,R_po,s_po] = stats.credLinear(jcb);
 
-% Setup models with nuisance parameters ***********************
+
+%-- Setup model with nuisance parameters ---------------------------------%
 theta_fields = {'dp0','alpha','Arho','Brho','Ccp','hvb','Tcr','Tg','Tb','CEmr'};
 theta0 = [mle,prop.Arho,prop.Brho,prop.Ccp,prop.hvb,prop.Tcr,...
     prop.Tg,prop.Tb,prop.CEmr];
@@ -57,7 +61,8 @@ stats_t = Stats(AModel_t,bModel_t,opts,'sx_pr',sx_pr,'x_pr',theta0);
 stats_t.getMinFun;
 % [mle_theta,jcb_theta] = stats_t.minimize(theta0);
 
-% Uncertainties with nuisance parameters ************
+
+%-- Uncertainties with nuisance parameters ---------------------------------%
 jcb_theta = stats_t.jcbEst(theta0);
 [G_theta,R_theta,s_theta] = stats_t.credLinear(jcb_theta);
 

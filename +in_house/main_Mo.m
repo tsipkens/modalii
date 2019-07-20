@@ -12,11 +12,11 @@ opts.bFun = 1;
 opts.Em = 'default';
 
 % Load data ***************************************************************
-import('inHouse.*');
-load('+inHouse\MoAr_sig1-delay.mat');
+import('in_house.*');
+load('+in_house\MoAr_sig1-delay.mat');
 % signal.data = signal.data(90:end,:,:);
 % signal.t = signal.t(90:end);
-prop = Prop({['inHouse.exper',signal.matl,'.m'],...
+prop = Prop({['in_house.exper_',signal.matl,'.m'],...
     ['',signal.gas,'.mat'],['',signal.matl,'.mat']},opts);
 prop.l = [442,716];
 
@@ -26,14 +26,14 @@ x0 = [50,0.2];
 
 htmodel = HTModel(prop,x_fields,signal.t,opts);
 smodel = SModel(prop,x_fields,signal.t,signal.l,signal,htmodel);
-% prop.Ti = signal.getPeakTemp(smodel); % only used to get Ti to start
+% prop.Ti = signal.get_peak_temp(smodel); % only used to get Ti to start
 prop.Ti = 2510; % temp. set peak temperature
-bModel = @smodel.evaluateI;
-AModel = @smodel.evaluateIF;
+b = @smodel.evaluateI;
+A = @smodel.evaluateIF;
 
 % Analysis ****************************************************************
 tic;
-stats = Stats(AModel,bModel,prop,opts);
+stats = Stats(A,b,prop,opts);
 [mle,jcb] = stats.minimize(x0,opts);
 disp('MLE = ');
 disp(mle);
@@ -50,6 +50,7 @@ Lt_ipr = sparse(chol(diag(1./(st_pr.^2))));
 figure(1);
 stats.plotmle(mle,signal.t);
 [~,R_po,s_po] = stats.credLinear(jcb);
+
 %{
 jcb_theta = stats.jcbEst(mle,theta0);
 [G_theta,R_theta,s_theta] = stats.credLinear(jcb_theta);
