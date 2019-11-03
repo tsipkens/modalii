@@ -1,4 +1,4 @@
-## wat-lii-analysis
+## wat-lii
 
 This is modular program to model and analyze time-resolved laser-induced
 incandescence (TiRe-LII) signals.
