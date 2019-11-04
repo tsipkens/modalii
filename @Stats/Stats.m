@@ -25,7 +25,7 @@ classdef Stats < handle
         pr_fun = []; % prior function
         min_fun = []; % minimization function
         
-        opts@struct = struct(...
+        opts struct = struct(...
             'variance','default',... % method for using/calculating covariance in data
             'minimize','default',... % indicates minimization scheme
             'bFun',1,... % boolean indicating if data is dependent on x

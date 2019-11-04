@@ -16,11 +16,13 @@ function [q,J,hv,pv] = q_evap(htmodel,T,dp)
 dp = dp.*1e-9; % convert to meters so everything is in SI units
 prop = htmodel.prop;
 
-if isempty(prop.gamma)
+if or(and(isempty(prop.gamma),isa(prop,'Prop')),...
+        and(isfield(prop,'gamma'),isa(prop,'struct')))
     prop.gamma = @prop.tolmanEqn;
 end
 
-if isempty(prop.alpham)
+if or(and(isempty(prop.alpham),isa(prop,'Prop')),...
+        and(isfield(prop,'alpham'),isa(prop,'struct')))
     prop.alpham = @(T) 1;
 end
 
