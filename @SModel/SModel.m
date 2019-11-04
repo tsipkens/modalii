@@ -17,7 +17,7 @@ classdef SModel
         
         data_sc = []; % used to scale Planck's to stabalize inference algorithms
         
-        opts@struct = struct( ...
+        opts struct = struct( ...
             'multicolor','default', ... % indicates which multicolor sovler to use
             'pyrometry','default' ... % indicates how to handle pyrometry
             );

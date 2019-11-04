@@ -7,14 +7,14 @@ l = [442,716];
 opts = [];
 % opts.hv = 'constant';
 opts.Em = 'default';%'Krishnan';%'Mie-Krishnan';
-prop = Prop({'Ar.m','Fe.m','experFe.m'},opts);
-% prop = Prop({'Ar.m','C.m','experLDF.m'});
+prop = Prop.get({'exper_fe_apb17','Ar','Fe'},opts);
+% prop = Prop.get({'exper_ldf','Ar','C'},opts);
 prop.F0 = 0.15; % in [J/cm2]
 prop.Ti = 298;
 prop.Tg = prop.Ti;
 prop.sigma = 0;
 
-opts.abs = 'include';
+opts.abs = 'include'; % include absorption
 x_fields = {'dp0'};
 htmodel = HTModel(prop,x_fields,t,opts);
 smodel = SModel(prop,x_fields,t,l);

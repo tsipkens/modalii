@@ -130,7 +130,7 @@ classdef Prop < handle & dynamicprops
         
         
         %-- Options structure --------------------------------------------%
-        opts@struct = struct(...
+        opts struct = struct(...
             'rho','default',... 
             'cp','default',... 
             'hv','default',... 
@@ -185,6 +185,13 @@ classdef Prop < handle & dynamicprops
     end
     
     methods(Static)
+        
+        function prop = get(strs,opts)
+            for ss=1:length(strs)
+                strs{ss} = [strs{ss},'.m'];
+            end
+            prop = Prop(strs,opts);
+        end
         
         out = iif(cond,a,b); % inline if function
         out = poly(varargin); % inline polynomial function

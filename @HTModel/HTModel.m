@@ -15,7 +15,7 @@ classdef HTModel
         dmdt = []; % function handle, rate of mass change
         dXdt = []; % function handle, rate of annealed fraction change
         
-        opts@struct = struct(...
+        opts struct = struct(...
             'evap','default',... % evaporation model
             'cond','default',... % conduction model
             'rad','default',... % radiation model

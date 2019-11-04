@@ -178,7 +178,7 @@ switch prop.opts.Em
     case {'Drude'}
         prop.omega_p = 6.78e17;
         prop.tau = 1.69e-19;
-        [Em_temp,n_temp,k_temp] = prop.drude(400:1100);
+        % [Em_temp,n_temp,k_temp] = prop.drude(400:1100);
         prop.Em_data = getfield(load('Em_Fe_Drude.mat'),'Em_data');
         prop.Em_gi = griddedInterpolant(prop.Em_data(:,1),prop.Em_data(:,2),'pchip');
         prop.Em = @(l,dp) prop.Em_gi(l);

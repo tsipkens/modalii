@@ -16,11 +16,11 @@ import('in_house.*');
 % load('+in_house\FeAr_sig17.mat');
 % load('+in_house\FeNe_sig72.mat');
 load('+in_house\FeHe_sig43.mat');
-prop = Prop({['in_house.exper_',signal.matl,'.m'],...
+prop = Prop({['exper_',signal.matl,'.m'],...
     ['',signal.gas,'.m'],['',signal.matl,'.m']},opts);
-prop.Ti = 3200;
-prop.l = [442,716];
-prop.alpha = 0.181;
+prop.Ti = 3200; % initial temperature
+prop.l = [442,716]; % wavelengths
+prop.alpha = 0.181; % thermal accommodation coefficient
 
 
 %-- Setup model ----------------------------------------------------------%
@@ -68,6 +68,7 @@ stats_t.get_min_fun;
 %-- Uncertainties with nuisance parameters ---------------------------------%
 jcb_theta = stats_t.jacob_est(theta0);
 [G_theta,R_theta,s_theta] = stats_t.cred_linear(jcb_theta);
+
 
 %{
 [X,Y,x,y] = stats_t.gen_grid(mle,s_po,20);
