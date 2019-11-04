@@ -1,4 +1,5 @@
-function [signal] = loadFiles_ih(fname,l)
+
+function [signal] = load_files_ih(fname,l)
 
  % APB 2016, Ar-17, CO2-33, 49-N2, 43-He
  % APB 2015, Ar-14; Ne-71; N2O-67; N2-55; He-48; CO2-42; CO-32?
