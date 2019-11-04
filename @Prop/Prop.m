@@ -146,22 +146,29 @@ classdef Prop < handle & dynamicprops
     methods
         
         %-- Constructor method -------------------------------------------%
-        function prop = Prop(file,varargin)
+        function prop = Prop(strs,varargin)
             disp('Reading material properties...');
             
+            for ss=1:length(strs) % convert strings to M file names
+                strs{ss} = [strs{ss},'.m'];
+            end
+            
+            
+            prop = tools.parse_varargin(prop,varargin{:});
+                % handle additional options (see function in tools package)
+            
+            
             %-- Load properties from files -------------------------------%
-            if exist('file','var')
-                if ~isempty(file)
-                    for ii=1:length(file)
-                        [~,name,~] = fileparts(file{ii});
-                        eval([name,'(prop);']);
+            if exist('strs','var')
+                if ~isempty(strs)
+                    for ii=1:length(strs)
+                        [~,name,~] = fileparts(strs{ii});
+                        eval([name,'(prop,prop.opts);']);
                     end
                 end
             end
             %-------------------------------------------------------------%
             
-            prop = tools.parse_varargin(prop);
-                % handle additional options (see function in tools package)
             
             disp('Material properties loaded.');
             disp(' ');
@@ -169,16 +176,17 @@ classdef Prop < handle & dynamicprops
         %-----------------------------------------------------------------%
         
         
+        %-- Thermophysical and optical expressions -----------------------%
+        [hv] = eq_watson(prop,T); % Watson equation
+        [pv] = eq_claus_clap(prop,T,dp,hv); % Clausius-Clapeyron equation
+        [pv] = eq_antoine(prop,T,dp,hv); % Antione equation
+        [pv] = eq_kelvin(prop,T,dp,hv); % Kelvin equation
+        [gamma] = eq_tolman(prop,dp,T); % Tolman equation (dp in nm)
+        [Em,n,k] = eq_drude(prop,lambda); % evaluate Drude theory given omega_p and tau (lambda in nm)
+        
+        
         %-- Helper methods -----------------------------------------------%
-        [hv] = watsonEqn(prop,T); % Watson equation
-        [pv] = clausClap(prop,T,dp,hv); % Clausius-Clapeyron equation
-        [pv] = antoineEqn(prop,T,dp,hv); % Antione equation
-        [pv] = kelvinEqn(prop,T,dp,hv); % Kelvin equation
-        [gamma] = tolmanEqn(prop,dp,T); % Tolman equation (dp in nm)
-        [Em,n,k] = drude(prop,lambda); % evaluate Drude theory given omega_p and tau (lambda in nm)
-        
         [out] = plotProp(prop,propName,opts); % Plot a property over a range
-        
         [copied] = copy(prop); % make a copy of current propreties
         %-----------------------------------------------------------------%
         
@@ -186,15 +194,14 @@ classdef Prop < handle & dynamicprops
     
     methods(Static)
         
-        function prop = get(strs,opts)
-            for ss=1:length(strs)
-                strs{ss} = [strs{ss},'.m'];
-            end
-            prop = Prop(strs,opts);
+        function out = iif(cond,a,b) % inline if function
+            out = b;
+            out(cond) = a(cond);
         end
         
-        out = iif(cond,a,b); % inline if function
-        out = poly(varargin); % inline polynomial function
+        function out = poly(varargin) % inline polynomial function
+            out = @(x)sum([varargin{2:2:end}].*x.^[varargin{1:2:end}]);
+        end
         
         [hv, pv, mv, alpham] = vaporMichelsen(); % vapor properties of carbon, Michelsen model
         [Em_eff, Q_abs] = get_Mie_solution(n,k,lambda_vec,dp_vec); % get Mie absorption

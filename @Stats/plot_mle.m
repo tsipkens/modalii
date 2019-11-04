@@ -17,13 +17,13 @@ if 1 % plot data error bounds
     % plot(t-t(1),[b0+2.*stats.sb(mle),b0-2.*stats.sb(mle)]);   
     fill([t_pl;flipud(t_pl)],...
         [b0-2.*stats.sb(mle);flipud(b0+2.*stats.sb(mle))],...
-        [0.94 0.94 0.94],'LineStyle','none');
+        [0.96 0.96 0.96],'LineStyle','none');
 %     area([t_pl;flipud(t_pl)],...
 %         [b0-2.*stats.sb(mle);flipud(b0+2.*stats.sb(mle))]);  
     hold off;
 end
 hold on;
-plot(t_pl,b0,'.','markers',4,'Color',[0 0.443 0.737]);
+plot(t_pl,b0,'.-','markers',5,'Color',[0 0.443 0.737]);
 plot(t_pl,stats.model(mle),'k');
 hold off;
 

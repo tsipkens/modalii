@@ -1,5 +1,5 @@
 
-function prop = exper_mo_apb17(prop,~)
+function prop = exper_apb17_Fe(prop,~)
 
 %-- Conduction properties ------------------------------------------------%
 prop.Tg = 298;

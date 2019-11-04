@@ -1,9 +1,18 @@
-function [] = N2(prop)
+
+function prop = N2(prop,opts)
+
+%-- Parse inputs ---------------------------------------------------------%
+if ~exist('prop','var'); prop = struct(); end
+
+if ~exist('opts','var'); opts = struct(); end
+if ~isfield(opts,'propmdel'); opts.propmodel = 'default'; end
+%-------------------------------------------------------------------------%
+
 
 prop.mg = 4.65186e-26;
 R = 8.314472; % ideal gas constant
 
-switch prop.opts.propmodel
+switch opts.propmodel
     case 'Michelsen'
         cpg = @(T) R.*(...
             3.498./(T.^2).*exp(1./T)./((exp(1./T)-1).^2)+...

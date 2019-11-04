@@ -21,9 +21,8 @@ Nd = length(dp0); % number of size classes to consider in solver
 Ti = htmodel.prop.Ti.*ones(Nd,1); % initial temperature, [K]
 
 %-- Initial mass ----%
-if or(and(isempty(htmodel.prop.rho0),isa(htmodel.prop,'Prop')),...
-        and(isfield(htmodel.prop,'rho0'),isa(htmodel.prop,'struct')))
-    htmodel.prop.rho0 = htmodel.prop.rho(htmodel.prop.Tg);
+if isempty(htmodel.prop.rho0)
+	htmodel.prop.rho0 = htmodel.prop.rho(htmodel.prop.Tg);
 end
 mass_conv = 1e21; % added for stability, converts mass to attogram (ag)
 mpi = (htmodel.prop.rho0.*(dp0.*1e-9).^3.*(pi/6)).*mass_conv; % inital mass, [ag]

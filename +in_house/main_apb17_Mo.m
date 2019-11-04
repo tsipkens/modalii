@@ -11,16 +11,18 @@ opts.display = 'default';
 opts.bFun = 1;
 opts.Em = 'default';
 
-% Load data ***************************************************************
+
+%-- Load data -------------------------------%
 import('in_house.*');
 load('+in_house\MoAr_sig1-delay.mat');
 % signal.data = signal.data(90:end,:,:);
 % signal.t = signal.t(90:end);
-prop = Prop({['in_house.exper_',signal.matl,'.m'],...
-    ['',signal.gas,'.mat'],['',signal.matl,'.mat']},opts);
+prop = Prop({['exper_apb17_',signal.matl],...
+    [signal.gas],[signal.matl]},opts);
 prop.l = [442,716];
 
-% Model *******************************************************************
+
+%-- Model -------------------------------%
 x_fields = {'dp0','sigma'};
 x0 = [50,0.2];
 
@@ -31,7 +33,8 @@ prop.Ti = 2510; % temp. set peak temperature
 b = @smodel.evaluateI;
 A = @smodel.evaluateIF;
 
-% Analysis ****************************************************************
+
+%-- Analysis -------------------------------%
 tic;
 stats = Stats(A,b,prop,opts);
 [mle,jcb] = stats.minimize(x0,opts);
@@ -39,7 +42,8 @@ disp('MLE = ');
 disp(mle);
 toc;
 
-% Setup models with nuisance parameters ***********************
+
+%-- Setup models with nuisance parameters -------------------------------%
 theta_fields = {'Arho','Brho','Ccp','hvb','Tcr','Tg','Tb','CEmr'};
 theta0 = [prop.Arho,prop.Brho,prop.Ccp,prop.hvb,prop.Tcr,prop.Tg,prop.Tb,prop.CEmr];
 st_pr = abs(theta0).*0.05;
@@ -48,8 +52,9 @@ st_pr(end) = st_pr(end-1)*2;
 Lt_ipr = sparse(chol(diag(1./(st_pr.^2))));
 
 figure(1);
-stats.plotmle(mle,signal.t);
-[~,R_po,s_po] = stats.credLinear(jcb);
+stats.plot_mle(mle,signal.t);
+[~,R_po,s_po] = stats.cred_linear(jcb);
+
 
 %{
 jcb_theta = stats.jcbEst(mle,theta0);

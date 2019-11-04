@@ -1,12 +1,29 @@
-function [] = Mo(prop)
 
-% Sensible energy properties **********************************************
+% MO Define properties for molybdenum particles
+% Author: Timothy Sipkens, 2019-11-03
+%=========================================================================%
+
+function prop = Mo(prop,opts)
+
+%-- Parse inputs ---------------------------------------------------------%
+if ~exist('prop','var'); prop = struct(); end
+
+if ~exist('opts','var'); opts = struct(); end
+if ~isfield(opts,'rho'); opts.rho = 'default'; end
+if ~isfield(opts,'cp'); opts.cp = 'default'; end
+if ~isfield(opts,'hv'); opts.hv = 'default'; end
+if ~isfield(opts,'pv'); opts.pv = 'default'; end
+if ~isfield(opts,'Em'); opts.Em = 'default'; end
+%-------------------------------------------------------------------------%
+
+
+%-- Sensible energy properties -------------------------------------------%
 prop.phi = prop.h*prop.c/prop.kb;
 
 prop.M = 0.09594;
 prop.Tm = 2896; % (Ida and Guthrie, book)
 
-switch prop.opts.rho
+switch opts.rho
     case {'default','Paradis'}
         prop.Arho = 1;
         prop.Brho = 1;
@@ -17,7 +34,7 @@ switch prop.opts.rho
         prop.rho = @(T) 11500;
 end
 
-switch prop.opts.cp
+switch opts.cp
     case {'default','Paradis'}
         prop.Ccp = 1;
         prop.Dcp = 1;
@@ -31,46 +48,49 @@ switch prop.opts.cp
         prop.cp = @(T) 360;
 end
 
-% Conduction properties ***************************************************
+
+%-- Conduction properties ------------------------------------------------%
 prop.alpha = 0.15;
 prop.ct = @()sqrt(8*prop.kb*prop.Tg/(pi*prop.mg));
 
-% Evaporation properties **************************************************
+
+%-- Evaporation properties -----------------------------------------------%
 prop.mv = prop.M.*1.660538782e-24;							
 prop.Rs = prop.R./prop.M;
 
 prop.Tb = 4912; % (Ida and Guthrie, book)
 prop.hvb = 590e3/1e6/prop.M; % (Ida and Guthrie, book)
-switch prop.opts.hv
+switch opts.hv
     case {'default','Watson'}
         prop.n = 0.38; % Watson
         prop.Tcr = 14588; % (Young and Alder)
         prop.hvA = @()(prop.hvb*1e6)./...
             ((1-prop.Tb/prop.Tcr).^0.38); % Watson eqn. constant
-        prop.hv = @prop.watsonEqn;
+        prop.hv = @(T) prop.eq_watson(T);
     case {'constant'}
         prop.hv = @(T) prop.hvb*1e6;
 end
 
 prop.Pref = 101325; % atmospheric boiling point used
 prop.C = log(prop.Pref)+(prop.hvb*1e6)./prop.Rs./prop.Tb; % Constant for C-C Eqn. 
-switch prop.opts.pv
+switch opts.pv
     case {'default','Kelvin-CC'}
         prop.gamma = @(dp,T) 2.11; % (currently unknown)
-        prop.pv = @prop.kelvinEqn;
+        prop.pv = @(T,dp,hv) prop.eq_kelvin(T,dp,hv);
     case {'Tolman-CC'}
         ... % enter additional parameters
-        prop.gamma = @prop.tolmanEqn;
-        prop.pv = @prop.kelvinEqn;
+        prop.gamma = @(dp,T) prop.eq_tolman(dp,T);
+        prop.pv = @(T,dp,hv) prop.eq_kelvin(T,dp,hv);
     case {'CC'}
-        prop.pv = @prop.clausClap;
+        prop.pv = @(T,dp,hv) prop.eq_claus_clap(T,dp,hv);
     case {'Antoine'}
         ... % enter additional parameters
 end
 
-% Optical properties ******************************************************
+
+%-- Optical properties ---------------------------------------------------%
 prop.CEmr = 1;
-switch prop.opts.Em
+switch opts.Em
     case {'default','Barnes'}
         prop.Em_data = getfield(load('Em_Mo_Barnes.mat'),'Em_data'); % (Barnes) *check
         prop.Em_gi = griddedInterpolant(prop.Em_data(:,1),prop.Em_data(:,2),'pchip');
@@ -83,6 +103,9 @@ switch prop.opts.Em
         prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1,dp)./prop.Em(l2,dp);
         prop.Eml = @(dp) prop.Em_gi(prop.l_laser,dp);
 end
+
+
+prop.opts = opts;
 
 end
 

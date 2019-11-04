@@ -14,16 +14,14 @@ opts.bFun = 1;
 %-- Load data ------------------------------------------------------------%
 import('in_house.*');
 load('+in_house\AgAr_sig1.mat');
-% load('+in_house\FeNe_sig72.mat');
-% load('+in_house\FeHe_sig43.mat');
-prop = Prop({['in_house.exper_',signal.matl,'.m'],...
-    ['',signal.gas,'.m'],['',signal.matl,'.m']},opts);
+prop = Prop({['exper_apb17_',signal.matl],...
+    [signal.gas],[signal.matl]},opts);
 prop.l = [442,716];
 
 
 %-- Model ----------------------------------------------------------------%
-x_fields = {'dp0','alpha'};
-x0 = [35,0.18];
+x_fields = {'dp0'};
+x0 = [35];
 
 htmodel = HTModel(prop,x_fields,signal.t,opts);
 smodel = SModel(prop,x_fields,signal.t,signal.l,signal,htmodel,opts);
@@ -41,10 +39,11 @@ disp(mle);
 toc;
 
 figure(2);
-stats.plotmle(mle,signal.t);
-[G_po,R_po,s_po] = stats.credLinear(jcb);
+stats.plot_mle(mle,signal.t);
+[G_po,R_po,s_po] = stats.cred_linear(jcb);
 
 
+%{
 %-- Setup model with nuisance parameters ---------------------------------%
 theta_fields = {'dp0','alpha','Arho','Brho','Ccp','hvb','Tcr','Tg','Tb','CEmr'};
 theta0 = [mle,prop.Arho,prop.Brho,prop.Ccp,prop.hvb,prop.Tcr,...
@@ -65,6 +64,7 @@ stats_t.getMinFun;
 %-- Uncertainties with nuisance parameters ---------------------------------%
 jcb_theta = stats_t.jcbEst(theta0);
 [G_theta,R_theta,s_theta] = stats_t.credLinear(jcb_theta);
+%}
 
 %{
 [X,Y,x,y] = stats_t.genGrid(mle,s_po,20);

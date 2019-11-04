@@ -1,5 +1,5 @@
 
-function [] = exper_fe_apb17(prop,~)
+function prop = exper_apb17_Ag(prop,~)
 
 %-- Conduction properties ------------------------------------------------%
 prop.Tg = 298;

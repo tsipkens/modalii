@@ -13,11 +13,11 @@ opts.bFun = 1;
 
 %-- Load data ------------------------------------------------------------%
 import('in_house.*');
-% load('+in_house\FeAr_sig17.mat');
+load('+in_house\FeAr_sig17.mat');
 % load('+in_house\FeNe_sig72.mat');
-load('+in_house\FeHe_sig43.mat');
-prop = Prop({['exper_',signal.matl,'.m'],...
-    ['',signal.gas,'.m'],['',signal.matl,'.m']},opts);
+% load('+in_house\FeHe_sig43.mat');
+prop = Prop({['exper_apb17_',signal.matl],...
+    [signal.gas],[signal.matl]},opts);
 prop.Ti = 3200; % initial temperature
 prop.l = [442,716]; % wavelengths
 prop.alpha = 0.181; % thermal accommodation coefficient

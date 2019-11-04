@@ -1,12 +1,22 @@
-function [] = C(prop)
+
+function prop = C(prop,opts)
+
+%-- Parse inputs ---------------------------------------------------------%
+if ~exist('prop','var'); prop = struct(); end
+
+if ~exist('opts','var'); opts = struct(); end
+if ~isfield(opts,'propmodel'); opts.propmodel = 'default'; end
+%-------------------------------------------------------------------------%
 
 % Currently, opts.propmodel = 
 %   'Sipkens', 'Michelsen', 'Kock', 'Liu', 'default', 'constant'
-% Sensible energy properties **********************************************
+
+
+%-- Sensible energy properties -------------------------------------------%
 prop.phi = prop.h*prop.c/prop.kb;
 prop.M = 0.01201;
 
-switch prop.opts.propmodel % Density in kg/m^3
+switch opts.propmodel % Density in kg/m^3
     case {'default','Michelsen','Michelsen-C3'}
         prop.Arho = 1;
         prop.Brho = 1;
@@ -28,7 +38,7 @@ switch prop.opts.propmodel % Density in kg/m^3
         prop.rho = @(T) prop.Arho.*2.26.*1000.*ones(size(T));
 end
 
-switch prop.opts.propmodel % Specific heat in J/(kg K)
+switch opts.propmodel % Specific heat in J/(kg K)
     case {'Michelsen','Michelsen-C3'}
         prop.Ccp = 1;
         prop.cp = @(T) prop.Ccp.*(prop.R/0.01201).*(1.115.*(597./T).^2.*exp(597./T).*(exp(597./T)-1).^-2+...
@@ -56,8 +66,9 @@ switch prop.opts.propmodel % Specific heat in J/(kg K)
         prop.cp = @(T) prop.Ccp.*1900.*ones(size(T));
 end
 
-% Conduction properties ***************************************************
-switch prop.opts.propmodel % Specific heat in J/(kg K)
+
+%-- Conduction properties ------------------------------------------------%
+switch opts.propmodel % Specific heat in J/(kg K)
     case {'Liu','default'}
         prop.alpha = 0.37; % Liu
     case {'Sipkens','Liu-MS','Melton-MS'}
@@ -79,8 +90,9 @@ end
 
 prop.ct = @()sqrt(8*prop.kb*prop.Tg/(pi*prop.mg));
 
-% Evaporation properties **************************************************
-switch prop.opts.propmodel % Molar mass in kg/mol
+
+%-- Evaporation properties -----------------------------------------------%
+switch opts.propmodel % Molar mass in kg/mol
     case {'simplified'} % simplified model
         prop.Mv = 3*prop.M;
         prop.Rs = prop.R./prop.Mv;
@@ -152,7 +164,7 @@ switch prop.opts.propmodel % Molar mass in kg/mol
         prop.a4 = -2.4875e-13;
         prop.pv = @(T,dp,hv) 101325.*exp(prop.a0+(prop.a1.*T)+(prop.a2.*T.^2)+...
             (prop.a3.*T.^3)+(prop.a4.*T.^4)); % Liu
-        if strcmp(prop.opts.propmodel,'Liu')
+        if strcmp(opts.propmodel,'Liu')
             prop.alpham = @(T) 0.77;
         else
             prop.alpham = @(T) 1;
@@ -258,8 +270,9 @@ switch prop.opts.propmodel % Molar mass in kg/mol
         prop.pv = @(T,dp,hv) exp(prop.C()-prop.hvb*1e6./prop.Rs./T);
 end
 
-% Optical properties ******************************************************
-switch prop.opts.propmodel
+
+%-- Optical properties ---------------------------------------------------%
+switch opts.propmodel
     case {'Michelsen','Sipkens','Liu-MS','Melton-MS','Michelsen-C3'}
         prop.Em = @(l,dp) 0.34.*ones(1,length(l)); % Michelsen
         prop.CEmr = 1;

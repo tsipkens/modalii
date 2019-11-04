@@ -1,17 +1,34 @@
-function [] = Ge(prop)
 
-% Sensible energy properties **********************************************
+% Ge Define properties for germanium particles
+% Author: Timothy Sipkens, 2019-11-03
+%=========================================================================%
+
+function prop = Ge(prop,opts)
+
+%-- Parse inputs ---------------------------------------------------------%
+if ~exist('prop','var'); prop = struct(); end
+
+if ~exist('opts','var'); opts = struct(); end
+if ~isfield(opts,'rho'); opts.rho = 'default'; end
+if ~isfield(opts,'cp'); opts.cp = 'default'; end
+if ~isfield(opts,'hv'); opts.hv = 'default'; end
+if ~isfield(opts,'pv'); opts.pv = 'default'; end
+if ~isfield(opts,'Em'); opts.Em = 'default'; end
+%-------------------------------------------------------------------------%
+
+
+%-- Sensible energy properties ---------------------------------------------%
 prop.phi = prop.h*prop.c/prop.kb;
 
 prop.M = 0.07264;
 prop.Tm = 1210; % (Ida and Guthrie, book)
 
-switch prop.opts.rho
+switch opts.rho
     case {'default'}
         prop.Arho = 5490; % (Ida and Guthrie, book)
         prop.Brho = -0.49; % (Ida and Guthrie, book)
         prop.rho = @(T) prop.Brho.*(T-prop.Tm)+prop.Arho;
-    case {'Jan'}
+    case {'Jan','Menser'}
         prop.Arho = 6170;
         prop.Brho = -4.42e-4;
         prop.rho = @(T) (prop.Brho.*T+prop.Arho);
@@ -20,7 +37,7 @@ switch prop.opts.rho
         prop.rho = @(T) prop.Arho;
 end
 
-switch prop.opts.cp
+switch opts.cp
     case {'default','mixed','constant'}
         prop.Ccp = 29.3./prop.M*1.2; % (Ida and Guthrie, book)
         prop.Dcp = 0;
@@ -30,23 +47,25 @@ switch prop.opts.cp
         prop.cp = @(T) prop.Ccp;
 end
 
-% Conduction properties ***************************************************
+
+%-- Conduction properties ------------------------------------------------%
 prop.alpha = 0.23;
 prop.ct = @()sqrt(8*prop.kb*prop.Tg/(pi*prop.mg));
 
-% Evaporation properties **************************************************
+
+%-- Evaporation properties -----------------------------------------------%
 prop.mv = prop.M.*1.660538782e-24;
 prop.Rs = prop.R./prop.M;
 
 prop.Tb = 3103; % (Ida and Guthrie, book)
 prop.hvb = 333e3/prop.M/1e6; % (Ida and Guthrie, book)
-switch prop.opts.hv
+switch opts.hv
     case {'default','Watson'}
         prop.Tcr = 9803; % (Young and Alder)
         prop.n = 0.38;
         prop.hvA = @()(prop.hvb*1e6)./...
             ((1-prop.Tb/prop.Tcr).^0.38); % Watson eqn. constant
-        prop.hv = @prop.watsonEqn;
+        prop.hv = @prop.watson;
     case {'constant'}
         prop.hv = @(T) prop.hvb*1e6;
     case {'Jan'}
@@ -56,24 +75,25 @@ end
 
 prop.Pref = 101325; % atmospheric boiling point used
 prop.C = log(prop.Pref)+(prop.hvb*1e6)./prop.Rs./prop.Tb; % Constant for C-C Eqn. 
-switch prop.opts.pv
+switch opts.pv
     case {'default','Kelvin-CC'}
         prop.gamma = @(dp,T) 607e-3+(T-prop.Tm).*0.14e-3; % (Ida and Guthrie, book)
-        prop.pv = @prop.kelvinEqn;
+        prop.pv = @(T,dp,hv) prop.eq_kelvin(T,dp,hv);
     case {'Tolman-CC'}
         ... % enter additional parameters
-        prop.gamma = @prop.tolmanEqn;
-        prop.pv = @prop.kelvinEqn;
+        prop.gamma = @(dp,T) prop.eq_tolman(dp,T);
+        prop.pv = @(T,dp,hv) prop.eq_kelvin(T,dp,hv);
     case {'CC'}
-        prop.pv = @prop.clausClap;
+        prop.pv = @(T,dp,hv) prop.eq_claus_clap(T,dp,hv);
     case {'Antoine','Jan'}
         prop.C1 = 16149;
         prop.C2 = 11.7288;
-        prop.pv = @prop.antoineEqn;
+        prop.pv = @(T,dp,hv) prop.eq_antoine(T,dp,hv);
 end
 
-% Optical properties ******************************************************
-switch prop.opts.Em
+
+%-- Optical properties ---------------------------------------------------%
+switch opts.Em
     case {'default','quartic'}
         prop.Em = @(l,dp) polyval([3.6567e-14,-2.5074e-10,6.2787e-07,...
             -0.00069181,0.30026],l); % quartic fit to Jellison and Hodgson
@@ -111,6 +131,9 @@ switch prop.opts.Em
         % omega_p = 2.64E+16;
         % tau = 2.10E-16;
 end
+
+
+prop.opts = opts;
 
 end
 
