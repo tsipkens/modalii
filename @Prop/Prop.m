@@ -2,13 +2,12 @@
 % PROP Container class used for handling of material and experimental properties.
 % Author: T. A. Sipkens, 11/28/2018
 %=========================================================================%
-% 
 % Notes:
-% 1 Prop is a handle class and changes to an instance affect all copies
-%   of the instance. Use Prop.copy to create a copy of the class that will
-%   update independently.
-% 2 Prop is a dynamicprops class, meaning that the property list can be
-%   alterred used the addprop(Prop,'variablename') function.
+% 1. Prop is a handle class and changes to an instance affect all copies
+%    of the instance. Use Prop.copy to create a copy of the class that will
+%    update independently.
+% 2. Prop is a dynamicprops class, meaning that the property list can be
+%    alterred used the addprop(Prop,'variablename') function.
 % 
 %=========================================================================%
 
