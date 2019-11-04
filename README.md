@@ -1,8 +1,6 @@
 
 ## MATLAB tools for LII analysis (wat-lii)
 
-<div itemscope itemtype="https://schema.org/Person"><a itemprop="sameAs" content="https://orcid.org/0000-0003-1719-7105" href="https://orcid.org/0000-0003-1719-7105" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">Timothy A. Sipkens <img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon"></a></div>
-
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
 This is modular program to model and analyze time-resolved laser-induced
