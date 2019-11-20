@@ -12,14 +12,14 @@ Signals are generated predominantly using absorption, conduction,
 and evaporation submodels, with capabilities to do other cooling
 modes. The program contain the following components.
 
-## Upper directory and other `main*.m` scripts
+## 1. Upper directory and other `main*.m` scripts
 
 Throughout the program, `main*.m` scripts are used to create instances
 of the classes and perform the analysis of LII signals.
 
-## Classes
+## 2. Classes
 
-#### @HTModel
+#### 2.1 @HTModel
 
 This class is designed to generate temperature
 decay curves. This is done by solving, at the very least, an ordinary
@@ -29,7 +29,7 @@ be solved simultaneously.
 Various aspects of the `HTModel` class are controlled using an `opts` structure,
 which is a property of the object.
 
-#### @SModel
+#### 2.2 @SModel
 
 This class is design to simulate incandescence
 from a temperature trace, incorporating blackbody
@@ -37,7 +37,7 @@ radiation and the optical properties. Methods exist
 to both forward and backward (i.e. pyrometry)
 calculations.
 
-#### @Prop
+#### 2.3 @Prop
 
 This class contains the thermosphysical, optical, and other model parameters
 to be used in evaluating both the spectroscopic and heat transfer models. These
@@ -67,4 +67,5 @@ for details).
 #### Contact information
 
 The primary author of the code is Timothy A. Sipkens, who can be
-emailed at [tsipkens@uwaterloo.ca](mailto:tsipkens@uwaterloo.ca).
+emailed at [tsipkens@uwaterloo.ca](mailto:tsipkens@uwaterloo.ca). The
+code was developed at the University of Waterloo. 
