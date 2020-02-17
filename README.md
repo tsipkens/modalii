@@ -29,7 +29,7 @@ be solved simultaneously.
 One can create an instance of the HTModel class by calling the 
 construction methods as follows:
 
-`htmodel = HTModel(prop,x_fields,t,opts):`
+`htmodel = HTModel(prop,x_fields,t,opts);`
 
 Here, `prop` is an instant of the `Prop` class, which contains all of
 the physical parameters required to define the heat transfer model.
