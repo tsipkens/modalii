@@ -26,8 +26,25 @@ decay curves. This is done by solving, at the very least, an ordinary
 differential equation for temperature. Mass and annealed fraction can also
 be solved simultaneously.
 
-Various aspects of the `HTModel` class are controlled using an `opts` structure,
+One can create an instance of the HTModel class by calling the 
+construction methods as follows:
+
+`htmodel = HTModel(prop,x_fields,t,opts):`
+
+Here, `prop` is an instant of the `Prop` class, which contains all of
+the physical parameters required to define the heat transfer model.
+The parameter `x_fields` then contains a cell of strings, where each entry
+is a property of the given `prop` variable. The `t` input if a 
+vector of time for which the heat transfer model will be evaluated. 
+Finally, various aspects of the `HTModel` class are controlled using an `opts` structure,
 which is a property of the object.
+
+The two key methods for evaluating the heat transfer model
+are the `evaluate` and `de_solve` methods. The `de_solve` method
+solves the ODEs without altering the default physical properties. 
+In contrast, the `evaluate` method solves the ODEs for a vector of
+property values given by the `x` input to the method. The latter
+is particularly useful in optimization scenerio. 
 
 #### 2.2 @SModel
 
