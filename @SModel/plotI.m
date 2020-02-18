@@ -4,7 +4,7 @@ Jmod = @(l) C(n).*(smodel.blackbody(T(n),l).*smodel.prop.Em(l,smodel.prop.dp0)./
     (l.*1e-9)./smodel.data_sc)';
 J = squeeze(data(n,1,:));
 
-if length(smodel.l)<4;
+if length(smodel.l)<4
     plotSpec = 'o';
 else
     plotSpec = '.';

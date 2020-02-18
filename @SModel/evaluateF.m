@@ -4,6 +4,10 @@ function [Jout,mp] = evaluateF(smodel,x)
 htmodel = smodel.htmodel; % embedded heat transfer model
 prop = smodel.prop; % material properties
 
+if and(isa(prop,'struct'),~isfield(prop,'C_J'))
+    prop.C_J = 1;
+end
+
 if nargin > 1 % update x values
     if length(x)==length(smodel.x)
         for ii=1:length(smodel.x)

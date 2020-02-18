@@ -1,0 +1,10 @@
+data/
+archive/
++cenide/
++inhouse/Mo*
++inhouse/Fe*
++inhouse/Ag*
++model_selection
++fluence_model
++general_error_model
+*.asv

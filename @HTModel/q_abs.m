@@ -1,8 +1,9 @@
 
+% Q_ABS     Rate of laser energy input from the laser. 
+% Author:   Timothy Sipkens, 2018-12-17
+%=========================================================================%
+
 function [q,Cabs] = q_abs(htmodel,t,dp)
-% Q_ABS Rate of laser energy input from the laser. 
-% Author: Timothy Sipkens, 2018-12-17
-%
 %-------------------------------------------------------------------------%
 % Inputs:
 %   t       Time, [ns]
@@ -13,7 +14,7 @@ function [q,Cabs] = q_abs(htmodel,t,dp)
 %-------------------------------------------------------------------------%
 
 dp = dp.*1e-9; % convert to meters so everything is in SI units
-prop = htmodel.prop;
+prop = htmodel.prop; % make local copy of prop struct
 tlp = prop.tlp*1e-9; % convert from ns to s
 tlm = prop.tlm*1e-9; % convert from ns to s
 t = t.*1e-9; % convert from ns to s

@@ -1,11 +1,16 @@
-function [Tout,Ti,Cout,s_T,out] = IModel(smodel,J)
 
-if and(strcmp(smodel.opts.pyrometry,'default'),length(smodel.l)==2)
-    smodel.opts.pyrometry = '2color';
-end
+% IMODEL    Evaluates the inverse spectroscopic model (using some form of pyrometry).
+% Author:   Timothy Sipkens
+%=========================================================================%
+
+function [Tout,Ti,Cout,s_T,out] = IModel(smodel,J)
 
 nshots = length(J(1,:,1)); % number of shots
 ntime = length(J(:,1,1)); % number of times
+
+%-- Choose type of pyrometry ---------------------------------------------%
+%   Note: Chooses between the different methods of pyrometry and output
+%   parameter using the opts.pyrometry in smodel.
 switch smodel.opts.pyrometry
     
     % Two-color pyrometry **********************
@@ -61,9 +66,9 @@ switch smodel.opts.pyrometry
         
         out.resid = zeros(ntime,1);
         
-    case {'constC'}
+    case {'constC'} % hold C at some constant value (not working)
         if ~isfield(opts,'C')
-            disp('Error occurred in pyrometry: C was not specified.');
+            error('Error occurred in pyrometry: C was not specified.');
             return
         end
         

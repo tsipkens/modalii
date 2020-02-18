@@ -1,11 +1,28 @@
-function prop = Fe(prop)
 
-% Sensible energy properties **********************************************
+% FE Define properties for iron particles
+% Author: Timothy Sipkens, 2019-11-03
+%=========================================================================%
+
+function prop = Fe(prop,opts)
+
+%-- Parse inputs ---------------------------------------------------------%
+if ~exist('prop','var'); prop = struct(); end
+
+if ~exist('opts','var'); opts = struct(); end
+if ~isfield(opts,'rho'); opts.rho = 'default'; end
+if ~isfield(opts,'cp'); opts.cp = 'default'; end
+if ~isfield(opts,'hv'); opts.hv = 'default'; end
+if ~isfield(opts,'pv'); opts.pv = 'default'; end
+if ~isfield(opts,'Em'); opts.Em = 'default'; end
+%-------------------------------------------------------------------------%
+
+
+%-- Sensible energy properties -------------------------------------------%
 prop.phi = prop.h*prop.c/prop.kb;
 
 prop.M = 0.055847;
 prop.Tm = 1811; % (Desai, 1986)
-switch prop.opts.rho
+switch opts.rho
     case {'default','Hixson'} % (Hixson, 1990), T > 2125 K
         prop.Arho = 8171;
         prop.Brho = -0.64985;
@@ -35,7 +52,7 @@ switch prop.opts.rho
         
 end
 
-switch prop.opts.cp
+switch opts.cp
     case {'default','mixed'}
         prop.Ccp = 1;
         prop.Dcp = 1; % update in the future, originally zero for APB paper
@@ -65,25 +82,27 @@ switch prop.opts.cp
         prop.cp = @(T) prop.Ccp.*46.632./prop.M; % given in J/(kg K)
 end
 
-% Conduction properties ***************************************************
+
+%-- Conduction properties ------------------------------------------------%
 prop.alpha = 0.23; % 0.23 - model selection						
 prop.Tg = 298;					
 prop.Pg = 101325;													
 prop.ct = @()sqrt(8*prop.kb*prop.Tg/(pi*prop.mg));
 
-% Evaporation properties **************************************************
+
+%-- Evaporation properties -----------------------------------------------%
 prop.mv = prop.M.*1.660538782e-24;
 prop.Rs = prop.R./prop.M;
 
 prop.Tb = 3134; % (Dean, Lange's Handbook of Chemisty) *check
 prop.hvb = 340e3/prop.M/1e6; % (Dean, Lange's Handbook of Chemisty) *check
-switch prop.opts.hv
+switch opts.hv
     case {'default','Watson'}
         prop.Tcr = 9340; % (Young and Alder) (ALT: Beutl et al.)
         prop.n = 0.38; % Watson
         prop.hvA = @()(prop.hvb*1e6)./...
             ((1-prop.Tb/prop.Tcr).^prop.n); % Watson eqn. constant
-        prop.hv = @prop.watsonEqn;
+        prop.hv = @(T) prop.eq_watson(T);
         
     case {'Roman'}
         prop.Tcr = 9340; % (Young and Alder) (ALT: Beutl et al.)
@@ -107,22 +126,22 @@ end
 prop.gamma0 = 1.865; % (Keene et al, 1988)
 prop.Pref = 101325; % atmospheric boiling point used
 prop.C = log(prop.Pref)+(prop.hvb*1e6)./prop.Rs./prop.Tb; % constant for C-C Eqn. 
-switch prop.opts.pv
+switch opts.pv
     case {'default','Kelvin-CC'}
         % prop.gamma = @(dp,T)(prop.gamma0-0.35*1e-3*(T-1823)); % (Keene et al, 1988)
         prop.gamma = @(dp,T) prop.gamma0;
-        prop.pv = @prop.kelvinEqn;
+        prop.pv = @(T,dp,hv) prop.eq_kelvin(T,dp,hv);
         
     case {'Tolman-CC'}
         ... % enter additional parameters
         % prop.gammaT = @(T)(prop.gamma0-0.35*1e-3*(T-1823)); % (Keene et al, 1988)
         prop.gammaT = @(T) prop.gamma0;
         prop.delta = 0.126; % atomic diameter
-        prop.gamma = @prop.tolmanEqn;
-        prop.pv = @prop.kelvinEqn;
+        prop.gamma = @(dp,T) prop.eq_tolman(dp,T);
+        prop.pv = @(T,dp,hv) prop.eq_kelvin(T,dp,hv);
         
     case {'CC'}
-        prop.pv = @prop.clausClap;
+        prop.pv = @(T,dp,hv) prop.eq_claus_clap(T,dp,hv);
         
     case {'CC-alt'}
         prop.C1 = prop.hvb*1e6./prop.Rs;
@@ -168,8 +187,8 @@ switch prop.opts.pv
             % Evaluate the Kelvin Eqn.
 end
 
-% Optical  properties *****************************************************
-switch prop.opts.Em
+%-- Optical  properties --------------------------------------------------%
+switch opts.Em
     case {'default','Emr1.1'}
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr.*1.1;
@@ -178,7 +197,7 @@ switch prop.opts.Em
     case {'Drude'}
         prop.omega_p = 6.78e17;
         prop.tau = 1.69e-19;
-        [Em_temp,n_temp,k_temp] = prop.drude(400:1100);
+        % [Em_temp,n_temp,k_temp] = prop.eq_drude(400:1100);
         prop.Em_data = getfield(load('Em_Fe_Drude.mat'),'Em_data');
         prop.Em_gi = griddedInterpolant(prop.Em_data(:,1),prop.Em_data(:,2),'pchip');
         prop.Em = @(l,dp) prop.Em_gi(l);
@@ -200,7 +219,7 @@ switch prop.opts.Em
         prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1,dp)./prop.Em(l2,dp);
         
     case 'Mie-Krishnan'
-        load('@Prop\Fe_opt_prop.mat');
+        load('prop.Fe_opt_prop.mat');
         n_gi = griddedInterpolant(Krishnan.l,Krishnan.n,'pchip','linear');
         k_gi = griddedInterpolant(Krishnan.l,Krishnan.k,'pchip','linear');
         n = @(l) n_gi(l);
@@ -213,9 +232,13 @@ end
 % prop.Eml = @(dp) 0.07; % representative of (Sipkens et al., APB, 2017)
 prop.Eml = @(dp) prop.Em(prop.l_laser,dp);
 
-% Particle size and signal properties *************************************
+
+%-- Particle size and signal properties ----------------------------------%
 prop.dp0 = 20;
 prop.sigma = 0; % Default monodisperse
+
+
+prop.opts = opts;
 
 end
 

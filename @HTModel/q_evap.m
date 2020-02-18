@@ -1,8 +1,9 @@
 
-function [q,J,hv,pv] = q_evap(htmodel,T,dp)
 % Q_EVAP Rate of evaporation or sublimation energy loss from the nanoparticle. 
 % Author: Timothy Sipkens, 2018-12-17
-%
+%=========================================================================%
+
+function [q,J,hv,pv] = q_evap(htmodel,T,dp)
 %-------------------------------------------------------------------------%
 % Inputs:
 %   T       Vector of nanoparticle temperature, [K]
@@ -16,11 +17,11 @@ dp = dp.*1e-9; % convert to meters so everything is in SI units
 prop = htmodel.prop;
 
 if isempty(prop.gamma)
-    prop.gamma = @prop.tolmanEqn;
+	prop.gamma = @prop.tolmanEqn;
 end
 
 if isempty(prop.alpham)
-    prop.alpham = @(T) 1;
+	prop.alpham = @(T) 1;
 end
 
 hv = prop.hv(T);

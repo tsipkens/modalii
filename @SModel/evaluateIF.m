@@ -1,6 +1,10 @@
+
+% EVALAUTEIF    Evaluate forward and inverse model (htmodel -> J -> Teff). 
+% Author:       Timothy Sipkens
+% Note:         Used to incorporate polydispersity into forward model. 
+%=========================================================================%
+
 function [Tout] = evaluateIF(smodel,x)
-% EVALAUTEIF Evaluate forward and inverse model (htmodel -> J -> Teff). 
-% Used to incorporate polydispersity into forward model. 
 
 htmodel = smodel.htmodel; % embedded heat transfer model
 prop = smodel.prop;

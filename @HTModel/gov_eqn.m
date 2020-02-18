@@ -1,10 +1,12 @@
 
-function [htmodel,dTdt,dmdt] = gov_eqn(htmodel)
-% GOV_EQN Generates governing equation for evaluating heat transfer model.
+% GOV_EQN Builds function handle for governing equation used in evaluation.
 % Author: Timothy Sipkens, 2018-11-28
-%
-% The dTdt portion of the equation is initially built up as a string, 
-%   with the output depending on htmodel.opts. 
+%=========================================================================%
+
+function [htmodel,dTdt,dmdt] = gov_eqn(htmodel)
+% Note: The dTdt portion of the equation is initially built up as a string, 
+%   with the output depending on htmodel.opts. Allows for quicker
+%   evaluation by exlcuding insignificant terms. 
 %-------------------------------------------------------------------------%
 % Inputs:
 %   dp0     Vector of nanoparticle diameters for which ODEs are to be solved, [nm]

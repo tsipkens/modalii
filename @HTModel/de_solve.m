@@ -1,8 +1,9 @@
 
+% DE_SOLVE  Solves ODEs for temperature, mass, etc. over time. 
+% Author:   Timothy Sipkens, 2018-11-28
+%=========================================================================%
+
 function [Tout,dpo,mpo,Xo] = de_solve(htmodel,dp0)
-% DE_SOLVE Solves ODEs for temperature, mass, etc. over time. 
-% Author: Timothy Sipkens, 2018-11-28
-%
 %-------------------------------------------------------------------------%
 % Inputs:
 %   dp0     Vector of nanoparticle diameters for which ODEs are to be solved, [nm]
@@ -14,16 +15,16 @@ function [Tout,dpo,mpo,Xo] = de_solve(htmodel,dp0)
 %   Xo      Time-resolved anneealed fraction, same format as above, [fraction]
 %-------------------------------------------------------------------------%
 
-Nd = length(dp0);
+Nd = length(dp0); % number of size classes to consider in solver
 
 %-- Initial conditions ---------------------------------------------------%
 Ti = htmodel.prop.Ti.*ones(Nd,1); % initial temperature, [K]
 
 %-- Initial mass ----%
 if isempty(htmodel.prop.rho0)
-    htmodel.prop.rho0 = htmodel.prop.rho(htmodel.prop.Tg);
+	htmodel.prop.rho0 = htmodel.prop.rho(htmodel.prop.Tg);
 end
-mass_conv = 1e21; % added for stability, used to convert mass to attogram (ag)
+mass_conv = 1e21; % added for stability, converts mass to attogram (ag)
 mpi = (htmodel.prop.rho0.*(dp0.*1e-9).^3.*(pi/6)).*mass_conv; % inital mass, [ag]
 
 Xi = 0.*ones(Nd,1); % initial annealed fraction, [fraction]
@@ -44,8 +45,10 @@ end
 %-------------------------------------------------------------------------%
 
 
-%-- Set up ODE function --------------------------------------------------%
-switch htmodel.opts.ann % consider percentage annealed variable
+%-- Setup ODE ------------------------------------------------------------%
+%   Note: Switch chooses whether to couple three ODEs to also solve to the
+%   annealed fraction or to only conisder two couples ODEs.
+switch htmodel.opts.ann % whether to solve for annealed fraction
     case {'include','Michelsen','Sipkens'}
         dydt = @(t,y)real([htmodel.dTdt(t,y(1:Nd),abs(y(Nd+1:2*Nd))./mass_conv,y(2*Nd+1:3*Nd)).*1e-9;...
             htmodel.dmdt(t,y(1:Nd),abs(y(Nd+1:2*Nd))./mass_conv,y(2*Nd+1:3*Nd)).*mass_conv.*1e-9;...
@@ -63,10 +66,13 @@ end
 
 
 %-- Solve ODE ------------------------------------------------------------%
+%   Note: Two solver methods are available: the built-in Runge-Kutta solver
+%   from MATLAB or a simple implementation of Euler's method. 
 switch htmodel.opts.deMethod
-    case {'default','ode23s'}
+    case {'default','ode23s'} % use MATLAB Runge-Kutta solver
         
-        if strcmp(htmodel.opts.abs,'include') % limit step size to ensure solver sees absorption
+        if strcmp(htmodel.opts.abs,'include')
+                % limit step size to ensure solver sees absorption
             opts.MaxStep = (htmodel.prop.tlp)/2;
         else
             opts = [];
@@ -118,14 +124,15 @@ end
 
 
 %-- Post-process results -------------------------------------------------%
-if opts_tadd==1 % remove added initial point
+if opts_tadd==1 % remove added initial point that was added if t(1)>0
     Tout = Tout(2:end,:);
     mpo = mpo(2:end,:);
     Xo = Xo(2:end,:);
 end
 
-dpo = ((6.*mpo)./(htmodel.prop.rho(Tout).*pi)).^(1/3).*1e9; % calculate diameter over time
-mpo = mpo./mpo(1); % calculate relative change in particle mass over time
+dpo = ((6.*mpo)./(htmodel.prop.rho(Tout).*pi)).^(1/3).*1e9;
+    % calculate diameter over time
+mpo = mpo./mpo(1); % output relative change in particle mass over time
 %-------------------------------------------------------------------------%
 
 end

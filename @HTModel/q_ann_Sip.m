@@ -1,5 +1,10 @@
+
+% Q_ANN_SIP Rate of annealing based on the simplified model of Sipkens, 2018.
+% Author:   Timothy Sipkens, 2018
+%=========================================================================%
+
 function [q,dXdt] = q_ann_Sip(htmodel,T,dp,X)
-% Q_ANN_SIP Rate of annealing based on the simplified model of Sipkens, 2018. 
+
 
 dp = dp.*1e-9; % convert to meters so everything is in SI units
 prop = htmodel.prop;
@@ -10,7 +15,7 @@ k = k0.*exp(-E./prop.R./T);
     % previous model 1.7e10 and 2e5
 
 DH = 0; % multiply by percentage of defects existing?
-    %1.6e5; % close to sum of the quantities given in Michelsen, J/mol
+    % 1.6e5; % close to sum of the quantities given in Michelsen, J/mol
     % 0.8-1.7e6 J/mol from Michelsen et al., 2003
 
 % dXdt = 3.*((1-X).^2/3)./dp.*k; % rate of change of fraction of particle

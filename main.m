@@ -1,24 +1,28 @@
 
 clear;
 
+tic;
+
 t = -100:2:2500;
 l = [442,716];
 
 opts = [];
 % opts.hv = 'constant';
-opts.Em = 'default';%'Krishnan';%'Mie-Krishnan';
-prop = Prop({'Ar.m','Fe.m','experFe.m'},opts);
-% prop = Prop({'Ar.m','C.m','experLDF.m'});
+opts.Em = 'default'; %'Krishnan';%'Mie-Krishnan';
+prop = Prop({'exper_apb17_Fe','Ar','Fe'},opts);
+% prop = Prop({'exper_apb17_Ag','Ar','Ag'},opts);
+% prop = Prop({'exper_ldf','Ar','C'},opts);
 prop.F0 = 0.15; % in [J/cm2]
 prop.Ti = 298;
 prop.Tg = prop.Ti;
 prop.sigma = 0;
 
-opts.abs = 'include';
+opts.abs = 'include'; % include absorption
 x_fields = {'dp0'};
 htmodel = HTModel(prop,x_fields,t,opts);
 smodel = SModel(prop,x_fields,t,l);
 smodel.htmodel = htmodel;
+toc;
 
 tic;
 T = htmodel.de_solve((15:15:90)');
@@ -42,4 +46,4 @@ hold on;
 plot(t,T_j,'k--');
 hold off;
 
-
+toc;

@@ -1,5 +1,10 @@
+
+% Q_ANN_MICH Implementation of annealing rate calculation from Michelsen, 2003. 
+% Author: Timothy Sipkens
+%=========================================================================%
+
 function [q,dXdt] = q_ann_Mich(htmodel,T,dp,X)
-% Q_ANN_MICH Rate of annealing from Michelsen, 2003. 
+
 
 dp = dp.*1e-9; % convert to meters so everything is in SI units
 prop = htmodel.prop;

@@ -18,7 +18,7 @@ classdef Signal < handle
         matl = []; % matl for signal
         type = []; % origin of data
         
-        opts@struct = struct(...
+        opts struct = struct(...
             'range','default',...
             'isave',false); % options
     end
@@ -27,9 +27,9 @@ classdef Signal < handle
         function signal = Signal(l,varargin)
             signal.l = l;
             
-            % Handle additional properties ********************************
+            %-- Handle additional properties -----------------------------%
             ii = 1;
-            while ii<=(nargin-1);
+            while ii<=(nargin-1)
                 if isprop(signal,varargin{ii})
                     signal.(varargin{ii}) = varargin{ii+1};
                     if strcmp(varargin{ii},'J_raw')
@@ -49,7 +49,7 @@ classdef Signal < handle
             end
         end
         
-        % Filters *********************************************************
+        %-- Filters ------------------------------------------------------%
         [] = filter_ave(signal,nn); % Find mean of across given shots.
         [] = filter_ave_rand(signal,n); % Find mean of across given shots, randomize signals avereged.
         [] = filter_mismatch(signal,t0); % Remove signals with mismatched peaks.
@@ -65,12 +65,13 @@ classdef Signal < handle
         [] = filter_signalmean(signal); % scale the data in the signal by the mean of all of the data
         [] = outlier(signal); % perform Thomson-Tau outlier removal on the data
         
-        % Peak temperature calculations ***********************************
-        [Tp,tp,F0] = getPeakTemp(signal,prop); % Calculate the peak temperature and time
+        %-- Peak temperature calculations --------------------------------%
+        [Tp,tp,F0] = get_peak_temp(signal,prop); % Calculate the peak temperature and time
         
-        % Plotting functions **********************************************
+        % Plotting functions ---------------------------------------------%
         [] = plot(signal,varargin); % Plot signals specified in num (or all, if num is excluded)
-        [] = plotImage(signal,ind); % plot incandescence as an image
+        [] = plot_image(signal,ind); % plot incandescence as an image
+        
         
         [copied] = copy(signal,vec); % make a copy of the specified signal
     end
