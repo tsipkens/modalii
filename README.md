@@ -3,33 +3,27 @@
 
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
-This is modular program to model and analyze time-resolved laser-induced
-incandescence (TiRe-LII) signals.
+This is modular program to model and analyze time-resolved laser-induced incandescence (TiRe-LII) signals, developed at the University of Waterloo.
 
-This program is built to simulate signals from various materials,
-including soot, silicon, germanium, iron, silver, and molybdenum.
-Signals are generated predominantly using absorption, conduction,
-and evaporation submodels, with capabilities to do other cooling
+This program is built to simulate signals from various materials, including soot, silicon, germanium, iron, silver, and molybdenum. Signals are generated predominantly using absorption, conduction, and evaporation submodels, with capabilities to do other cooling
 modes. The program contain the following components.
 
-## 1. Upper directory and other `main*.m` scripts
+## 1. Upper directory and other main\*.m scripts
 
-Throughout the program, `main*.m` scripts are used to create instances
-of the classes and perform the analysis of LII signals.
+Throughout the program, `main*.m` scripts are used to create instances of the classes and perform the analysis of LII signals.
 
 ## 2. Classes
 
 #### 2.1 @HTModel
 
-This class is designed to generate temperature
-decay curves. This is done by solving, at the very least, an ordinary
-differential equation for temperature. Mass and annealed fraction can also
-be solved simultaneously.
+This class is designed to generate temperature decay curves. This is done by solving, at the very least, an ordinary differential equation for temperature. Mass and annealed fraction can also be solved simultaneously.
 
 One can create an instance of the HTModel class by calling the 
 construction methods as follows:
 
-`htmodel = HTModel(prop,x_fields,t,opts);`
+```Matlab
+htmodel = HTModel(prop,x_fields,t,opts);
+```
 
 Here, `prop` is an instant of the `Prop` class, which contains all of
 the physical parameters required to define the heat transfer model.
@@ -73,16 +67,23 @@ copies to be made. Simple assignments (e.g. `prop2 = prop;`) will be
 insufficient to create an independent copy, as changes to `prop2` will
 affect the original `prop`.
 
+#### @Signal
+
+This is depreciated class that is to be replaced by structured arrays. It packages together a series of signals and related information, such as the time and wavelengths. The class is still included for legacy purposes. The class's previous methods were largely moved to the `+data` package, described below. 
+
+## 3. Packages
+
+#### 3.1 +data
+
+The data package is available to filter or otherwise process data. 
+
 ----------------------------------------------------------------------
 
 #### License
 
-This software is licensed under an MIT license (see the corresponding file
-for details).
+This software is licensed under an MIT license (see the corresponding file for details).
 
 
-#### Contact information
+#### Contact information and acknowledgements
 
-The primary author of the code is Timothy A. Sipkens, who can be
-emailed at [tsipkens@uwaterloo.ca](mailto:tsipkens@uwaterloo.ca). The
-code was developed at the University of Waterloo. 
+The primary author of the code is Timothy A. Sipkens, who can be emailed at  [tsipkens@uwaterloo.ca](mailto:tsipkens@uwaterloo.ca). The code was developed at the University of Waterloo.  Kyle Daun contributed significantly to the ideas summarized in this code. 
