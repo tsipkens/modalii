@@ -7,6 +7,7 @@
 
 function s = outlier(s)
 
+ntot = numel(s);
 T = real(s);
  
 T(T < 0) = NaN(1);
@@ -49,6 +50,7 @@ end
 % signal.data = mu;
 % signal.sigma = sigma./sqrt(n-1);
 
-disp(['Removed ',num2str(ll(1)),' points as they are outliers.']);
+disp(['Removed ',num2str(ll(1)),' of ',num2str(ntot)...
+    ' points, as they are outliers.']);
 
 end
