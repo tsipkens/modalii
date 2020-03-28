@@ -28,8 +28,9 @@ x_fields = {'dp0','alpha'};
 x0 = [35,0.18];
 
 htmodel = HTModel(prop,x_fields,signal.t,opts);
-smodel = SModel(prop,x_fields,signal.t,signal.l,signal,htmodel,opts);
-prop.Ti = signal.get_peak_temp(smodel); % only used to get Ti to start
+smodel = SModel(prop,x_fields,...
+    signal.t,signal.l,signal,htmodel,opts);
+prop.Ti = data.get_peak_temp(signal,smodel); % only used to get Ti to start
 b = @smodel.evaluateI;
 model = @smodel.evaluateIF;
 

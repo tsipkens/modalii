@@ -27,8 +27,9 @@ x_fields = {'dp0','sigma'};
 x0 = [50,0.2];
 
 htmodel = HTModel(prop,x_fields,signal.t,opts);
-smodel = SModel(prop,x_fields,signal.t,signal.l,signal,htmodel);
-% prop.Ti = signal.get_peak_temp(smodel); % only used to get Ti to start
+smodel = SModel(prop,x_fields,...
+    signal.t,signal.l,signal,htmodel,opts);
+% prop.Ti = data.get_peak_temp(signal,smodel);  % only used to get Ti to start
 prop.Ti = 2510; % temp. set peak temperature
 b = @smodel.evaluateI;
 A = @smodel.evaluateIF;
