@@ -5,7 +5,7 @@
 % Author: Timothy Sipkens
 %=========================================================================%
 
-function [] = outlier(s)
+function s = outlier(s)
 
 T = real(s);
  
@@ -34,7 +34,7 @@ while (done == false)
         ii(deltamax <= TS)=[]; % determine sample no. to remove
         kk(deltamax <= TS)=[]; % determine time to remove
         
-        jj = false(size(T)));
+        jj = false(size(T));
         jj(sub2ind(size(jj),kk,ii))=true;
         jj = repmat(any(jj,3),[1,1,n0(3:end)]);
         
