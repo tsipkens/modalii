@@ -1,43 +1,58 @@
 
-% TEXTBAR   Print out a text-based progress bar
+% TEXTBAR   Print out a text-based progress bar.
 % Author:   Samuel Grauer, 2017-11-16
-% Modified: Timothy Sipkens, 2018-10
-%=========================================================================%
-
-function textbar(pct)
+% Modified: Timothy Sipkens, 2018-11-26
 %-------------------------------------------------------------------------%
 % Input:
-%   pct     Progress as a fraction, [%]
-%-------------------------------------------------------------------------%
+%   pct     Progress complete, as a fraction
+%=========================================================================%
 
+function textbar(pct,opt_backspace)
 
 %--- Initialization ------------------------------------------------------%
-% Parameters
-n_dot = 50;
-n_str = 75;
+%-- Parameters ----%
+n_dot = 40;
+n_str = n_dot+17;
 
-% Parse input
-if ~exist('pct','var'), pct = 0; end
-if isempty(pct) || pct < 0, pct = 0;
-elseif pct > 1, pct = 1; end
+%-- Parse input ----%
+if ~exist('pct','var')
+    pct = 0;
+elseif isempty(pct) || pct < 0
+    pct = 0;
+elseif pct > 1
+    pct = 1;
+end
+
+%-- Parse input ----%
+if ~exist('opt_backspace','var')
+    opt_backspace = 1;
+elseif isempty(opt_backspace)
+    opt_backspace = 1;
+end
 %-------------------------------------------------------------------------%
 
 
 %--- Print progress ------------------------------------------------------%
 if pct == 0
-    str_out = ['[',repmat(' ',[1 n_dot]),'] 0.0%%'];
+    str_back = '';
+    str_out = ['  [',repmat(' ',[1 n_dot]),'] 0%%'];
 else
-    fprintf(repmat(char(8),[1 n_str]));
+    if opt_backspace
+        str_back = repmat(char(8),[1 n_str]);
+    else
+        str_back = '';
+    end
     nc = ceil(pct*n_dot);
     
-    str_b01 = repmat('-',[1 nc]);
-    str_b02 = repmat(' ',[1 n_dot-nc]);
-    str_out = ['[',str_b01,str_b02,'] ',num2str(100*pct,'%.0f'),'%%'];
+    str_p01 = repmat('-',[1 nc]);
+    str_p02 = repmat(' ',[1 n_dot-nc]);
+    
+    str_out = ['  [',str_p01,str_p02,'] ',num2str(100*pct,'%.0f'),'%%'];
 end
 
-fprintf([str_out,repmat(' ',[1 n_str-length(str_out)])]);
-fprintf('\n');
+fprintf([str_back,str_out,repmat(' ',[1 n_str-length(str_out)]),'\n']);
 %-------------------------------------------------------------------------%
 
 end
+
 
