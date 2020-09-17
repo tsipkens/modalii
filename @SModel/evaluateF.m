@@ -9,12 +9,15 @@ if and(isa(prop,'struct'),~isfield(prop,'C_J'))
 end
 
 if nargin > 1 % update x values
-    if length(x)==length(smodel.x)
+    if length(x)<length(smodel.x)
+        error('Error: QoIs parameter size mismatch.');
+    else
+        if length(x)>length(smodel.x)
+            warning('QoIs parameter size mismatch.');
+        end
         for ii=1:length(smodel.x)
             prop.(smodel.x{ii}) = x(ii);
         end
-    else
-        disp('Warning: QoIs parameter size mismatch.');
     end
 end
 
