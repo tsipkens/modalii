@@ -133,7 +133,7 @@ opts2 = opts;
 opts2.minimize = 'vector-xpr'; opts2.prior = 'xpr';
 
 y0 = [22,0.3,4150,0.37,298,1];
-sy0 = 0.02.*y0; sy0(1:2) = inf; sy0(3) = 15;
+sy0 = 0.15.*y0; sy0(1:2) = inf; sy0(3) = 15; sy0(5) = 10;
 b2 = @smodel2.evaluateI;
 model2 = @smodel2.evaluateIF;
 stats2 = Stats(model2,b2,opts2);
@@ -147,7 +147,7 @@ p_fun2 = @(x) -(1/2) .* ( ...
     norm(prior_fun(x)).^2);
 
 xs2 = slicesample(mle2, 1e3, ...
-    'logpdf', @(x) p_fun2(x), 'width', 0.1 .* mle2);
+    'logpdf', @(x) p_fun2(x), 'width', 0.25 .* mle2);
 
 figure(5);
 contourf(sigma_vec, dp0_vec, log(-p1), 40, ...
