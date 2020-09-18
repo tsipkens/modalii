@@ -1,3 +1,4 @@
+
 function [pr_fun,pr_fun_theta] = get_prior_fun(stats)
 
 switch stats.opts.prior
