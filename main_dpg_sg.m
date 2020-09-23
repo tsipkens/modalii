@@ -77,8 +77,15 @@ ylim([0,4500]);
 %%
 % Evaluate likelihood on a grid for plotting.
 % Longer runtimes. 
+
+% SPACE 1
 sigma_vec = linspace(1.0, 2, 78);
 dp0_vec = linspace(5, 60, 77);
+
+% SPACE 2
+sigma_vec = linspace(1.45, 1.65, 78);
+dp0_vec = linspace(20, 30, 77);
+
 p1 = zeros(length(dp0_vec), length(sigma_vec));
 
 p_fun = @(x) -(1/2).*norm(stats.min_fun(x)).^2;
@@ -96,7 +103,7 @@ disp(' ');
 
 % Get MCMC samples.
 xs = slicesample(mle, 1e3, ...
-    'logpdf', @(x) p_fun(x), 'width', 0.1 .* mle);
+    'logpdf', @(x) p_fun(x), 'width', 0.05 .* mle);
 
 
 %%
@@ -109,19 +116,28 @@ set(gca, 'YDir', 'normal');
 
 
 figure(4);
-contourf(sigma_vec, dp0_vec, log(-p1), 40, ...
+contourf(sigma_vec, dp0_vec, -p1, 40, ...
     'edgecolor', 'none');
-colormap(viridis);
+colormap(fgreen);
 axis square;
 hold on;
 scatter(exp(xs(:,2)), xs(:,1), ...
     'filled', 'w', 'SizeData', 2.5);
 alpha(0.5);
+plot(exp(mle(2)), mle(1), 'rx');
+
+dp32 = mle(1) * exp((5/2).*mle(2).^2);
+xlims = xlim; ylims = ylim;
+sg_vec = linspace(xlims(1), xlims(2), 300);
+dpg_vec = dp32 ./ ...
+    exp((5/2) .* log(sg_vec).^2);
+plot(sg_vec, dpg_vec, 'y-');
 hold off;
 %-------------------------------------------------------------------------%
 
 
 %%
+%{
 %-- Consideration of nuisance parameters ---------------------------------%
 y_fields = {'dp0','sigma','Ti','alpha','Tg','Ccp'};
 htmodel2 = HTModel(prop, y_fields, t, opts);
@@ -160,7 +176,7 @@ scatter(exp(xs2(:,2)), xs2(:,1), ...
 alpha(0.5);
 hold off;
 %-------------------------------------------------------------------------%
-
+%}
 
 
 
