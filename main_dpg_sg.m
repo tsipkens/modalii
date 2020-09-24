@@ -12,6 +12,7 @@ l = [442,716]; % measurement wavelengths
 
 opts = [];
 opts.Em = 'default';
+% opts.abs = 'include';
 prop = Prop({'exper_ldf','Ar','C'}, opts);
 prop.F0 = 0.15; % in [J/cm2]
 prop.Ti = 4150;
@@ -45,10 +46,12 @@ T_j = smodel.evaluateI([30, log(1.3)]);
 
 %-- Plot of temperature data ---------------------------------------------%
 figure(1);
+cmap_sweep(6, fgreen);
 plot(t, T);
 hold on;
-plot(t, squeeze(T_j(:,1,:)), 'k--');
+plot(t, squeeze(T_j(:,1,:)), 'k.');
 hold off;
+ylim([0,4500]);
 %-------------------------------------------------------------------------%
 
 
@@ -116,10 +119,12 @@ set(gca, 'YDir', 'normal');
 
 
 figure(4);
-contourf(sigma_vec, dp0_vec, -p1, 40, ...
+contourf(sigma_vec, dp0_vec, log(-p1), 40, ...
     'edgecolor', 'none');
-colormap(fgreen);
-axis square;
+cm = fgreen(255); colormap(cm(1:150, :)); % apply colourmap
+colorbar;
+
+
 hold on;
 scatter(exp(xs(:,2)), xs(:,1), ...
     'filled', 'w', 'SizeData', 2.5);
