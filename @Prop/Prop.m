@@ -1,8 +1,8 @@
 
-% PROP Container class used for handling of material and experimental properties.
+% PROP  Container class used for handling of material and experimental properties.
 % Author: T. A. Sipkens, 11/28/2018
-%=========================================================================%
-% Notes:
+% 
+% NOTES:
 % 1. Prop is a handle class and changes to an instance affect all copies
 %    of the instance. Use Prop.copy to create a copy of the class that will
 %    update independently.
