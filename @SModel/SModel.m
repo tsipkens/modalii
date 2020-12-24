@@ -1,6 +1,6 @@
 
-% SMODEL    Class for the spectroscopic model and pyrometry calculations.
-% Author:   Timothy Sipkens, 2017
+% SMODEL  Class for the spectroscopic model and pyrometry calculations.
+% AUTHOR: Timothy Sipkens, 2017
 %=========================================================================%
 
 classdef SModel

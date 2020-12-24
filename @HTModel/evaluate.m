@@ -1,5 +1,5 @@
 
-% EVALUATE Primary function to evaluate the heat transfer model at provided x.
+% EVALUATE  Primary function to evaluate the heat transfer model at provided x.
 % AUTHOR: Timothy Sipkens, 2018-11-28
 %=========================================================================%
 

@@ -1,5 +1,9 @@
+
+% EVALAUTEF  Evaluate spectroscopic forward model (T/htmodel -> J). 
+% AUTHOR: Timothy Sipkens
+%=========================================================================%
+
 function [Jout,mp] = evaluateF(smodel,x)
-% EVALAUTEF Evaluate spectroscopic forward model (T/htmodel -> J). 
 
 htmodel = smodel.htmodel; % embedded heat transfer model
 prop = smodel.prop; % material properties

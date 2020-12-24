@@ -1,6 +1,6 @@
 
-% HTMODEL   Class definition for the TiRe-LII heat transfer model.
-% AUTHOR:   Timothy Sipkens, 2015
+% HTMODEL  Class definition for the TiRe-LII heat transfer model.
+% AUTHOR: Timothy Sipkens, 2015
 %=========================================================================%
 
 classdef HTModel
@@ -30,7 +30,9 @@ classdef HTModel
     
     
     methods
-        % HTMODEL Constructor method for heat transfer model.
+        %== HTMODEL ======================================================%
+        %   Constructor method for heat transfer model.
+        % 
         % INPUTS:
         %   prop        Instance of the properties class containing
         %               material properties
@@ -39,8 +41,7 @@ classdef HTModel
         %                   (e.g. 'alpha','dp')
         %   t           Vector of times at which heat transfer model is
         %                   evaluated
-        %   varargin    Options as a struct or a series of name-value pairs
-        %                   (Optional)
+        %   varargin    Options as a struct or a series of name-value pairs (Optional)
         %-----------------------------------------------------------------%
         function htmodel = HTModel(prop,x,t,varargin)
         

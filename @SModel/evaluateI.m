@@ -1,6 +1,6 @@
 
-% EVALAUTEI Bridge function to evaluate spectroscopic inverse model (J > T). 
-% Author:   Timothy Sipkens
+% EVALAUTEI  Bridge function to evaluate spectroscopic inverse model (J > T). 
+% AUTHOR: Timothy Sipkens
 %=========================================================================%
 
 function [Tout] = evaluateI(smodel,x)

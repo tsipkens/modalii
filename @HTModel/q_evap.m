@@ -1,19 +1,18 @@
 
-% Q_EVAP Rate of evaporation or sublimation energy loss from the nanoparticle. 
-% Author: Timothy Sipkens, 2018-12-17
-%=========================================================================%
-
-function [q,J,hv,pv] = q_evap(htmodel,T,dp)
-%-------------------------------------------------------------------------%
-% Inputs:
+% Q_EVAP  Rate of evaporation or sublimation energy loss from the nanoparticle. 
+% AUTHOR: Timothy Sipkens, 2018-12-17
+% 
+% INPUTS:
 %   T       Vector of nanoparticle temperature, [K]
 %   dp      Nanoparticle diameter, [nm]
 %
-% Outputs:
+% OUTPUTS:
 %   q       Rate of evaporative or sublimative losses, [W]
-%-------------------------------------------------------------------------%
+%=========================================================================%
 
-dp = dp.*1e-9; % convert to meters so everything is in SI units
+function [q,J,hv,pv] = q_evap(htmodel,T,dp)
+
+dp = dp .* 1e-9; % convert to meters so everything is in SI units
 prop = htmodel.prop;
 
 if isempty(prop.gamma)
@@ -32,11 +31,11 @@ else
     mv = prop.mv;
 end
 
-cv = sqrt(8*prop.kb.*T./(pi*mv)); % Molecular speed of matl [m/s]
-nv = prop.alpham(T).*pv./(prop.kb.*T);  % Vapor number flux of matl
+cv = sqrt(8 * prop.kb .* T ./ (pi * mv)); % Molecular speed of matl [m/s]
+nv = prop.alpham(T) .* pv ./ (prop.kb .* T);  % Vapor number flux of matl
 
-J = mv.*nv.*cv./4.*pi.*dp.^2;
-q = hv.*J;
+J = mv .* nv .* cv ./ 4 .* pi .* dp .^ 2;
+q = hv .* J;
 
 end
 

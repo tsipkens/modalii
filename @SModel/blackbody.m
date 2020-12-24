@@ -1,6 +1,6 @@
 
-% BLACKBODY Vector implementation of Planck's law.
-% Author:   Timothy Sipkens
+% BLACKBODY  Vector implementation of Planck's law.
+% AUTHOR: Timothy Sipkens
 %=========================================================================%
 
 function Ib = blackbody(T,l)

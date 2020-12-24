@@ -1,9 +1,9 @@
 
-% IMODEL    Evaluates the inverse spectroscopic model (using some form of pyrometry).
-% Author:   Timothy Sipkens
+% IMODEL  Evaluates the inverse spectroscopic model (using some form of pyrometry).
+% AUTHOR: Timothy Sipkens
 %=========================================================================%
 
-function [Tout,Ti,Cout,s_T,out] = IModel(smodel,J)
+function [Tout, Ti, Cout, s_T, out] = IModel(smodel, J)
 
 nshots = length(J(1,:,1)); % number of shots
 ntime = length(J(:,1,1)); % number of times

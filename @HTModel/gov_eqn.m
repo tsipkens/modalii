@@ -1,5 +1,5 @@
 
-% GOV_EQN Builds function handle for governing equation used in evaluation.
+% GOV_EQN  Builds function handle for governing equation used in evaluation.
 % AUTHOR: Timothy Sipkens, 2018-11-28
 % 
 % NOTE: The dTdt portion of the equation is initially built up as a string, 
@@ -16,7 +16,7 @@
 %   Xo      Time-resolved anneealed fraction, same format as above, [fraction]
 %=========================================================================%
 
-function [htmodel,dTdt,dmdt] = gov_eqn(htmodel)
+function [htmodel, dTdt, dmdt] = gov_eqn(htmodel)
 
 prop = htmodel.prop; % make local copy of material properties
 dp = @(mp,T) 1e9.*(6.*mp./(pi.*prop.rho(T))).^(1/3); % output in nm
