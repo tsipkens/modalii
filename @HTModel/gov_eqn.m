@@ -1,22 +1,22 @@
 
 % GOV_EQN Builds function handle for governing equation used in evaluation.
-% Author: Timothy Sipkens, 2018-11-28
-%=========================================================================%
-
-function [htmodel,dTdt,dmdt] = gov_eqn(htmodel)
-% Note: The dTdt portion of the equation is initially built up as a string, 
+% AUTHOR: Timothy Sipkens, 2018-11-28
+% 
+% NOTE: The dTdt portion of the equation is initially built up as a string, 
 %   with the output depending on htmodel.opts. Allows for quicker
 %   evaluation by exlcuding insignificant terms. 
-%-------------------------------------------------------------------------%
-% Inputs:
+%
+% INPUTS:
 %   dp0     Vector of nanoparticle diameters for which ODEs are to be solved, [nm]
 %
-% Outputs:
+% OUTPUTS:
 %   Tout    Time-resolved temperature with a single column per input diameter, [K]
 %   dpo     Time-resolved nanoparticle diameter, same format as above, [nm]
 %   mpo     Time-resolved nanoparticle mass, same format as above, [fraction]
 %   Xo      Time-resolved anneealed fraction, same format as above, [fraction]
-%-------------------------------------------------------------------------%
+%=========================================================================%
+
+function [htmodel,dTdt,dmdt] = gov_eqn(htmodel)
 
 prop = htmodel.prop; % make local copy of material properties
 dp = @(mp,T) 1e9.*(6.*mp./(pi.*prop.rho(T))).^(1/3); % output in nm

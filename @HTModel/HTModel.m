@@ -1,39 +1,37 @@
 
 % HTMODEL   Class definition for the TiRe-LII heat transfer model.
-% Author:   Timothy Sipkens, 2015
+% AUTHOR:   Timothy Sipkens, 2015
 %=========================================================================%
 
 classdef HTModel
     
     properties
-        prop = []; % material and experimental properties
-        t = []; % time vector
+        prop = [];  % material and experimental properties
+        t = [];  % time vector
         
-        x = []; % cell containing QoI variable names
+        x = [];  % cell containing QoI variable names
         
-        dTdt = []; % function handle, rate of temperature change
-        dmdt = []; % function handle, rate of mass change
-        dXdt = []; % function handle, rate of annealed fraction change
+        dTdt = [];  % function handle, rate of temperature change
+        dmdt = [];  % function handle, rate of mass change
+        dXdt = [];  % function handle, rate of annealed fraction change
         
+        % Heat transfer model options.
         opts struct = struct(...
-            'evap','default',... % evaporation model
-            'cond','default',... % conduction model
-            'rad','default',... % radiation model
-            'abs','default',... % absorption model
-            'ann','default',... % annealing model
-            'laserprofile','default',... % temporal shape of laser profile
-            'polydispersity',0,... % whether to incorporate polydispersity
-            'deMethod','default'... % ODE sovler method
+            'evap', 'default',...  % evaporation model
+            'cond', 'default',...  % conduction model
+            'rad', 'default',...  % radiation model
+            'abs', 'default',...  % absorption model
+            'ann', 'default',...  % annealing model
+            'laserprofile', 'default',...  % temporal shape of laser profile
+            'polydispersity', 0,...  % whether to incorporate polydispersity
+            'deMethod', 'default'...  % ODE sovler method
             );
     end
     
     
     methods
-        %-- Constructor method -------------------------------------------%
-        function htmodel = HTModel(prop,x,t,varargin)
         % HTMODEL Constructor method for heat transfer model.
-        %-----------------------------------------------------------------%
-        % Inputs:
+        % INPUTS:
         %   prop        Instance of the properties class containing
         %               material properties
         %   x           Cell of strings defining fields of prop to be
@@ -44,6 +42,7 @@ classdef HTModel
         %   varargin    Options as a struct or a series of name-value pairs
         %                   (Optional)
         %-----------------------------------------------------------------%
+        function htmodel = HTModel(prop,x,t,varargin)
         
             htmodel.prop = prop; % copy material and experimental properties
             htmodel.x = x; % copy cell containing QoI variable names

@@ -1,19 +1,18 @@
 
 % DE_SOLVE  Solves ODEs for temperature, mass, etc. over time. 
 % Author:   Timothy Sipkens, 2018-11-28
-%=========================================================================%
-
-function [Tout,dpo,mpo,Xo] = de_solve(htmodel,dp0)
-%-------------------------------------------------------------------------%
-% Inputs:
+% 
+% INPUTS:
 %   dp0     Vector of nanoparticle diameters for which ODEs are to be solved, [nm]
 %
-% Outputs:
+% OUTPUTS:
 %   Tout    Time-resolved temperature with a single column per input diameter, [K]
 %   dpo     Time-resolved nanoparticle diameter, same format as above, [nm]
 %   mpo     Time-resolved nanoparticle mass, same format as above, [fraction]
 %   Xo      Time-resolved anneealed fraction, same format as above, [fraction]
-%-------------------------------------------------------------------------%
+%=========================================================================%
+
+function [Tout,dpo,mpo,Xo] = de_solve(htmodel, dp0)
 
 Nd = length(dp0); % number of size classes to consider in solver
 
