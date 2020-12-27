@@ -14,5 +14,10 @@ prop.R = 8.3144621;       % Universal gas constant [J/mol/K]
 
 prop.phi = 0.0143877696;  % Constant for Planck's law, phi = h*c/kb
 
+%-- Other empty fields to initialize ---------------------%
+prop.rho0 = [];
+prop.alpham = [];
+%---------------------------------------------------------%
+
 end
 
