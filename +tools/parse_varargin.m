@@ -3,11 +3,11 @@
 % Author:           Timothy Sipkens, 2019-06-25
 %=========================================================================%
 
-function [instance] = parse_varargin(instance,varargin)
+function [instance] = parse_varargin(instance, varargin)
 
 ii = 1;
 while ii<=length(varargin) % incorporate list of properties
-    if isprop(instance,varargin{ii}) % manually set property
+    if isprop(instance, varargin{ii}) % manually set property
         instance.(varargin{ii}) = varargin{ii+1};
         ii = ii+2; % skip an input
 
