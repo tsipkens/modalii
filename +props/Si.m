@@ -49,7 +49,7 @@ end
 prop.alpha = 0.36;
 prop.Tg = 298;
 prop.Pg = 101325;
-prop.ct = @()sqrt(8*prop.kb*prop.Tg/(pi*prop.mg));
+prop.ct = @(prop) sqrt(8 * prop.kb * prop.Tg / (pi * prop.mg));
 
 
 %-- Evaporation properties -----------------------------------------------%

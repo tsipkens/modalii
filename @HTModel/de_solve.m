@@ -12,7 +12,7 @@
 %   Xo      Time-resolved anneealed fraction, same format as above, [fraction]
 %=========================================================================%
 
-function [Tout,dpo,mpo,Xo] = de_solve(htmodel, dp0)
+function [Tout, dpo, mpo, Xo] = de_solve(htmodel, dp0)
 
 Nd = length(dp0); % number of size classes to consider in solver
 
@@ -90,7 +90,7 @@ switch htmodel.opts.deMethod
         
         switch htmodel.opts.ann % consider percentage annealed variable
             case {'include','Michelsen','Sipkens'}
-                Xo = yo(:,2*Nd+1:3*Nd);
+                Xo = yo(:, 2*Nd + 1:3*Nd);
             otherwise
                 Xo = [];
         end
@@ -112,7 +112,7 @@ switch htmodel.opts.deMethod
         end
         
         Tout = interp1(t_eval,T_eval,t);
-        mpo = interp1(t_eval,m_eval,t)./mass_conv;
+        mpo = interp1(t_eval,m_eval,t) ./ mass_conv;
         Xo = interp1(t_eval,X_eval,t);
         
     otherwise
@@ -129,7 +129,7 @@ if opts_tadd==1 % remove added initial point that was added if t(1)>0
     Xo = Xo(2:end,:);
 end
 
-dpo = ((6.*mpo)./(htmodel.prop.rho(Tout).*pi)).^(1/3).*1e9;
+dpo = ((6.*mpo) ./ (htmodel.prop.rho(Tout).*pi)) .^ (1/3) .* 1e9;
     % calculate diameter over time
 mpo = mpo./mpo(1); % output relative change in particle mass over time
 %-------------------------------------------------------------------------%

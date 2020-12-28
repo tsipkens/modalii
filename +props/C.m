@@ -88,7 +88,7 @@ switch opts.propmodel % Specific heat in J/(kg K)
         prop.alpha = 0.9;
 end
 
-prop.ct = @()sqrt(8*prop.kb*prop.Tg/(pi*prop.mg));
+prop.ct = @(prop) sqrt(8 * prop.kb * prop.Tg / (pi * prop.mg));
 
 
 %-- Evaporation properties -----------------------------------------------%

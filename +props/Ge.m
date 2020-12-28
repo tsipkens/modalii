@@ -50,7 +50,7 @@ end
 
 %-- Conduction properties ------------------------------------------------%
 prop.alpha = 0.23;
-prop.ct = @()sqrt(8*prop.kb*prop.Tg/(pi*prop.mg));
+prop.ct = @(prop) sqrt(8 * prop.kb * prop.Tg / (pi * prop.mg));
 
 
 %-- Evaporation properties -----------------------------------------------%

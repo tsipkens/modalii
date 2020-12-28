@@ -65,7 +65,7 @@ switch opts.hv
         prop.n = 0.38; % Watson
         prop.hvA = @()(prop.hvb*1e6)./...
             ((1-prop.Tb/prop.Tcr).^0.38); % Watson eqn. constant
-        prop.hv = @(T) prop.eq_watson(T);
+        prop.hv = @(T) props.eq_watson(prop, T);
     case {'constant'}
         prop.hv = @(T) prop.hvb;
 end
@@ -74,15 +74,15 @@ prop.Pref = 101325; % atmospheric boiling point used
 prop.C = log(prop.Pref)+(prop.hvb*1e6)./prop.Rs./prop.Tb; % Constant for C-C Eqn. 
 switch opts.pv
     case {'default','Kelvin-CC'}
-        prop.gamma = @(dp,T) 0.765-0.016e-3.*(T-prop.Tm); % Rhim, 2000
-        prop.pv = @(T,dp,hv) prop.eq_kelvin(T,dp,hv);
+        prop.gamma = @(dp,T) 0.765 - 0.016e-3 .* (T-prop.Tm); % Rhim, 2000
+        prop.pv = @(T,dp,hv) props.eq_kelvin(prop, T, dp, hv);
     case {'Tolman-CC'}
         prop.delta = 0.22; % Toman length = atomic diameter
-        prop.gamma0 = @(dp,T) 0.765-0.016e-3.*(T-prop.Tm); % Rhim, 2000
-        prop.gamma = @(dp,T) prop.eq_tolman(dp,T);
-        prop.pv = @(T,dp,hv) prop.eq_kelvin(T,dp,hv);
+        prop.gamma0 = @(dp,T) 0.765 - 0.016e-3 .* (T - prop.Tm); % Rhim, 2000
+        prop.gamma = @(dp,T) props.eq_tolman(prop, T, dp);
+        prop.pv = @(T,dp,hv) props.eq_kelvin(prop, T, dp, hv);
     case {'CC'}
-        prop.pv = @(T,dp,hv) prop.eq_claus_clap(T,dp,hv);
+        prop.pv = @(T,dp,hv) props.eq_claus_clap(prop, T, dp, hv);
     case {'Antoine'}
         ... % enter additional parameters
 end

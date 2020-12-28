@@ -3,7 +3,7 @@
 % Author: Timothy Sipkens, 2019-11-03
 %=========================================================================%
 
-function prop = Mo(prop,opts)
+function prop = Mo(prop, opts)
 
 %-- Parse inputs ---------------------------------------------------------%
 if ~exist('prop','var'); prop = struct(); end
@@ -66,7 +66,7 @@ switch opts.hv
         prop.Tcr = 14588; % (Young and Alder)
         prop.hvA = @()(prop.hvb*1e6)./...
             ((1-prop.Tb/prop.Tcr).^0.38); % Watson eqn. constant
-        prop.hv = @(T) prop.eq_watson(T);
+        prop.hv = @(T) props.eq_watson(prop, T);
     case {'constant'}
         prop.hv = @(T) prop.hvb*1e6;
 end
@@ -76,13 +76,13 @@ prop.C = log(prop.Pref)+(prop.hvb*1e6)./prop.Rs./prop.Tb; % Constant for C-C Eqn
 switch opts.pv
     case {'default','Kelvin-CC'}
         prop.gamma = @(dp,T) 2.11; % (currently unknown)
-        prop.pv = @(T,dp,hv) prop.eq_kelvin(T,dp,hv);
+        prop.pv = @(T,dp,hv) props.eq_kelvin(prop, T, dp, hv);
     case {'Tolman-CC'}
         ... % enter additional parameters
-        prop.gamma = @(dp,T) prop.eq_tolman(dp,T);
-        prop.pv = @(T,dp,hv) prop.eq_kelvin(T,dp,hv);
+        prop.gamma = @(dp,T) props.eq_tolman(prop, dp, T);
+        prop.pv = @(T,dp,hv) props.eq_kelvin(prop, T, dp, hv);
     case {'CC'}
-        prop.pv = @(T,dp,hv) prop.eq_claus_clap(T,dp,hv);
+        prop.pv = @(T,dp,hv) props.eq_claus_clap(prop, T, dp, hv);
     case {'Antoine'}
         ... % enter additional parameters
 end

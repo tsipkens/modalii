@@ -1,9 +1,9 @@
 
-% FE Define properties for iron particles
+% FE  Define properties for iron particles
 % Author: Timothy Sipkens, 2019-11-03
 %=========================================================================%
 
-function prop = Fe(prop,opts)
+function prop = Fe(prop, opts)
 
 %-- Parse inputs ---------------------------------------------------------%
 if ~exist('prop', 'var'); prop = []; end
@@ -24,7 +24,7 @@ prop.phi = prop.h*prop.c/prop.kb;
 prop.M = 0.055847;
 prop.Tm = 1811; % (Desai, 1986)
 switch opts.rho
-    case {'default','Hixson'} % (Hixson, 1990), T > 2125 K
+    case {'default', 'Hixson'} % (Hixson, 1990), T > 2125 K
         prop.Arho = 8171;
         prop.Brho = -0.64985;
         prop.rho = @(T) (prop.Brho.*T+prop.Arho);
@@ -36,10 +36,10 @@ switch opts.rho
         
     case {'Mills'}
         prop.rho = @(T)...
-            prop.iif(and(T>=0,T<293),7871.6.*(T./T),...
-            prop.iif(and(T>=293,T<1184),7874./(1+3.*(14.5e-6).*(T-273-20)),...
-            prop.iif(and(T>=1184,T<1667),7650-0.51.*(T-273-911),...
-            prop.iif(and(T>=1667,T<1811),7355-0.42.*(T-273-1394),...
+            props.iif(and(T>=0,T<293),7871.6.*(T./T),...
+            props.iif(and(T>=293,T<1184),7874./(1+3.*(14.5e-6).*(T-273-20)),...
+            props.iif(and(T>=1184,T<1667),7650-0.51.*(T-273-911),...
+            props.iif(and(T>=1667,T<1811),7355-0.42.*(T-273-1394),...
             7030-0.86.*(T-273-1538)))));
         
     case 'noSlope'
@@ -54,27 +54,27 @@ switch opts.rho
 end
 
 switch opts.cp
-    case {'default','mixed'}
+    case {'default', 'mixed'}
         prop.Ccp = 1;
         prop.Dcp = 1; % update in the future, originally zero for APB paper
-        prop.cp = @(T) prop.Ccp.*(prop.iif(T>=prop.Tm,(46.632.*ones(1,length(T))),... % liquid iron, (Desai, 1986)
-            prop.iif(T>=1667,(-12.38+3.161e-2.*T),... % delta iron, (Cezairliyan and McClure, 1974)
+        prop.cp = @(T) prop.Ccp.*(props.iif(T>=prop.Tm,(46.632.*ones(1,length(T))),... % liquid iron, (Desai, 1986)
+            props.iif(T>=1667,(-12.38+3.161e-2.*T),... % delta iron, (Cezairliyan and McClure, 1974)
             (17.64+1.232e-2.*T)))./prop.M)... % gamma iron, (Cezairliyan and McClure, 1974)
             ; % given in J/(kg K)
         
     case 'Desai'
         prop.Ccp = 1;
         prop.Dcp = 1;
-        prop.cp = @(T) (prop.iif(T>=prop.Tm,(prop.Ccp.*46.632.*ones(1,length(T))),... % liquid iron, (Desai, 1986)
-            prop.iif(T>=1667,(prop.Ccp.*40.368+prop.Dcp.*3.2194e-2.*(T-1667)),... % delta iron, (Desai, 1986)
+        prop.cp = @(T) (props.iif(T>=prop.Tm,(prop.Ccp.*46.632.*ones(1,length(T))),... % liquid iron, (Desai, 1986)
+            props.iif(T>=1667,(prop.Ccp.*40.368+prop.Dcp.*3.2194e-2.*(T-1667)),... % delta iron, (Desai, 1986)
             (prop.Ccp.*33.803+prop.Dcp.*9.1605e-3.*(T-1181))))./prop.M)... % gamma iron, (Desai, 1986)
             ; % given in J/(kg K)
         
     case 'noSlope'
         prop.Ccp = 1; % 7874
         prop.Dcp = 0;
-        prop.cp = @(T) prop.Ccp.*(prop.iif(T>=prop.Tm,(46.632.*ones(1,length(T))),... % liquid iron, (Desai, 1986)
-            prop.iif(T>=1667,(-12.38+3.161e-2.*T),... % delta iron, (Cezairliyan and McClure, 1974)
+        prop.cp = @(T) prop.Ccp.*(props.iif(T>=prop.Tm,(46.632.*ones(1,length(T))),... % liquid iron, (Desai, 1986)
+            props.iif(T>=1667,(-12.38+3.161e-2.*T),... % delta iron, (Cezairliyan and McClure, 1974)
             (17.64+1.232e-2.*T)))./prop.M)... % gamma iron, (Cezairliyan and McClure, 1974)
             ; % given in J/(kg K)
         
@@ -88,7 +88,7 @@ end
 prop.alpha = 0.23; % 0.23 - model selection						
 prop.Tg = 298;					
 prop.Pg = 101325;													
-prop.ct = @()sqrt(8*prop.kb*prop.Tg/(pi*prop.mg));
+prop.ct = @(prop) sqrt(8 * prop.kb * prop.Tg / (pi * prop.mg));
 
 
 %-- Evaporation properties -----------------------------------------------%
@@ -98,12 +98,12 @@ prop.Rs = prop.R./prop.M;
 prop.Tb = 3134; % (Dean, Lange's Handbook of Chemisty) *check
 prop.hvb = 340e3/prop.M/1e6; % (Dean, Lange's Handbook of Chemisty) *check
 switch opts.hv
-    case {'default','Watson'}
+    case {'default', 'Watson'}
         prop.Tcr = 9340; % (Young and Alder) (ALT: Beutl et al.)
         prop.n = 0.38; % Watson
         prop.hvA = @()(prop.hvb*1e6)./...
             ((1-prop.Tb/prop.Tcr).^prop.n); % Watson eqn. constant
-        prop.hv = @(T) props.eq_watson(T);
+        prop.hv = @(T) props.eq_watson(prop, T);
         
     case {'Roman'}
         prop.Tcr = 9340; % (Young and Alder) (ALT: Beutl et al.)
@@ -128,21 +128,21 @@ prop.gamma0 = 1.865; % (Keene et al, 1988)
 prop.Pref = 101325; % atmospheric boiling point used
 prop.C = log(prop.Pref)+(prop.hvb*1e6)./prop.Rs./prop.Tb; % constant for C-C Eqn. 
 switch opts.pv
-    case {'default','Kelvin-CC'}
+    case {'default', 'Kelvin-CC'}
         % prop.gamma = @(dp,T)(prop.gamma0-0.35*1e-3*(T-1823)); % (Keene et al, 1988)
         prop.gamma = @(dp,T) prop.gamma0;
-        prop.pv = @(T,dp,hv) props.eq_kelvin(T,dp,hv);
+        prop.pv = @(T,dp,hv) props.eq_kelvin(prop, T, dp, hv);
         
     case {'Tolman-CC'}
         ... % enter additional parameters
         % prop.gammaT = @(T)(prop.gamma0-0.35*1e-3*(T-1823)); % (Keene et al, 1988)
         prop.gammaT = @(T) prop.gamma0;
         prop.delta = 0.126; % atomic diameter
-        prop.gamma = @(dp,T) props.eq_tolman(dp,T);
-        prop.pv = @(T,dp,hv) props.eq_kelvin(T,dp,hv);
+        prop.gamma = @(dp,T) props.eq_tolman(prop, T, dp);
+        prop.pv = @(T,dp,hv) props.eq_kelvin(prop, T, dp, hv);
         
     case {'CC'}
-        prop.pv = @(T,dp,hv) props.eq_claus_clap(T,dp,hv);
+        prop.pv = @(T,dp,hv) props.eq_claus_clap(prop, T, dp, hv);
         
     case {'CC-alt'}
         prop.C1 = prop.hvb*1e6./prop.Rs;
@@ -183,14 +183,14 @@ switch opts.pv
         
     case {'Kelvin-Antoine'}
         prop.gamma = @(dp,T) prop.gamma0;
-        pv0 = prop.Antoine(T,dp,hv); % Clausius-Clapeyron equation
+        pv0 = props.eq_antoine(prop, T, dp, hv);  % Clausius-Clapeyron equation
         prop.pv = pv0.*exp((4*prop.gamma(dp,T))./((dp).*prop.rho(T).*prop.Rs.*T));
             % Evaluate the Kelvin Eqn.
 end
 
 %-- Optical  properties --------------------------------------------------%
 switch opts.Em
-    case {'default','Emr1.1'}
+    case {'default', 'Emr1.1'}
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr.*1.1;
         prop.Em = @(l,dp) (l-716)/(442-716)*(prop.Emr(442,716)-1)+1;
