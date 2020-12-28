@@ -1,5 +1,5 @@
 
-# MATLAB tools for LII analysis (wat-lii)
+# MATLAB tools for modular LII analysis (wat-lii)
 
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
@@ -13,7 +13,7 @@ Throughout the program, `main*.m` scripts are used to create instances of the cl
 
 ## 2. Classes
 
-### 2.1 Heat transfer model: @HTModel
+### 2.1 @HTModel: Heat transfer model
 
 This class is designed to generate temperature decay curves. This is done by solving, at the very least, an ordinary differential equation for temperature. Mass and annealed fraction can also be solved simultaneously.
 
@@ -27,7 +27,7 @@ Here, `prop` is an instant of the `Prop` class, which contains all of the physic
 
 The two key methods for evaluating the heat transfer model are the `evaluate` and `de_solve` methods. The `de_solve` method solves the ODEs without altering the default physical properties. In contrast, the `evaluate` method solves the ODEs for a vector of property values given by the `x` input to the method. The latter is particularly useful in optimization scenerio. 
 
-### 2.2 Spectroscopic model: @SModel
+### 2.2 @SModel: Spectroscopic model
 
 This class is design to simulate incandescence from a temperature trace, incorporating blackbody radiation and the optical properties. Methods exist to both forward and backward (i.e. pyrometry) calculations.
 
@@ -45,13 +45,19 @@ This is depreciated class that is to be replaced by structured arrays. It packag
 
 ## 3. Packages
 
-### 3.1 +data
+### 3.1 +props
 
-The data package is available to filter or otherwise process data. 
+**NOTE**: This package replaces the @Prop class in previous versions to allow for more dynamic/flexible structures. 
+
+This package contains functions to contain the thermophycial, optical, and other properties that are used to evaluate the heat transfer and spectroscopic models. This includes methods to describe the temperature dependence of various properties, using expressions like the Clausius-Clapeyron equation. 
 
 ### 3.2 +tools
 
 This package contains an assortment of other utilities, including a text-based progress bar and  a function to parse the inputs of various functions. 
+
+### 3.3 +data
+
+The data package is available to filter or otherwise process data. 
 
 -----------------------------------
 
