@@ -8,17 +8,23 @@ l = [442,716]; % measurement wavelengths
 
 opts = [];
 % opts.hv = 'constant';
-opts.Em = 'default'; %'Krishnan';%'Mie-Krishnan';
-prop = Prop({'exper_apb17_Fe','Ar','Fe'}, opts);
-% prop = Prop({'exper_apb17_Ag','Ar','Ag'},opts);
-% prop = Prop({'exper_ldf','Ar','C'},opts);
+opts.Em = 'default'; %'Krishnan'; %'Mie-Krishnan';
+
+prop = props.exper_apb17_Fe;
+prop = props.Ar(prop);
+
+prop = props.Fe(prop, opts);
+% prop = props.Ag(prop, opts);
+% prop = props.C(prop, opts);
+
 prop.F0 = 0.15; % in [J/cm2]
 prop.Ti = 298;
 prop.Tg = prop.Ti;
-prop.sigma = 0;
+prop.sigma = 0;  % 0.1
 
-opts.abs = 'include'; % include absorption
-x_fields = {'dp0'};
+% Define models and their parameterizations.
+opts.abs = 'include';  % set opts to include absorption
+x_fields = {'dp0'};  % set models to take only diameter as inputs
 htmodel = HTModel(prop, x_fields, t, opts);
 smodel = SModel(prop, x_fields, t, l);
 smodel.htmodel = htmodel;

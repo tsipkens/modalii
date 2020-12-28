@@ -8,12 +8,16 @@ clear; close all; clc;
 addpath('cmap');
 
 t = 0:2:2500; % time, laser pulse centered at t = 0
-l = [442,716]; % measurement wavelengths
+l = [442, 716]; % measurement wavelengths
 
 opts = [];
 opts.Em = 'default';
 % opts.abs = 'include';
-prop = Prop({'exper_ldf','Ar','C'}, opts);
+
+prop = props.exper_ldf;
+prop = props.Ar(prop, opts);
+prop = props.C(prop, opts);
+
 prop.F0 = 0.15; % in [J/cm2]
 prop.Ti = 4150;
 prop.Tg = 298;
@@ -28,7 +32,7 @@ smodel.htmodel = htmodel;
 %-- Forward model --------------------------------------------------------%
 T = htmodel.de_solve((15:15:90)');
 
-J = smodel.evaluateF([25,log(1.5)]);
+J = smodel.evaluateF([25, log(1.5)]);
 J = J ./ max(J(:));
 
 rng(0); % for reproducible results
@@ -51,7 +55,7 @@ plot(t, T);
 hold on;
 plot(t, squeeze(T_j(:,1,:)), 'k.');
 hold off;
-ylim([0,4500]);
+ylim([0, 4500]);
 %-------------------------------------------------------------------------%
 
 
@@ -59,7 +63,7 @@ ylim([0,4500]);
 
 %-- Inverse analysis -----------------------------------------------------%
 % Setup model
-x0 = [22,0.3];
+x0 = [22, 0.3];
 b = @smodel.evaluateI;
 model = @smodel.evaluateIF;
 
@@ -82,17 +86,17 @@ ylim([0,4500]);
 % Longer runtimes. 
 
 % SPACE 1
-sigma_vec = linspace(1.0, 2, 78);
-dp0_vec = linspace(5, 60, 77);
+% sigma_vec = linspace(1.0, 2, 78);
+% dp0_vec = linspace(5, 60, 77);
 
 % SPACE 2
-sigma_vec = linspace(1.45, 1.65, 78);
-dp0_vec = linspace(20, 30, 77);
+sigma_vec = linspace(1.45, 1.65, 11);
+dp0_vec = linspace(20, 30, 10);
 
 p1 = zeros(length(dp0_vec), length(sigma_vec));
 
 p_fun = @(x) -(1/2).*norm(stats.min_fun(x)).^2;
-disp('Evaluating chi function on grid:');
+tools.textheader('Evaluating chi function on grid');
 tools.textbar(0);
 for ii=1:length(dp0_vec)
     for jj=1:length(sigma_vec)
@@ -101,8 +105,7 @@ for ii=1:length(dp0_vec)
             (length(sigma_vec) * length(dp0_vec)));
     end
 end
-disp('Complete.');
-disp(' ');
+tools.textheader();
 
 % Get MCMC samples.
 xs = slicesample(mle, 1e3, ...
