@@ -67,16 +67,16 @@ classdef SModel
         %-----------------------------------------------------------------%
         
         %-- Modeling functions -------------------------------------------%
-        [Jout] = FModel(smodel,T,Em) % calculates J given T, Em is function handle
-        [Tout,Ti,Cout,s_T,s_C,r_T,resid,oth] = IModel(smodel,J) % solve inverse model for temperature
+        [Jout] = FModel(smodel, prop, T, Em) % calculates J given T, Em is function handle
+        [Tout,Ti,Cout,s_T,s_C,r_T,resid,oth] = IModel(smodel, prop, J) % solve inverse model for temperature
         [Tout,Cout,s_T,out] = calcSpectralFit(smodel,J) % spectral fitting with sequential inference
         [Tout,Cout,s_T,out] = calcSpectralFit_all(smodel,J) % spectral fitting with simulatneous inference
         [Tout,Cout,s_T,out] = calcRatioPyrometry(smodel,J1,J2) % ratio pyrometry evaluation, corr. calc. included
         
         %-- Evaluate functions, take and update x ------------------------%
-        [Tout] = evaluateI(smodel,x) % evaluate inverse model at x, given J in SModel
-        [Tout] = evaluateIF(smodel,x) % evaluate inverse and forward model at x, given T in Smodel
-        [Jout,mp] = evaluateF(smodel,x) % evaluate forward model at x
+        [Tout] = evaluateI(smodel, x) % evaluate inverse model at x, given J in SModel
+        [Tout] = evaluateIF(smodel, x) % evaluate inverse and forward model at x, given T in Smodel
+        [Jout,mp] = evaluateF(smodel, x) % evaluate forward model at x
         
         %-- Plotting functions -------------------------------------------%
         [] = plotI(smodel,T,C,J,n) % Plots data vs fit of inverse procedure
