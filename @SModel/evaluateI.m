@@ -3,7 +3,7 @@
 % AUTHOR: Timothy Sipkens
 %=========================================================================%
 
-function [Tout] = evaluateI(smodel,x)
+function [Tout] = evaluateI(smodel, x)
 
 J = smodel.J; % local copy of stored incandescence
 prop = smodel.prop; % local copy of matl/experimental properties
@@ -21,7 +21,7 @@ if nargin > 1 % check if there is a mismatch in size of x
     end
 end
 
-Tout = smodel.IModel(J); % call IModel function
+Tout = smodel.IModel(prop, J); % call IModel function
 
 end
 

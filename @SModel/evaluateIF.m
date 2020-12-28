@@ -4,7 +4,7 @@
 % NOTE: Used to incorporate polydispersity into forward model. 
 %=========================================================================%
 
-function [Tout] = evaluateIF(smodel,x)
+function [Tout] = evaluateIF(smodel, x)
 
 htmodel = smodel.htmodel; % embedded heat transfer model
 prop = smodel.prop;
@@ -14,7 +14,7 @@ if isempty(htmodel) % check if HTModel is missing and produce an error according
 end
 
 if nargin > 1 % update x values
-    if length(x)==length(smodel.x)
+    if length(x) == length(smodel.x)
         for ii=1:length(smodel.x)
             prop.(smodel.x{ii}) = x(ii);
         end
@@ -24,17 +24,18 @@ if nargin > 1 % update x values
 end
 
 
-%-- Consider size distribution -------------------------------------------%
+%-- POLYDISPERSE ---------------------------------------------------------%
 %   Note: In order for the effective temperature to contain polydispersity
 %   effects: (i) the HTModel must be evaluated at a range of nanoparticle
 %   diameters, (ii) incnadnescence must be generated for the different size
 %   classes, (iii) the inandescence must be integrated over the
 %   distribution, and (iv) an effectively temperature must be evaluated
-%   from that incandescence. 
+%   from that incandescence.
 if prop.sigma > 0.005 % if distribution width is sufficiently large, include polydispersity
-    J = smodel.evaluateF; % evaluate forward model for J (includes poly.)
-    Tout = smodel.IModel(J); % evaluate inverse model for T
-    
+    J = smodel.evaluateF(x); % evaluate forward model for J (includes poly.)
+    Tout = smodel.IModel(prop, J); % evaluate inverse model for T
+
+%-- MONODISPERSE ---------------------------------------------------------%
 else
     Tout = htmodel.evaluate; % for monodisperse case, compute temperature directly
     
