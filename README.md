@@ -13,9 +13,7 @@ This program is built to simulate signals from various materials, including soot
 
 ## Getting started
 
-This is under construction and will be coming soon.
-
------------------------
+This is under construction and will be coming soon. 
 
 ## 1. Upper directory and main\*.m scripts
 
