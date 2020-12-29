@@ -1,6 +1,6 @@
 
 clear;
-
+addpath cmap;
 tic;
 
 t = -100:2:2500; % time, laser pulse centered at t = 0
@@ -47,9 +47,11 @@ figure(2);
 plot(t, squeeze(J));
 
 figure(1);
+cmap_sweep(6, flipud(fgreen));  % apply colormap for lines
 plot(t, T);
 hold on;
-plot(t, T_j, 'k--');
+plot(t, T_j, 'w:');
 hold off;
+xlim([min(t), max(t)]);
 
 toc;
