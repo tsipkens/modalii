@@ -4,7 +4,7 @@
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
 <p align="left">
-  <img width="340" src="docs/header.svg">
+  <img width="400" src="docs/header.svg">
 </p>
 
 This is modular program to model and analyze time-resolved laser-induced incandescence (TiRe-LII) signals, developed at the University of Waterloo.
