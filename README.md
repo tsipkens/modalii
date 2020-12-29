@@ -1,5 +1,5 @@
 
-# MATLAB tools for modular LII analysis (wat-lii)
+# Modular analysis of LII signals (wat-lii)
 
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
