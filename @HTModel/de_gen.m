@@ -70,7 +70,6 @@ switch htmodel.opts.rad % Default is none
         disp('  RADIATION:   Incl.');
         aa = [aa,'-htmodel.q_rad(T,dp(mp,T))'];
     otherwise
-        disp('  RADIATION:   -');
         % Do nothing.
 end
 %-------------------------------------------------------------------------%
@@ -99,7 +98,6 @@ switch htmodel.opts.ann % Default is none
         aa = [aa,'+htmodel.q_ann_Sip(T,dp(mp,T),X)'];
         htmodel.dXdt = @(t,T,mp,X) htmodel.dXdt_fun(@htmodel.Qann_Sip,T,dp(mp,T),X);
     otherwise
-        disp('  ANNEALING:   -');
         htmodel.dXdt = @(t,T,mp,X) 0;
 end
 %-------------------------------------------------------------------------%
