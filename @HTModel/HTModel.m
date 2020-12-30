@@ -43,40 +43,40 @@ classdef HTModel
         %                   evaluated
         %   varargin    Options as a struct or a series of name-value pairs (Optional)
         %-----------------------------------------------------------------%
-        function htmodel = HTModel(prop,x,t,varargin)
+        function htmodel = HTModel(prop, x, t, varargin)
         
             htmodel.prop = prop; % copy material and experimental properties
             htmodel.x = x; % copy cell containing QoI variable names
             htmodel.t = t; % time vector
             
-            htmodel = tools.parse_varargin(htmodel,varargin{:});
-                % handle additional options (see function in tools package)
+            % Handle additional options (see function in tools package).
+            htmodel = tools.parse_varargin(htmodel, varargin{:});
             
-            htmodel = htmodel.gov_eqn; % generate governing equation
+            htmodel = htmodel.de_gen; % generate governing equation
         end
         
         
         %-- Heat transfer evaluation functions ---------------------------%
-        [Tout] = evaluate(htmodel,x); % evaluates selected model at x, outputting temperature
-        [Tout,dpo,mpo,Xo] = de_solve(htmodel,prop,dp) % solves ode at a specified particle size
-        [dTdt,dmdt] = gov_eqn(htmodel) % determines governing equation and stores in dTdt
+        [Tout] = evaluate(htmodel, x); % evaluates selected model at x, outputting temperature
+        [Tout, dpo, mpo, Xo] = de_solve(htmodel, prop, dp) % solves ode at a specified particle size
+        [dTdt, dmdt] = de_gen(htmodel) % determines governing equation and stores in dTdt
         %-----------------------------------------------------------------%
         
         
         %-- Heat transfer submodels --------------------------------------%
         [q] = q_cond(htmodel,T,dp); % evaluates conduction at the specified parameters
-        [q,J,hv,pv] = q_evap(htmodel,T,dp); % evaluates evaporation at the specified parameters
+        [q, J, hv, pv] = q_evap(htmodel,T,dp); % evaluates evaporation at the specified parameters
         [J] = Jevap(htmodel,T,dp); % evaluates rate of mass loss at the specified parameters
-        [q,rad] = q_rad(htmodel,T,dp); % evaluates radiation at the specified parameters
-        [q,Cabs] = q_abs(htmodel,t,dp); % evaluates the absorbed laser energy at specified parameters
-        [q,dXdt] = q_ann_Mich(htmodel,T,dp,X); % evaluates Michelsen's annealing model
-        [q,dXdt] = q_ann_Sip(htmodel,T,dp,X); % evaluates in house annealing model
+        [q, rad] = q_rad(htmodel,T,dp); % evaluates radiation at the specified parameters
+        [q, Cabs] = q_abs(htmodel,t,dp); % evaluates the absorbed laser energy at specified parameters
+        [q, dXdt] = q_ann_Mich(htmodel,T,dp,X); % evaluates Michelsen's annealing model
+        [q, dXdt] = q_ann_Sip(htmodel,T,dp,X); % evaluates in house annealing model
         [dXdt] = dXdt_fun(htmodel,q_ann,T,dp,X); % evaluates dXdt, second output from q_ann
         %-----------------------------------------------------------------%
         
         
         %-- Plotting functions -------------------------------------------%
-        [q,h] = sig_q(htmodel,T,dp,opts_rad); % evaluates the different modes at the specified parameters
+        [q, h] = sig_q(htmodel,T,dp,opts_rad); % evaluates the different modes at the specified parameters
         %-----------------------------------------------------------------%
         
     end
