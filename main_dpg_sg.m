@@ -22,7 +22,7 @@ prop.F0 = 0.15; % in [J/cm2]
 prop.Ti = 4150;
 prop.Tg = 298;
 
-x_fields = {'dp0','sigma'};
+x_fields = {'dp0', 'sigma'};
 htmodel = HTModel(prop, x_fields, t, opts);
 smodel = SModel(prop, x_fields, t, l);
 smodel.htmodel = htmodel;
@@ -69,8 +69,8 @@ model = @smodel.evaluateIF;
 
 % Analysis
 tic;
-stats = Stats(model,b,opts);
-[mle,jcb] = stats.minimize(x0);
+stats = Stats(model, b, opts);
+[mle, jcb] = stats.minimize(x0);
 disp('MLE = ');
 disp(mle);
 disp(' ');
@@ -97,12 +97,12 @@ p1 = zeros(length(dp0_vec), length(sigma_vec));
 
 p_fun = @(x) -(1/2).*norm(stats.min_fun(x)).^2;
 tools.textheader('Evaluating chi function on grid');
-tools.textbar(0);
+tools.textbar([0, length(sigma_vec) * length(dp0_vec)]);
 for ii=1:length(dp0_vec)
     for jj=1:length(sigma_vec)
         p1(ii, jj) = p_fun([dp0_vec(ii), log(sigma_vec(jj))]);
-        tools.textbar((length(sigma_vec) * (ii-1) + jj) ./ ...
-            (length(sigma_vec) * length(dp0_vec)));
+        tools.textbar([length(sigma_vec) * (ii-1) + jj, ...
+            length(sigma_vec) * length(dp0_vec)]);
     end
 end
 tools.textheader();
