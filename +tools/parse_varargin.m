@@ -6,10 +6,10 @@
 function [instance] = parse_varargin(instance, varargin)
 
 ii = 1;
-while ii<=length(varargin) % incorporate list of properties
-    if isprop(instance, varargin{ii}) % manually set property
+while ii<=length(varargin)  % incorporate list of properties
+    if isprop(instance, varargin{ii})  % manually set property
         instance.(varargin{ii}) = varargin{ii+1};
-        ii = ii+2; % skip an input
+        ii = ii+2;  % skip an input
 
     else  % incorporate opts given as struct
         aa = fieldnames(varargin{ii});
