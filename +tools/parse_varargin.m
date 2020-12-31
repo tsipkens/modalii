@@ -1,6 +1,6 @@
 
-% PARSE_VARARGIN    Parses varargin inputs to class definitions and other functions.
-% Author:           Timothy Sipkens, 2019-06-25
+% PARSE_VARARGIN  Parses varargin inputs to class definitions and other functions.
+% AUTHOR: Timothy Sipkens, 2019-06-25
 %=========================================================================%
 
 function [instance] = parse_varargin(instance, varargin)
