@@ -1,18 +1,16 @@
 
 % EVALUATE  Primary function to evaluate the heat transfer model at provided x.
+% Acts as a wrapper for DE_SOLVE, updating the values of x.
 % AUTHOR: Timothy Sipkens, 2018-11-28
+% 
+% INPUTS:
+%   x       Vector of numbers with one entry corresponding to each parameter in htmodel.x
+%
+% OUTPUTS:
+%   Tout    Temperature decay for the specified input
 %=========================================================================%
 
 function [Tout] = evaluate(htmodel, x)
-% Note: Acts as a wrapper for DE_SOLVE, updating the values of x.
-%-------------------------------------------------------------------------%
-% Inputs:
-%   x       Vector of numbers with one entry corresponding to each parameter in htmodel.x
-%
-% Outputs:
-%   Tout    Temperature decay for the specified input
-%-------------------------------------------------------------------------%
-
 
 %-- Update x values in prop struct ---------------------------------------%
 prop = htmodel.prop;
