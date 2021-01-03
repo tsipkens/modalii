@@ -15,7 +15,7 @@ function [q] = q_cond(htmodel, prop, T, dp)
 
 dp = dp .* 1e-9; % convert to meters so everything is in SI units
 
-switch htmodel.cond
+switch htmodel.opts.cond
     case 'free-molecular'
         q = q_fm(prop, T, dp, prop.Tg);  % compute free-molecular conduction
         
