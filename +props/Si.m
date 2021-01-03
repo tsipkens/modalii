@@ -1,9 +1,9 @@
 
-% SI Define properties for silicon particles
-% Author: Timothy Sipkens, 2019-11-03
+% SI  Define properties for silicon particles
+% AUTHOR: Timothy Sipkens, 2019-11-03
 %=========================================================================%
 
-function prop = Si(prop,opts)
+function prop = Si(prop, opts)
 
 %-- Parse inputs ---------------------------------------------------------%
 if ~exist('prop', 'var'); prop = []; end
@@ -16,6 +16,9 @@ if ~isfield(opts, 'hv'); opts.hv = 'default'; end
 if ~isfield(opts, 'pv'); opts.pv = 'default'; end
 if ~isfield(opts, 'Em'); opts.Em = 'default'; end
 %-------------------------------------------------------------------------%
+
+
+prop.matl = 'Si';
 
 
 %-- Sensible energy properties -------------------------------------------%

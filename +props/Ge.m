@@ -17,6 +17,9 @@ if ~isfield(opts,'Em'); opts.Em = 'default'; end
 %-------------------------------------------------------------------------%
 
 
+prop.matl = 'Ge';
+
+
 %-- Sensible energy properties ---------------------------------------------%
 prop.phi = prop.h*prop.c/prop.kb;
 
