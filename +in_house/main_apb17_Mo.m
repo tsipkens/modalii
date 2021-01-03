@@ -31,9 +31,9 @@ prop.l = [442,716];
 x_fields = {'dp0','sigma'};
 x0 = [50, 0.2];
 
-htmodel = HTModel(prop,x_fields,signal.t,opts);
-smodel = SModel(prop,x_fields,...
-    signal.t,signal.l,signal,htmodel,opts);
+htmodel = HTModel(prop, x_fields, signal.t, opts);
+smodel = SModel(prop, x_fields,...
+    signal.t, signal.l, signal, htmodel, opts);
 % prop.Ti = data.get_peak_temp(signal,smodel);  % only used to get Ti to start
 
 prop.Ti = 2510; % temp. set peak temperature
