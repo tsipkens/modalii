@@ -27,7 +27,7 @@ switch opts.rho
     case {'default','Paradis'}
         prop.Arho = 1;
         prop.Brho = 1;
-        prop.rho = @(T) 10789.^(4/3)./(prop.iif(T>=prop.Tm,...
+        prop.rho = @(T) 10789.^(4/3)./(props.iif(T>=prop.Tm,...
             (prop.Arho.*9100-prop.Brho.*0.6.*(T-prop.Tm)),...
             (prop.Arho.*9490-prop.Brho.*0.5.*(T-prop.Tm)))).^(1/3); % (Paradis,2002)
     case 'constant'
@@ -39,7 +39,7 @@ switch opts.cp
         prop.Ccp = 1;
         prop.Dcp = 1;
         prop.Ecp = 1;
-        prop.cp = @(T) prop.iif(T>=prop.Tm,...
+        prop.cp = @(T) props.iif(T>=prop.Tm,...
             (prop.Ccp.*34.2+prop.Dcp.*0.00113.*(T-prop.Tm))/prop.M,...
             (prop.Ccp.*44.0162+prop.Dcp.*0.0166.*(T-prop.Tm)+prop.Ecp.*5.5878e-07.*(T-prop.Tm).^2)./prop.M)...
             ; % (Paradis,2002)
@@ -66,25 +66,25 @@ switch opts.hv
         prop.Tcr = 14588; % (Young and Alder)
         prop.hvA = @()(prop.hvb*1e6)./...
             ((1-prop.Tb/prop.Tcr).^0.38); % Watson eqn. constant
-        prop.hv = @(T) prop.eq_watson(T);
+        prop.hv = @(T) props.eq_watson(prop, T);
     case {'constant'}
         prop.hv = @(T) prop.hvb*1e6;
 end
 
 prop.Pref = 101325; % atmospheric boiling point used
-prop.C = log(prop.Pref)+(prop.hvb*1e6)./prop.Rs./prop.Tb; % Constant for C-C Eqn. 
+prop.C = log(prop.Pref) + (prop.hvb*1e6)./prop.Rs./prop.Tb; % Constant for C-C Eqn. 
 switch opts.pv
     case {'default','Kelvin-CC'}
         prop.gamma = @(dp,T) 2.11; % (currently unknown)
-        prop.pv = @(T,dp,hv) prop.eq_kelvin(T,dp,hv);
+        prop.pv = @(T,dp,hv) props.eq_kelvin(prop, T,dp,hv);
     case {'Tolman-CC'}
         ... % enter additional parameters
-        prop.gamma = @(dp,T) prop.eq_tolman(dp,T);
-        prop.pv = @(T,dp,hv) prop.eq_kelvin(T,dp,hv);
+        prop.gamma = @(dp,T) props.eq_tolman(prop, dp,T);
+        prop.pv = @(T,dp,hv) props.eq_kelvin(prop, T,dp,hv);
     case {'CC'}
-        prop.pv = @(T,dp,hv) prop.eq_claus_clap(T,dp,hv);
+        prop.pv = @(T,dp,hv) props.eq_claus_clap(prop, T,dp,hv);
     case {'Antoine'}
-        ... % enter additional parameters
+        % will enter additional parameters
 end
 
 
@@ -92,7 +92,7 @@ end
 prop.CEmr = 1;
 switch opts.Em
     case {'default','Barnes'}
-        prop.Em_data = getfield(load('Em_Mo_Barnes.mat'),'Em_data'); % (Barnes) *check
+        prop.Em_data = getfield(load('+props/Em_Mo_Barnes.mat'),'Em_data'); % (Barnes) *check
         prop.Em_gi = griddedInterpolant(prop.Em_data(:,1),prop.Em_data(:,2),'pchip');
         prop.Em = @(l,dp) prop.Em_gi(l);
         prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1)./prop.Em(l2);

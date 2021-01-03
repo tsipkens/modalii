@@ -6,14 +6,14 @@
 function prop = Ag(prop,opts)
 
 %-- Parse inputs ---------------------------------------------------------%
-if ~exist('prop','var'); prop = struct(); end
+if ~exist('prop', 'var'); prop = struct(); end
 
-if ~exist('opts','var'); opts = struct(); end
-if ~isfield(opts,'rho'); opts.rho = 'default'; end
-if ~isfield(opts,'cp'); opts.cp = 'default'; end
-if ~isfield(opts,'hv'); opts.hv = 'default'; end
-if ~isfield(opts,'pv'); opts.pv = 'default'; end
-if ~isfield(opts,'Em'); opts.Em = 'default'; end
+if ~exist('opts', 'var'); opts = struct(); end
+if ~isfield(opts, 'rho'); opts.rho = 'default'; end
+if ~isfield(opts, 'cp'); opts.cp = 'default'; end
+if ~isfield(opts, 'hv'); opts.hv = 'default'; end
+if ~isfield(opts, 'pv'); opts.pv = 'default'; end
+if ~isfield(opts, 'Em'); opts.Em = 'default'; end
 %-------------------------------------------------------------------------%
 
 
@@ -31,7 +31,7 @@ switch opts.rho
 end
 
 switch opts.cp
-    case {'default','Paradis'}
+    case {'default', 'Paradis'}
         prop.Ccp = 1;
         prop.cp = @(T) prop.Ccp.*33.46./prop.M; % (Iada and Guthrie, book)
 end
@@ -51,7 +51,7 @@ prop.Rs = prop.R./prop.M;
 prop.Tb = 2435; % (Ida and Guthrie, book)
 prop.hvb = 253e3/prop.M/1e6; % (Ida and Guthrie, book)
 switch opts.hv
-    case {'default','Watson'}
+    case {'default', 'Watson'}
         prop.Tcr = 6410; % (Young and Alder)
         prop.n = 0.38; % Watson equations
         prop.hvA = @()(prop.hvb*1e6)./...
@@ -65,7 +65,7 @@ end
 prop.Pref = 101325; % atmospheric boiling point used
 prop.C = log(prop.Pref)+(prop.hvb*1e6)./prop.Rs./prop.Tb; % Constant for C-C Eqn. 
 switch opts.pv
-    case {'default','Kelvin-CC'}
+    case {'default', 'Kelvin-CC'}
         prop.gamma = @(dp,T) (1.0994-0.0002*T); % (currently unknown)
         prop.pv = @(T,dp,hv) props.eq_kelvin(prop, T, dp, hv);
     
@@ -84,8 +84,8 @@ end
 
 %-- Optical properties ---------------------------------------------------%
 switch opts.Em
-    case {'default','Drude'}
-        prop.Em_data = getfield(load('Em_Ag_Drude.mat'),'Em_data'); % (Drude)
+    case {'default', 'Drude'}
+        prop.Em_data = getfield(load('+props/Em_Ag_Drude.mat'),'Em_data'); % (Drude)
         prop.Em_gi = griddedInterpolant(prop.Em_data(:,1),prop.Em_data(:,2),'pchip');
         prop.Em = @(l,dp) prop.Em_gi(l);
         prop.CEmr = 1;
