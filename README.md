@@ -3,15 +3,17 @@
 
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
+NOTE: This code is still under construction and should be considered experimental.
+
 This is modular program to model and analyze time-resolved laser-induced incandescence (TiRe-LII) signals, developed at the University of Waterloo.
 
-This program is built to simulate signals from various materials, including soot, silicon, germanium, iron, silver, and molybdenum. Signals are generated predominantly using absorption, conduction, and evaporation submodels, with capabilities to do other cooling modes. The overall TiRe-LII analysis procedure is shown schematically below. 
+This program is built to simulate signals from various materials, including soot, silicon, germanium, iron, silver, and molybdenum. Signals are generated predominantly using absorption, conduction, and evaporation submodels, with capabilities to do other cooling modes. The typicaly, overall TiRe-LII analysis procedure is shown schematically below. 
 
 <p align="left">
   <img width="400" src="docs/models_structure.svg">
 </p>
 
-
+While the overall procedure generally follows the above structure, variants may apply these steps at different points int he procedure, which this code attempts to accomodate. 
 
 ## Getting started
 
