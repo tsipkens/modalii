@@ -5,11 +5,12 @@
 
 This is modular program to model and analyze time-resolved laser-induced incandescence (TiRe-LII) signals, developed at the University of Waterloo.
 
-This program is built to simulate signals from various materials, including soot, silicon, germanium, iron, silver, and molybdenum. Signals are generated predominantly using absorption, conduction, and evaporation submodels, with capabilities to do other cooling modes. 
+This program is built to simulate signals from various materials, including soot, silicon, germanium, iron, silver, and molybdenum. Signals are generated predominantly using absorption, conduction, and evaporation submodels, with capabilities to do other cooling modes. The overall TiRe-LII analysis procedure is shown schematically below. 
 
 <p align="left">
-  <img width="600" src="docs/header.svg">
+  <img width="400" src="docs/models_structure.svg">
 </p>
+
 
 
 ## Getting started
@@ -26,7 +27,13 @@ This code contains two classes, which are used to define the two different submo
 
 ### 2.1 Heat transfer model (@HTModel)
 
-This class is designed to generate temperature decay curves. This is done by solving, at the very least, an ordinary differential equation for temperature. Mass and annealed fraction can also be solved simultaneously.
+This class is designed to generate temperature decay curves, implementing several heat transfer submodels, shown schematically below..
+
+<p align="left">
+  <img width="600" src="docs/header.svg">
+</p>
+
+This is done by solving, at the very least, an ordinary differential equation for temperature. Mass and annealed fraction can also be solved simultaneously.
 
 One can create an instance of the `HTModel` class by calling the construction method:
 
