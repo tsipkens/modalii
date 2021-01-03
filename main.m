@@ -32,7 +32,7 @@ smodel.htmodel = htmodel;
 toc;
 
 tic;
-T = htmodel.de_solve((15:15:90)');
+T = htmodel.de_solve(prop, (15:15:90)');
 toc;
 
 tic;

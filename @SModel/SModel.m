@@ -18,8 +18,8 @@ classdef SModel
         data_sc = []; % used to scale Planck's to stabalize inference algorithms
         
         opts struct = struct( ...
-            'multicolor','default', ... % indicates which multicolor sovler to use
-            'pyrometry','default' ... % indicates how to handle pyrometry
+            'multicolor', 'default', ... % indicates which multicolor sovler to use
+            'pyrometry', 'ratio' ... % indicates how to handle pyrometry
             );
     end
     
@@ -63,6 +63,10 @@ classdef SModel
             smodel.data_sc = smodel.blackbody(T_sc,1064).*...
                 prop.Em(1064,30)/(1064e-9); % scale Planck's law about T_sc for stability
                     % use dp = 30 nm for data scaling (used for stability)
+                    
+            tools.textheader('New spectroscopic model');
+            disp(['  Pyrometry: ', smodel.opts.pyrometry]);
+            tools.textheader();
         end
         %-----------------------------------------------------------------%
         

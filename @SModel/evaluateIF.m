@@ -7,21 +7,15 @@
 function [Tout] = evaluateIF(smodel, x)
 
 htmodel = smodel.htmodel; % embedded heat transfer model
-prop = smodel.prop;
 
 if isempty(htmodel) % check if HTModel is missing and produce an error accordingly
     error('Error: Must include HTModel in SModel to use "evaluateIF" function.');
 end
 
-if nargin > 1 % update x values
-    if length(x) == length(smodel.x)
-        for ii=1:length(smodel.x)
-            prop.(smodel.x{ii}) = x(ii);
-        end
-    else
-        warning('The number of entries in smodel.x does not match the input dimension.');
-    end
-end
+
+%-- Update x values in prop struct ---------------------------------------%
+[smodel, prop] = tools.update_prop(smodel, x);
+%-------------------------------------------------------------------------%
 
 
 %-- POLYDISPERSE ---------------------------------------------------------%
@@ -37,7 +31,7 @@ if prop.sigma > 0.005 % if distribution width is sufficiently large, include pol
 
 %-- MONODISPERSE ---------------------------------------------------------%
 else
-    Tout = htmodel.evaluate; % for monodisperse case, compute temperature directly
+    Tout = htmodel.evaluate(x); % for monodisperse case, compute temperature directly
     
 end
 %-------------------------------------------------------------------------%

@@ -14,7 +14,7 @@
 %   l       Wavelngths corresponding to rad, used in integration, [nm]
 %=========================================================================%
 
-function [q,rad,l] = q_rad(htmodel,T,dp)
+function [q,rad,l] = q_rad(htmodel, prop, T, dp)
 
 dp = dp * 1e-9;
 prop = htmodel.prop;

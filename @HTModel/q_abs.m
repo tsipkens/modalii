@@ -10,7 +10,7 @@
 %   q	Rate of laser energy uptake by the nanoparticle, [W]
 %=========================================================================%
 
-function [q,Cabs] = q_abs(htmodel,t,dp)
+function [q,Cabs] = q_abs(htmodel, prop, t, dp)
 
 dp = dp .* 1e-9; % convert to meters so everything is in SI units
 prop = htmodel.prop; % make local copy of prop struct

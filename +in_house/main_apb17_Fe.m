@@ -16,35 +16,47 @@ import('in_house.*');
 load('+in_house\FeAr_sig17.mat');
 % load('+in_house\FeNe_sig72.mat');
 % load('+in_house\FeHe_sig43.mat');
-prop = Prop({['exper_apb17_',signal.matl],...
-    [signal.gas],[signal.matl]},opts);
+
+% prop = Prop({['exper_apb17_',signal.matl],...
+%     [signal.gas],[signal.matl]},opts);
+
+
+prop = props.exper_apb17_Fe;
+prop = eval(['props.', [signal.gas], '(prop, opts)']);
+prop = eval(['props.', [signal.matl], '(prop, opts)']);
+
 prop.Ti = 3200; % initial temperature
-prop.l = [442,716]; % wavelengths
+prop.l = [442, 716]; % wavelengths
 prop.alpha = 0.181; % thermal accommodation coefficient
 
 
 %-- Setup model ----------------------------------------------------------%
-x_fields = {'dp0','alpha'};
-x0 = [35,0.18];
+x_fields = {'dp0', 'alpha'};
+x0 = [35, 0.18];
 
-htmodel = HTModel(prop,x_fields,signal.t,opts);
-smodel = SModel(prop,x_fields,...
-    signal.t,signal.l,signal,htmodel,opts);
+htmodel = HTModel(prop, x_fields, signal.t, opts);
+smodel = SModel(prop, x_fields,...
+    signal.t, signal.l, signal, htmodel, opts);
+
 prop.Ti = data.get_peak_temp(signal,smodel); % only used to get Ti to start
+htmodel.prop.Ti = prop.Ti;
+smodel.prop.Ti = prop.Ti;
+smodel.htmodel.prop.Ti = prop.Ti;
+
 b = @smodel.evaluateI;
 model = @smodel.evaluateIF;
 
 
 %-- Analysis -------------------------------------------------------------%
 tic;
-stats = Stats(model,b,opts);
-[mle,jcb] = stats.minimize(x0,opts);
+stats = Stats(model, b, opts);
+[mle,jcb] = stats.minimize(x0, opts);
 disp('MLE = ');
 disp(mle);
 toc;
 
 figure(2);
-stats.plot_mle(mle,signal.t);
+stats.plot_mle(mle, signal.t);
 [G_po,R_po,s_po] = stats.cred_linear(jcb);
 
 

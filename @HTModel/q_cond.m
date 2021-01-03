@@ -10,7 +10,7 @@
 %   q       Rate of conductive losses, [W]
 %=========================================================================%
 
-function [q] = q_cond(htmodel,T,dp)
+function [q] = q_cond(htmodel, prop, T, dp)
 
 dp = dp .* 1e-9; % convert to meters so everything is in SI units
 prop = htmodel.prop;

@@ -30,7 +30,7 @@ smodel.htmodel = htmodel;
 
 
 %-- Forward model --------------------------------------------------------%
-T = htmodel.de_solve((15:15:90)');
+T = htmodel.de_solve(prop, (15:15:90)');
 
 J = smodel.evaluateF([25, log(1.5)]);
 J = J ./ max(J(:));

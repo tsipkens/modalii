@@ -14,7 +14,7 @@ ntime = length(J(:,1,1)); % number of times
 switch smodel.opts.pyrometry
     
     % Two-color pyrometry **********************
-    case {'2color','default'} % simple/fast two-color pyrometry, default if two wavelengths
+    case {'2color','ratio'} % simple/fast two-color pyrometry, default if two wavelengths
             % cannot output scaling factor as more than one shot can be
             % used
         l = smodel.l;

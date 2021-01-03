@@ -6,24 +6,14 @@
 function [Jout,mp] = evaluateF(smodel, x)
 
 htmodel = smodel.htmodel; % embedded heat transfer model
-prop = smodel.prop; % material properties
 
-if and(isa(prop,'struct'),~isfield(prop,'C_J'))
-    prop.C_J = 1;
+if and(isa(smodel.prop,'struct'),~isfield(smodel.prop,'C_J'))
+    smodel.prop.C_J = 1;
 end
 
-if nargin > 1 % update x values
-    if length(x)<length(smodel.x)
-        error('Error: QoIs parameter size mismatch.');
-    else
-        if length(x)>length(smodel.x)
-            warning('QoIs parameter size mismatch.');
-        end
-        for ii=1:length(smodel.x)
-            prop.(smodel.x{ii}) = x(ii);
-        end
-    end
-end
+%-- Update x values in prop struct ---------------------------------------%
+[smodel, prop] = tools.update_prop(smodel, x);
+%-------------------------------------------------------------------------%
 
 
 %-- POLYDISPERSE ---------------------------------------------------------%
@@ -39,7 +29,7 @@ if prop.sigma > 0.005 % currently models with lognormal
     dp_x = (dp_1:dp_x_diff:dp_2)';  % differentiated space
     
     % Evaluate temperature and incandescence
-    T = htmodel.de_solve(dp_x);  % solve differential equation
+    T = htmodel.de_solve(prop, dp_x);  % solve differential equation
     Jout = bsxfun(@times, ...
         (lognpdf(dp_x, log(dp0), prop.sigma) .* dp_x_diff .* ...
         pi .* (dp_x.*1e-9).^3)', ...
@@ -53,7 +43,7 @@ if prop.sigma > 0.005 % currently models with lognormal
 %   If the distribution is narrow enough, skip integration over 
 %   size distribution and evaluate temperature directly (much faster).
 else % for monodisperse case, simply evaluate the ODE directly
-    [T,~,mp] = htmodel.de_solve(prop.dp0); % solve heat transfer model at dp0
+    [T,~,mp] = htmodel.de_solve(prop, prop.dp0); % solve heat transfer model at dp0
     
     Jout = smodel.FModel(prop, T, prop.Em); % evaluate forward model for J
     Jout = Jout.*prop.C_J; % scale incandescence by corresponding factor

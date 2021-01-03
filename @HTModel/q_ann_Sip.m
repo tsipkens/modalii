@@ -3,7 +3,7 @@
 % Author:   Timothy Sipkens, 2018
 %=========================================================================%
 
-function [q,dXdt] = q_ann_Sip(htmodel,T,dp,X)
+function [q,dXdt] = q_ann_Sip(htmodel, prop, T, dp, X)
 
 
 dp = dp .* 1e-9; % convert to meters so everything is in SI units

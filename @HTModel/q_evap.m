@@ -10,7 +10,7 @@
 %   q       Rate of evaporative or sublimative losses, [W]
 %=========================================================================%
 
-function [q,J,hv,pv] = q_evap(htmodel,T,dp)
+function [q,J,hv,pv] = q_evap(htmodel, prop, T, dp)
 
 dp = dp .* 1e-9; % convert to meters so everything is in SI units
 prop = htmodel.prop;

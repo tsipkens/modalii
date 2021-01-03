@@ -1,5 +1,5 @@
 
-% DE_GEN  Builds function handle for governing equation used in evaluation.
+% DE_BUILD  Builds function handle for governing equation used in evaluation.
 % Currently builds the function using strings and `eval`.
 % AUTHOR: Timothy Sipkens, 2018-11-28
 % 
@@ -7,27 +7,20 @@
 %   with the output depending on htmodel.opts. Allows for quicker
 %   evaluation by exlcuding insignificant terms. 
 %
-% INPUTS:
-%   dp0     Vector of nanoparticle diameters for which ODEs are to be solved, [nm]
-%
 % OUTPUTS:
-%   Tout    Time-resolved temperature with a single column per input diameter, [K]
-%   dpo     Time-resolved nanoparticle diameter, same format as above, [nm]
-%   mpo     Time-resolved nanoparticle mass, same format as above, [fraction]
-%   Xo      Time-resolved anneealed fraction, same format as above, [fraction]
+%   dTdt    Function for the change in temperature
+%   dmdt    Function for the change in particle mass
 %=========================================================================%
 
-function [htmodel, dTdt, dmdt] = de_gen(htmodel)
+function [htmodel, dTdt, dmdt] = de_build(htmodel)
 
 prop = htmodel.prop; % make local copy of material properties
 dp = @(mp,T) 1e9.*(6.*mp./(pi.*prop.rho(T))).^(1/3); % output in nm
 
 
 %-- Mass component of the ODE --------------------------------------------%
-dmdt = @(t,T,mp,X) -htmodel.J_evap(T,dp(mp,T));
+dmdt = @(t,T,mp,X) -htmodel.J_evap(prop, T, dp(mp,T));
 htmodel.dmdt = dmdt;
-
-tools.textheader('Generating heat transfer ODE');
 
 
 %-- Temperature component of the ODE -------------------------------------%
@@ -37,14 +30,11 @@ aa = '@(t,T,mp,X)('; % temperature component of the ODE
 %-- Conduction model -----------------------------------------------------%
 switch htmodel.opts.cond % Default is free molecular regime
     case 'exp'
-        disp('  CONDUCTION:  Exponential');
         htmodel.opts.deMethod = 'none';
     case 'none'
-        disp('  CONDUCTION:  -');
         % Do nothing.
     otherwise % Free molecular regime
-        disp('  CONDUCTION:  Free molecular');
-        aa = [aa,'-htmodel.q_cond(T,dp(mp,T))'];
+        aa = [aa,'-htmodel.q_cond(prop,T,dp(mp,T))'];
 end
 %-------------------------------------------------------------------------%
 
@@ -52,14 +42,11 @@ end
 %-- Evaporation model ----------------------------------------------------%
 switch htmodel.opts.evap % Deafult is free molecular regime
     case 'none'
-        disp('  EVAPORATION: -');
         % Do nothing.
     case 'mult' % Free molecular regimes, multiple species
-        disp('  EVAPORATION: Multiple species');
-        aa = [aa,'-htmodel.q_evapm(T,dp(mp,T))'];
+        aa = [aa,'-htmodel.q_evapm(prop,T,dp(mp,T))'];
     otherwise % Free molecular regime, one species
-        disp('  EVAPORATION: Free molecular');
-        aa = [aa,'-htmodel.q_evap(T,dp(mp,T))'];
+        aa = [aa,'-htmodel.q_evap(prop,T,dp(mp,T))'];
 end
 %-------------------------------------------------------------------------%
 
@@ -67,10 +54,8 @@ end
 %-- Radiative model ------------------------------------------------------%
 switch htmodel.opts.rad % Default is none
     case {'include'}
-        disp('  RADIATION:   Incl.');
-        aa = [aa,'-htmodel.q_rad(T,dp(mp,T))'];
+        aa = [aa,'-htmodel.q_rad(prop,T,dp(mp,T))'];
     otherwise
-        disp('  RADIATION:   -');
         % Do nothing.
 end
 %-------------------------------------------------------------------------%
@@ -79,10 +64,8 @@ end
 %-- Abrsorption model ----------------------------------------------------%
 switch htmodel.opts.abs % Default is none
     case {'include'}
-        disp('  ABSORPTION:  Incl.');
-        aa = [aa,'+htmodel.q_abs(t,dp(mp,T))'];
+        aa = [aa,'+htmodel.q_abs(prop,t,dp(mp,T))'];
     otherwise
-        disp('  ABSORPTION:  -');
         % Do nothing. 
 end
 %-------------------------------------------------------------------------%
@@ -91,15 +74,12 @@ end
 %-- Annealing model ------------------------------------------------------%
 switch htmodel.opts.ann % Default is none
     case {'include','Michelsen'}
-        disp('  ANNEALING:   Michelsen');
-        aa = [aa,'+htmodel.q_ann_Mich(T,dp(mp,T),X)'];
-        htmodel.dXdt = @(t,T,mp,X) htmodel.dXdt_fun(@htmodel.Qann_Mich,T,dp(mp,T),X);
+        aa = [aa,'+htmodel.q_ann_Mich(prop,T,dp(mp,T),X)'];
+        htmodel.dXdt = @(t,T,mp,X) htmodel.dXdt_fun(@htmodel.Qann_Mich,prop,T,dp(mp,T),X);
     case {'Sipkens'}
-        disp('  ANNEALING:   Sipkens');
-        aa = [aa,'+htmodel.q_ann_Sip(T,dp(mp,T),X)'];
-        htmodel.dXdt = @(t,T,mp,X) htmodel.dXdt_fun(@htmodel.Qann_Sip,T,dp(mp,T),X);
+        aa = [aa,'+htmodel.q_ann_Sip(prop,T,dp(mp,T),X)'];
+        htmodel.dXdt = @(t,T,mp,X) htmodel.dXdt_fun(@htmodel.Qann_Sip,prop,T,dp(mp,T),X);
     otherwise
-        disp('  ANNEALING:   -');
         htmodel.dXdt = @(t,T,mp,X) 0;
 end
 %-------------------------------------------------------------------------%
@@ -111,8 +91,6 @@ dTdt = eval(aa);
 htmodel.dTdt = dTdt;
 %-------------------------------------------------------------------------%
 
-tools.textheader();
 
 end
-
 
