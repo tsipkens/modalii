@@ -24,7 +24,7 @@ Throughout the program, `main*.m` scripts are used to create instances of the cl
 
 This code contains two classes, which are used to define the two different submodels that make up the larger TiRe-LII submodel. 
 
-### 2.1 @HTModel: Heat transfer model
+### 2.1 Heat transfer model (@HTModel)
 
 This class is designed to generate temperature decay curves. This is done by solving, at the very least, an ordinary differential equation for temperature. Mass and annealed fraction can also be solved simultaneously.
 
@@ -46,7 +46,7 @@ The inputs to the instructor method are as follows:
 
 The two key methods for evaluating the heat transfer model are the `evaluate` and `de_solve` methods. The `de_solve` method solves the ODEs without altering the default physical properties. In contrast, the `evaluate` method solves the ODEs for a vector of property values given by the `x` input to the method. The latter is particularly useful in optimization scenerio. 
 
-### 2.2 @SModel: Spectroscopic model
+### 2.2 Spectroscopic model (@SModel)
 
 This class is design to simulate incandescence from a temperature trace, incorporating blackbody radiation and the optical properties. Methods exist to both forward and backward (i.e. pyrometry) calculations. 
 
@@ -56,13 +56,11 @@ Instances of the class are created following a similar procedure to `HTModel`. F
 smodel = SModel(prop, x_fields, t, l);
 ```
 
-The inputs are largely the same as before, but with an added `l` argument that defines the wavelenths relevant to the experiment. 
-
-### @Signal
-
-This is depreciated class that is to be replaced by structured arrays. It packages together a series of signals and related information, such as the time and wavelengths. The class is still included for legacy purposes. The class's previous methods were largely moved to the `+data` package, described below. 
+The inputs are largely the same as before, but with an added `l` argument that defines the wavelengths relevant to the experiment. 
 
 ## 3. Packages
+
+Matlab packages are used to bundle similar functions. 
 
 ### 3.1 +props
 
@@ -78,7 +76,7 @@ This package contains an assortment of other utilities, including a text-based p
 
 ### 3.3 +data
 
-The data package is available to filter or otherwise process data. 
+The data package is available to filter or otherwise process TiRe-LII signals. For example, the `get_peak_temp` function used a spectroscopic model to estimate the peak temperature from experimental signals, which can then be used to initialize the temperature in a heat transfer model. 
 
 -----------------------------------
 
