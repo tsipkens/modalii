@@ -20,7 +20,6 @@ load('+in_house\FeAr_sig17.mat');
 % prop = Prop({['exper_apb17_',signal.matl],...
 %     [signal.gas],[signal.matl]},opts);
 
-
 prop = props.exper_apb17_Fe;
 prop = eval(['props.', [signal.gas], '(prop, opts)']);
 prop = eval(['props.', [signal.matl], '(prop, opts)']);

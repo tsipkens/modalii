@@ -15,8 +15,13 @@ opts.bFun = 1;
 import('in_house.*');
 load('+in_house\AgAr_sig1.mat');
 
-prop = Prop({['exper_apb17_',signal.matl],...
-    [signal.gas],[signal.matl]},opts);
+% prop = Prop({['exper_apb17_',signal.matl],...
+%     [signal.gas],[signal.matl]},opts);
+
+prop = props.exper_apb17_Ag;
+prop = eval(['props.', [signal.gas], '(prop, opts)']);
+prop = eval(['props.', [signal.matl], '(prop, opts)']);
+
 prop.l = [442,716];
 
 
@@ -27,7 +32,12 @@ x0 = [35];
 htmodel = HTModel(prop,x_fields,signal.t,opts);
 smodel = SModel(prop,x_fields,...
     signal.t,signal.l,signal,htmodel,opts);
+
 prop.Ti = data.get_peak_temp(signal,smodel); % only used to get Ti to start
+htmodel.prop.Ti = prop.Ti;
+smodel.prop.Ti = prop.Ti;
+smodel.htmodel.prop.Ti = prop.Ti;
+
 bModel = @smodel.evaluateI;
 AModel = @smodel.evaluateIF;
 
