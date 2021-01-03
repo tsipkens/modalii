@@ -71,7 +71,6 @@ classdef HTModel
         [Tout] = evaluate(htmodel, x); % evaluates selected model at x, outputting temperature
         [Tout, dpo, mpo, Xo] = de_solve(htmodel, prop, dp); % solves ode at a specified particle size
         [htmodel, dTdt, dmdt] = de_build(htmodel); % determines governing equation and stores in dTdt
-        [htmodel, dTdt, dmdt] = de_build2(htmodel); % determines governing equation and stores in dTdt
         %-----------------------------------------------------------------%
         
         
