@@ -5,9 +5,20 @@ function prop = Ar(prop,~)
 if ~exist('prop','var'); prop = struct(); end
 %-------------------------------------------------------------------------%
 
+prop.gas = 'Ar';
+
 prop.mg = 6.63368e-26;
 prop.gamma1 = 5/3;
 prop.gamma2 = @(T)(prop.gamma1+1)/(prop.gamma1-1);
+
+
+coeffs = [0.5706755, -95.117330,   2089.64, 2.471881; ...
+          0.6560118,   51.78050, -33046.71, 1.771141; ...
+          0.5675853, -100.15250,   2573.66, 2.253741; ...
+          0.6427552,   14.11291, -20639.08, 1.644010];
+
+prop.mu = @(T) props.eq_mu(T, coeffs);
+prop.k  = @(T) props.eq_k(T, coeffs);
 
 end
 
