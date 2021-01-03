@@ -9,9 +9,10 @@
 %
 % OUTPUTS:
 %   q       Rate of conductive losses, [W]
+%   Kn      Knudsen number, []. (Optional.)
 %=========================================================================%
 
-function [q] = q_cond(htmodel, prop, T, dp)
+function [q, Kn] = q_cond(htmodel, prop, T, dp)
 
 dp = dp .* 1e-9; % convert to meters so everything is in SI units
 
@@ -23,12 +24,21 @@ switch htmodel.opts.cond
         q = q_cont(prop, T, dp, prop.Tg);  % compute continuum regime conduction
         
     case {'transition', 'fuchs'}
-        res = @(Tdelta) q_fm(prop, T, dp, Tdelta) - ...
-            qcont(prop, Tdelta, dp + 2*get_mfp(prop), prop.Tg);
+        % Define residual function, where
+        % T_delta is an intermediate temperature at 
+        % free molecular-continuum boundary (dp + 2*MFP).
+        res = @(T_delta) q_fm(prop, T, dp, T_delta) - ...
+            q_cont(prop, T_delta, dp + 2 * get_mfp(prop, T), prop.Tg);
         
         Tdelta = fzero(@(T) res(T), [prop.Tg, T]);
         q = q_fm(prop, T, dp, Tdelta);
+        
+end
 
+% If necessary, also output Knudsen number.
+% Requires that prop.mu (dynamic viscosity) to be specified for the gas.
+if nargout>1
+    Kn = get_mfp(prop, T) ./ (dp ./ 2);
 end
 
 end
@@ -51,7 +61,7 @@ end
 
 %== Q_CONT ===============================================================%
 %   Continuum regime condutions, using Eq. (6) in Daun and Hubermann. 
-%   REQUIRES prop.k (conductivity) to be specified for the gas.
+%   REQUIRES: prop.k (conductivity) to be specified for the gas.
 function [q] = q_cont(prop, T, dp, Tg)
 
 q = 2 .* pi .* dp .* integral(@(T) prop.k(T), Tg, T);
@@ -64,12 +74,11 @@ end
 %   Returns the Maxwell mean free path of the gas in nm based 
 %   on viscosity (Eq. 16 in %Huberman and Daun) Pg is pressure in Pa, 
 %   Tg is temperature in K, mg is molecular mass in kg.
-%   REQUIRES prop.mu (dynamic viscosity) to be specified for the gas.
-function lambda = get_mfp(prop)
+%   REQUIRES: prop.mu (dynamic viscosity) to be specified for the gas.
+function lambda = get_mfp(prop, T)
 
-rho = prop.mg * prop.Pg / (prop.kB * prop.Tg);
-
-lambda = prop.mu / rho / sqrt(2*prop.kB .* prop.Tg / (pi * prop.mg));
+rho = prop.mg * prop.Pg ./ (prop.kb .* prop.Tg);
+lambda = prop.mu(T) / rho / sqrt(2*prop.kb .* prop.Tg / (pi * prop.mg));
 
 end
 
