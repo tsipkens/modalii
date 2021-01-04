@@ -7,17 +7,17 @@ NOTE: This code is still under construction and should be considered experimenta
 
 This is modular program to model and analyze time-resolved laser-induced incandescence (TiRe-LII) signals, developed at the University of Waterloo.
 
-This program is built to simulate signals from various materials, including soot, silicon, germanium, iron, silver, and molybdenum. Signals are generated predominantly using absorption, conduction, and evaporation submodels, with capabilities to do other cooling modes. The typicaly, overall TiRe-LII analysis procedure is shown schematically below. 
+This program is built to simulate signals from various materials, including soot, silicon, germanium, iron, silver, and molybdenum. Signals are generated predominantly using absorption, conduction, and evaporation submodels, with capabilities to do other cooling modes. A typical TiRe-LII apparatus is shown below. 
 
 <p align="left">
-  <img width="300" src="docs/models_structure.svg">
+  <img width="600" src="docs/tirelii_schematic.svg">
 </p>
-
-While the overall procedure generally follows the above structure, variants may apply these steps at different points int he procedure, which this code attempts to accomodate. 
 
 ## Getting started
 
 This is under construction and will be coming soon. 
+
+Note that times are defined relative to the center of the laser pulse intensity (or the peak of the signals, if heating/absorption is not modeled). This allows modeling of the initial portion of the temperature decay for polydisperse particle size distributions. In these cases, this allows for modeling of the later portion of the signals, while ignoring anomalous cooling at the beginning of some signals (e.g., molybdenum or some carbon cases). 
 
 ## 1. Upper directory and main\*.m scripts
 
@@ -25,15 +25,22 @@ Throughout the program, `main*.m` scripts are used to create instances of the cl
 
 ## 2. Classes
 
-This code contains two classes, which are used to define the two different submodels that make up the larger TiRe-LII submodel. 
+The typical, overall TiRe-LII analysis procedure is shown schematically below. 
+
+<p align="left">
+  <img width="300" src="docs/models_structure.svg">
+</p>
+
+This code contains two classes that are used to define the two heat transfer and spectroscopic components of the overall TiRe-LII model. 
 
 ### 2.1 Heat transfer model (@HTModel)
 
 This class is designed to generate temperature decay curves, implementing several heat transfer submodels, shown schematically below..
 
 <p align="left">
-  <img width="600" src="docs/header.svg">
+  <img width="600" src="docs/heat_transfer_schematic.svg">
 </p>
+
 
 This is done by solving, at the very least, an ordinary differential equation for temperature. Mass and annealed fraction can also be solved simultaneously.
 
