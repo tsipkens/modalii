@@ -3,7 +3,7 @@
 
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
-NOTE: This code is still under construction and should be considered experimental.
+> NOTE: This code is still under construction and should be considered experimental.
 
 This is modular program to model and analyze time-resolved laser-induced incandescence (TiRe-LII) signals, developed at the University of Waterloo.
 
@@ -31,6 +31,7 @@ The typical, overall TiRe-LII analysis procedure is shown schematically below.
 <p align="left">
   <img width="320" src="docs/models_structure.svg">
 </p>
+
 
 This code contains two classes that are used to define the two heat transfer and spectroscopic components of the overall TiRe-LII model. 
 
@@ -86,7 +87,7 @@ This class contains the thermosphysical, optical, and other model parameters to 
 
 This package also includes methods to describe the temperature dependence of various properties, using expressions like the Clausius-Clapeyron or Tolman equations. 
 
-*NOTE*: This package replaces the @Prop class in previous versions to allow for more dynamic/flexible structures. 
+> NOTE: This package replaces the @Prop class in previous versions to allow for more dynamic/flexible structures. 
 
 ### 3.2 +tools
 
@@ -101,7 +102,6 @@ The data package is available to filter or otherwise process TiRe-LII signals. F
 ### License
 
 This software is licensed under an MIT license (see the corresponding file for details).
-
 
 ### Contributions and acknowledgements
 
