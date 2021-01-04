@@ -40,8 +40,9 @@ This code contains two classes that are used to define the two heat transfer and
 This class is designed to generate temperature decay curves, implementing several heat transfer submodels, shown schematically below..
 
 <p align="left">
-  <img width="650" src="docs/heat_transfer_schematic.svg">
+  <img width="550" src="docs/heat_transfer_schematic.svg">
 </p>
+
 
 
 
