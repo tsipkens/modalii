@@ -12,11 +12,16 @@
 %   Kn      Knudsen number, []. (Optional.)
 %=========================================================================%
 
-function [q, Kn] = q_cond(htmodel, prop, T, dp)
+function [q, Kn] = q_cond(htmodel, prop, T, dp, opts_cond)
 
-dp = dp .* 1e-9; % convert to meters so everything is in SI units
+% By default, use the opts from this instance of htmodel.
+if ~exist('opts_cond', 'var'); opts_cond = []; end
+if isempty(opts_cond); opts_cond = htmodel.opts.cond; end
 
-switch htmodel.opts.cond
+% Convert to meters so everything is in SI units.
+dp = dp .* 1e-9;
+
+switch opts_cond
     case 'free-molecular'
         q = q_fm(prop, T, dp, prop.Tg);  % compute free-molecular conduction
         
@@ -27,11 +32,14 @@ switch htmodel.opts.cond
         % Define residual function, where
         % T_delta is an intermediate temperature at 
         % free molecular-continuum boundary (dp + 2*MFP).
-        res = @(T_delta) q_fm(prop, T, dp, T_delta) - ...
-            q_cont(prop, T_delta, dp + 2 * get_mfp(prop, T), prop.Tg);
-        
-        Tdelta = fzero(@(T) res(T), [prop.Tg, T]);
-        q = q_fm(prop, T, dp, Tdelta);
+        q = [];
+        for ii=1:length(dp)
+            res = @(T_delta) q_fm(prop, T, dp(ii), T_delta) - ...
+                q_cont(prop, T_delta, dp(ii) + 2 * get_mfp(prop, T), prop.Tg);
+
+            Tdelta = fzero(@(T) res(T), [prop.Tg, T]);
+            q(ii) = q_fm(prop, T, dp(ii), Tdelta);
+        end
         
 end
 

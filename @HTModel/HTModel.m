@@ -75,7 +75,7 @@ classdef HTModel
         
         
         %-- Heat transfer submodels --------------------------------------%
-        [q] = q_cond(htmodel, prop, T, dp); % evaluates conduction at the specified parameters
+        [q, Kn] = q_cond(htmodel, prop, T, dp, opts_cond); % evaluates conduction at the specified parameters
         [q, J, hv, pv] = q_evap(htmodel, prop, T, dp); % evaluates evaporation at the specified parameters
         [J] = Jevap(htmodel, prop, T, dp); % evaluates rate of mass loss at the specified parameters
         [q, rad] = q_rad(htmodel, prop, T, dp); % evaluates radiation at the specified parameters
