@@ -10,7 +10,7 @@ This is modular program to model and analyze time-resolved laser-induced incande
 This program is built to simulate signals from various materials, including soot, silicon, germanium, iron, silver, and molybdenum. Signals are generated predominantly using absorption, conduction, and evaporation submodels, with capabilities to do other cooling modes. A typical TiRe-LII apparatus is shown below. 
 
 <p align="left">
-  <img width="450" src="docs/tirelii_schematic.svg">
+  <img width="500" src="docs/tirelii_schematic.svg">
 </p>
 
 
@@ -29,7 +29,7 @@ Throughout the program, `main*.m` scripts are used to create instances of the cl
 The typical, overall TiRe-LII analysis procedure is shown schematically below. 
 
 <p align="left">
-  <img width="300" src="docs/models_structure.svg">
+  <img width="320" src="docs/models_structure.svg">
 </p>
 
 This code contains two classes that are used to define the two heat transfer and spectroscopic components of the overall TiRe-LII model. 
@@ -39,8 +39,9 @@ This code contains two classes that are used to define the two heat transfer and
 This class is designed to generate temperature decay curves, implementing several heat transfer submodels, shown schematically below..
 
 <p align="left">
-  <img width="600" src="docs/heat_transfer_schematic.svg">
+  <img width="650" src="docs/heat_transfer_schematic.svg">
 </p>
+
 
 
 This is done by solving, at the very least, an ordinary differential equation for temperature. Mass and annealed fraction can also be solved simultaneously.
