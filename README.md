@@ -10,8 +10,9 @@ This is modular program to model and analyze time-resolved laser-induced incande
 This program is built to simulate signals from various materials, including soot, silicon, germanium, iron, silver, and molybdenum. Signals are generated predominantly using absorption, conduction, and evaporation submodels, with capabilities to do other cooling modes. A typical TiRe-LII apparatus is shown below. 
 
 <p align="left">
-  <img width="600" src="docs/tirelii_schematic.svg">
+  <img width="450" src="docs/tirelii_schematic.svg">
 </p>
+
 
 ## Getting started
 
