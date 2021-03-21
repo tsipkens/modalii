@@ -1,7 +1,28 @@
 
 % HTMODEL  Class definition for the TiRe-LII heat transfer model.
-% AUTHOR: Timothy Sipkens, 2015
-%=========================================================================%
+%  The htmodel.evaluate([...]) function is then to be used to evaluate the 
+%  heat transfer model for the fields specified by x. 
+%  
+%  htmodel = HTModel(PROP, [], T) creates a heat transfer model using the
+%  default options, the material and experimental properties in PROP, 
+%  and at the times specified by vector T. The model is to be evaluated by 
+%  providing a primary particle diameter (i.e., this is equivalent to 
+%  X = 'dp0') using htmodel.evaluate(dp0). 
+%  
+%  htmodel = HTModel(PROP, X, T) evaluates the heat transfer model, as
+%  above, but allows for evaluation at the properties named in X. For
+%  example, X = {'dp0', 'alpha'} will create a model that is a funciton of
+%  primary particle size and thermal accommodation coefficient (e.g.,
+%  htmodel.evaluate([30, 0.5]) will then evaluate the heat transfer model
+%  at dp0 = 30 and alpha = 0.5. Most fields in PROP can be specified in X.
+%  
+%  htmodel = HTModel(PROP, X, T, OPTS) add an options structure that
+%  controls the nature of the heat transfer model. For example, 
+%  OPTS.abs = 'include' will add an laser absorption mode to the model. For
+%  the list of fields, see the class properties in the HTModel.m file.
+%  Options can also be name-value pairs. 
+%  
+%  AUTHOR: Timothy Sipkens, 2015
 
 classdef HTModel
     
@@ -32,21 +53,13 @@ classdef HTModel
     methods
         %== HTMODEL ======================================================%
         %   Constructor method for heat transfer model.
-        % 
-        % INPUTS:
-        %   prop        Instance of the properties class containing
-        %               material properties
-        %   x           Cell of strings defining fields of prop to be
-        %                   considered as quantities of interest (Qoi)
-        %                   (e.g. 'alpha','dp')
-        %   t           Vector of times at which heat transfer model is
-        %                   evaluated
-        %   varargin    Options as a struct or a series of name-value pairs (Optional)
-        %-----------------------------------------------------------------%
+        %   See class header for use.
         function htmodel = HTModel(prop, x, t, varargin)
             
             % If no fields specified, only use particle diameter.
+            if ~exist('x', 'var'); x = []; end
             if isempty(x); x = {'dp0'}; end
+            if ~iscell(x); x = {x}; end
             
             htmodel.prop = prop; % copy material and experimental properties
             htmodel.x = x; % copy cell containing QoI variable names
