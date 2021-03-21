@@ -11,7 +11,7 @@ if stats.opts.bFun==0
             min_fun = @(x) norm(((stats.Lb')*(model(x)-stats.b))./2,2);
 
         case {'vector-xpr'} % function also has priors introduced, vector
-            stats.getPriorFun;
+            stats.get_prior_fun;
             min_fun = @(x) [((stats.Lb')*(model(x)-stats.b))./2;...
                 stats.pr_fun(x)];
 

@@ -1,3 +1,4 @@
+
 function [mle,jcb] = minimize(stats,x0,opts)
 
 if or(nargin<2,isempty(x0))

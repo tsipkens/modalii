@@ -17,19 +17,30 @@ import('in_house.*');
 load('+in_house\MoAr_sig1-delay.mat');
 % signal.data = signal.data(90:end,:,:);
 % signal.t = signal.t(90:end);
-prop = Prop({['exper_apb17_',signal.matl],...
-    [signal.gas],[signal.matl]},opts);
+% prop = Prop({['exper_apb17_',signal.matl],...
+%     [signal.gas],[signal.matl]},opts);
+
+prop = props.exper_apb17_Mo;
+prop = eval(['props.', [signal.gas], '(prop, opts)']);
+prop = eval(['props.', [signal.matl], '(prop, opts)']);
+
 prop.l = [442,716];
 
 
 %-- Model -------------------------------%
 x_fields = {'dp0','sigma'};
-x0 = [50,0.2];
+x0 = [50, 0.2];
 
-htmodel = HTModel(prop,x_fields,signal.t,opts);
-smodel = SModel(prop,x_fields,signal.t,signal.l,signal,htmodel);
-% prop.Ti = signal.get_peak_temp(smodel); % only used to get Ti to start
+htmodel = HTModel(prop, x_fields, signal.t, opts);
+smodel = SModel(prop, x_fields,...
+    signal.t, signal.l, signal, htmodel, opts);
+% prop.Ti = data.get_peak_temp(signal,smodel);  % only used to get Ti to start
+
 prop.Ti = 2510; % temp. set peak temperature
+htmodel.prop.Ti = prop.Ti;
+smodel.prop.Ti = prop.Ti;
+smodel.htmodel.prop.Ti = prop.Ti;
+
 b = @smodel.evaluateI;
 A = @smodel.evaluateIF;
 
@@ -52,7 +63,7 @@ st_pr(end) = st_pr(end-1)*2;
 Lt_ipr = sparse(chol(diag(1./(st_pr.^2))));
 
 figure(1);
-stats.plot_mle(mle,signal.t);
+stats.plot_mle(mle, signal.t);
 [~,R_po,s_po] = stats.cred_linear(jcb);
 
 

@@ -1,31 +1,34 @@
 
 % DE_SOLVE  Solves ODEs for temperature, mass, etc. over time. 
 % Author:   Timothy Sipkens, 2018-11-28
-%=========================================================================%
-
-function [Tout,dpo,mpo,Xo] = de_solve(htmodel,dp0)
-%-------------------------------------------------------------------------%
-% Inputs:
+% 
+% INPUTS:
+%   prop    Heat transfer model property structure (used instead of htmodel.prop)
 %   dp0     Vector of nanoparticle diameters for which ODEs are to be solved, [nm]
 %
-% Outputs:
+% OUTPUTS:
 %   Tout    Time-resolved temperature with a single column per input diameter, [K]
 %   dpo     Time-resolved nanoparticle diameter, same format as above, [nm]
 %   mpo     Time-resolved nanoparticle mass, same format as above, [fraction]
 %   Xo      Time-resolved anneealed fraction, same format as above, [fraction]
-%-------------------------------------------------------------------------%
+%=========================================================================%
+
+function [Tout, dpo, mpo, Xo] = de_solve(htmodel, prop, dp0)
 
 Nd = length(dp0); % number of size classes to consider in solver
 
+htmodel = htmodel.de_build;
+
+
 %-- Initial conditions ---------------------------------------------------%
-Ti = htmodel.prop.Ti.*ones(Nd,1); % initial temperature, [K]
+Ti = prop.Ti .* ones(Nd,1); % initial temperature, [K]
 
 %-- Initial mass ----%
-if isempty(htmodel.prop.rho0)
-	htmodel.prop.rho0 = htmodel.prop.rho(htmodel.prop.Tg);
+if isempty(prop.rho0)
+	prop.rho0 = prop.rho(prop.Tg);
 end
 mass_conv = 1e21; % added for stability, converts mass to attogram (ag)
-mpi = (htmodel.prop.rho0.*(dp0.*1e-9).^3.*(pi/6)).*mass_conv; % inital mass, [ag]
+mpi = (prop.rho0 .* (dp0.*1e-9).^3 .* (pi/6)) .* mass_conv; % inital mass, [ag]
 
 Xi = 0.*ones(Nd,1); % initial annealed fraction, [fraction]
 %-------------------------------------------------------------------------%
@@ -73,7 +76,7 @@ switch htmodel.opts.deMethod
         
         if strcmp(htmodel.opts.abs,'include')
                 % limit step size to ensure solver sees absorption
-            opts.MaxStep = (htmodel.prop.tlp)/2;
+            opts.MaxStep = (prop.tlp)/2;
         else
             opts = [];
         end 
@@ -82,16 +85,16 @@ switch htmodel.opts.deMethod
         
         if ~(length(yo(:,1))==length(t))
             yo = [yo;...
-                bsxfun(@times,[htmodel.prop.Tg,yo(end,2)],...
+                bsxfun(@times,[prop.Tg,yo(end,2)],...
                 ones(length(t)-length(yo(:,1)),2))];
             disp('WARNING: Error in length of vector output by ode solver.');
         end
-        Tout = max(yo(:,1:Nd),htmodel.prop.Tg); % removes some of the ringing for fast decays
+        Tout = max(yo(:,1:Nd),prop.Tg); % removes some of the ringing for fast decays
         mpo = yo(:,Nd+1:2*Nd)./mass_conv;
         
         switch htmodel.opts.ann % consider percentage annealed variable
             case {'include','Michelsen','Sipkens'}
-                Xo = yo(:,2*Nd+1:3*Nd);
+                Xo = yo(:, 2*Nd + 1:3*Nd);
             otherwise
                 Xo = [];
         end
@@ -113,7 +116,7 @@ switch htmodel.opts.deMethod
         end
         
         Tout = interp1(t_eval,T_eval,t);
-        mpo = interp1(t_eval,m_eval,t)./mass_conv;
+        mpo = interp1(t_eval,m_eval,t) ./ mass_conv;
         Xo = interp1(t_eval,X_eval,t);
         
     otherwise
@@ -130,7 +133,7 @@ if opts_tadd==1 % remove added initial point that was added if t(1)>0
     Xo = Xo(2:end,:);
 end
 
-dpo = ((6.*mpo)./(htmodel.prop.rho(Tout).*pi)).^(1/3).*1e9;
+dpo = ((6.*mpo) ./ (prop.rho(Tout).*pi)) .^ (1/3) .* 1e9;
     % calculate diameter over time
 mpo = mpo./mpo(1); % output relative change in particle mass over time
 %-------------------------------------------------------------------------%

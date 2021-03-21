@@ -1,9 +1,9 @@
 
-% IMODEL    Evaluates the inverse spectroscopic model (using some form of pyrometry).
-% Author:   Timothy Sipkens
+% IMODEL  Evaluates the inverse spectroscopic model (using some form of pyrometry).
+% AUTHOR: Timothy Sipkens
 %=========================================================================%
 
-function [Tout,Ti,Cout,s_T,out] = IModel(smodel,J)
+function [Tout, Ti, Cout, s_T, out] = IModel(smodel, prop, J)
 
 nshots = length(J(1,:,1)); % number of shots
 ntime = length(J(:,1,1)); % number of times
@@ -14,11 +14,11 @@ ntime = length(J(:,1,1)); % number of times
 switch smodel.opts.pyrometry
     
     % Two-color pyrometry **********************
-    case {'2color','default'} % simple/fast two-color pyrometry, default if two wavelengths
+    case {'2color','ratio'} % simple/fast two-color pyrometry, default if two wavelengths
             % cannot output scaling factor as more than one shot can be
             % used
         l = smodel.l;
-        Emr = smodel.prop.Emr(l(1),l(2),smodel.prop.dp0); % two-colour pyrometry
+        Emr = prop.Emr(l(1), l(2), prop.dp0); % two-colour pyrometry
         Tout = (0.0143877696*(1/(l(2)*1e-9)-1/(l(1)*1e-9)))./...
             log(J(:,:,1)./J(:,:,2).*(((l(1)/l(2))^6)/Emr)); % phi=0.01438
         Tout = real(Tout);
@@ -28,22 +28,22 @@ switch smodel.opts.pyrometry
         
     case {'2color-scalingfactor'}
         l = smodel.l;
-        Emr = smodel.prop.Emr(l(1),l(2),smodel.prop.dp0); % two-colour pyrometry
+        Emr = prop.Emr(l(1),l(2), prop.dp0); % two-colour pyrometry
         Tout = (0.0143877696*(1/(l(2)*1e-9)-1/(l(1)*1e-9)))./...
             log(J(:,:,1)./J(:,:,2).*(((l(1)/l(2))^6)/Emr)); % phi=0.01438
         Tout = real(Tout);
-        Cout = bsxfun(@times,J,1./smodel.FModel(Tout,smodel.prop.Em));
+        Cout = bsxfun(@times,J,1./smodel.FModel(Tout,prop.Em));
         Cout = Cout(:,:,1);
         s_T = [];
         out = [];
         
     case {'2color-constT'}
         l = smodel.l;
-        Emr = smodel.prop.Emr(l(1),l(2),smodel.prop.dp0); % two-colour pyrometry
+        Emr = prop.Emr(l(1),l(2), prop.dp0); % two-colour pyrometry
         Tout = (0.0143877696*(1/(l(2)*1e-9)-1/(l(1)*1e-9)))./...
             log(J(:,:,1)./J(:,:,2).*(((l(1)/l(2))^6)/Emr)); % phi=0.01438
         Tout = real(Tout);
-        Cout = J./smodel.FModel(1730.*ones(size(Tout)),smodel.prop.Em);
+        Cout = J./smodel.FModel(1730.*ones(size(Tout)),prop.Em);
         Cout = Cout(:,1,1);
         s_T = [];
         out = [];

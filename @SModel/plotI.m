@@ -1,3 +1,4 @@
+
 function [] = plotI(smodel,T,C,data,n)
 
 Jmod = @(l) C(n).*(smodel.blackbody(T(n),l).*smodel.prop.Em(l,smodel.prop.dp0)./...

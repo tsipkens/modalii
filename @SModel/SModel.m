@@ -1,6 +1,6 @@
 
-% SMODEL    Class for the spectroscopic model and pyrometry calculations.
-% Author:   Timothy Sipkens, 2017
+% SMODEL  Class for the spectroscopic model and pyrometry calculations.
+% AUTHOR: Timothy Sipkens, 2017
 %=========================================================================%
 
 classdef SModel
@@ -18,8 +18,8 @@ classdef SModel
         data_sc = []; % used to scale Planck's to stabalize inference algorithms
         
         opts struct = struct( ...
-            'multicolor','default', ... % indicates which multicolor sovler to use
-            'pyrometry','default' ... % indicates how to handle pyrometry
+            'multicolor', 'default', ... % indicates which multicolor sovler to use
+            'pyrometry', 'ratio' ... % indicates how to handle pyrometry
             );
     end
     
@@ -63,20 +63,24 @@ classdef SModel
             smodel.data_sc = smodel.blackbody(T_sc,1064).*...
                 prop.Em(1064,30)/(1064e-9); % scale Planck's law about T_sc for stability
                     % use dp = 30 nm for data scaling (used for stability)
+                    
+            tools.textheader('New spectroscopic model');
+            disp(['  Pyrometry: ', smodel.opts.pyrometry]);
+            tools.textheader();
         end
         %-----------------------------------------------------------------%
         
         %-- Modeling functions -------------------------------------------%
-        [Jout] = FModel(smodel,T,Em) % calculates J given T, Em is function handle
-        [Tout,Ti,Cout,s_T,s_C,r_T,resid,oth] = IModel(smodel,J) % solve inverse model for temperature
+        [Jout] = FModel(smodel, prop, T, Em) % calculates J given T, Em is function handle
+        [Tout,Ti,Cout,s_T,s_C,r_T,resid,oth] = IModel(smodel, prop, J) % solve inverse model for temperature
         [Tout,Cout,s_T,out] = calcSpectralFit(smodel,J) % spectral fitting with sequential inference
         [Tout,Cout,s_T,out] = calcSpectralFit_all(smodel,J) % spectral fitting with simulatneous inference
         [Tout,Cout,s_T,out] = calcRatioPyrometry(smodel,J1,J2) % ratio pyrometry evaluation, corr. calc. included
         
         %-- Evaluate functions, take and update x ------------------------%
-        [Tout] = evaluateI(smodel,x) % evaluate inverse model at x, given J in SModel
-        [Tout] = evaluateIF(smodel,x) % evaluate inverse and forward model at x, given T in Smodel
-        [Jout,mp] = evaluateF(smodel,x) % evaluate forward model at x
+        [Tout] = evaluateI(smodel, x) % evaluate inverse model at x, given J in SModel
+        [Tout] = evaluateIF(smodel, x) % evaluate inverse and forward model at x, given T in Smodel
+        [Jout,mp] = evaluateF(smodel, x) % evaluate forward model at x
         
         %-- Plotting functions -------------------------------------------%
         [] = plotI(smodel,T,C,J,n) % Plots data vs fit of inverse procedure

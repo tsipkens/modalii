@@ -3,7 +3,7 @@
 % Author: Timothy Sipkens, 2018-12-17
 %+========================================================================%
 
-function [q,h] = sig_q(htmodel,T,dp,opts_rad)
+function [q,h] = sig_q(htmodel, prop, T, dp, opts_rad)
 %-------------------------------------------------------------------------%
 % Inputs:
 %   T           Vector of nanoparticle temperature, [K]
@@ -20,22 +20,22 @@ if nargin<4
 end
 
 if opts_rad
-    q = [q_cond(htmodel,T,dp)' q_evap(htmodel,T,dp)'-(J_evap(htmodel,T,dp).*T.*htmodel.prop.cp(T))' ...
-        q_rad(htmodel,T,dp)'];
+    q = [q_cond(htmodel, prop, T, dp)' q_evap(htmodel, prop, T, dp)'-(J_evap(htmodel, prop, T, dp).*T.*htmodel.prop.cp(T))' ...
+        q_rad(htmodel, prop, T, dp)'];
 else
-    q = [q_cond(htmodel,T,dp)' q_evap(htmodel,T,dp)'-(J_evap(htmodel,T,dp).*T.*htmodel.prop.cp(T))'];
+    q = [q_cond(htmodel, prop, T, dp)' q_evap(htmodel, prop, T, dp)'-(J_evap(htmodel, prop, T, dp).*T.*htmodel.prop.cp(T))'];
 end
 
 %-- Plot modes -----------------------------------------------------------%
 h = semilogy(T,q);
 
 hold on; % plot vertical lines about transition points
-fun1 = @(T)(q_cond(htmodel,T,dp)-q_evap(htmodel,T,dp)+(J_evap(htmodel,T,dp).*T.*htmodel.prop.cp(T)));
+fun1 = @(T)(q_cond(htmodel, prop, T, dp)-q_evap(htmodel, prop, T, dp)+(J_evap(htmodel, prop, T, dp).*T.*htmodel.prop.cp(T)));
 t1 = fzero(fun1,3000);
 plot([t1,t1],ylim,'k--');
 
 if opts_rad
-    fun2 = @(T)(q_evap(htmodel,T,dp)-(J_evap(htmodel,T,dp).*T.*htmodel.prop.cp(T))-q_rad(htmodel,T,dp));
+    fun2 = @(T)(q_evap(htmodel, prop, T, dp)-(J_evap(htmodel, prop, T, dp).*T.*htmodel.prop.cp(T))-q_rad(htmodel, prop, T, dp));
     t2 = fzero(fun2,3000);
     plot([t2,t2],ylim,'k--');
     legend('q_{cond}','q_{evap}','q_{rad}');
