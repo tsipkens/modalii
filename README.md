@@ -84,11 +84,17 @@ Matlab packages are used to bundle similar functions.
 
 ### 3.1 +props
 
-This class contains the thermosphysical, optical, and other model parameters to be used in evaluating both the spectroscopic and heat transfer models. These parameters are also the ones that can be selected as dependent variables when creating instances of the `HTModel` and `SModel` classes.
-
-This package also includes methods to describe the temperature dependence of various properties, using expressions like the Clausius-Clapeyron or Tolman equations. 
+This class contains the thermosphysical, optical, and other model parameters to be used in evaluating both the spectroscopic and heat transfer models. These parameters are also the ones that can be selected as dependent variables when creating instances of the `HTModel` and `SModel` classes. 
 
 > NOTE: This package replaces the @Prop class in previous versions to allow for more dynamic/flexible structures. 
+
+Some basic naming conventions are as follows: 
+
+**1. (eq)**: Functions that start with `props.eq_*(...)` indicate methods that describe functional dependencies of some material properties, e.g., the temperature dependence of various properties using expressions like the Clausius-Clapeyron or Tolman equations. 
+
+**2. (x)**: Functions that start with `props.x_*()` indicate methods that describe experimental parameters, such as gas pressure and temperature, for a specific set of experiments. 
+
+**3.**: Function that evaluate material properties for a specific gas of nanoparticle material are named according to their chemical symbol, e.g., `props.Fe()` for iron or `props.C()` for carbon/soot. 
 
 ### 3.2 +tools
 
