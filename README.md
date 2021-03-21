@@ -114,6 +114,6 @@ This software is licensed under an MIT license (see the corresponding file for d
 
 The primary author of the code is Timothy A. Sipkens, who can be emailed at  [tsipkens@uwaterloo.ca](mailto:tsipkens@uwaterloo.ca), and based around the corresponding thesis:
 
-[Sipkens, T. A. (2018). Advances in the Modeling of Time-Resolved Laser-Induced Incandescence. PhD Thesis. University of Waterloo](https://uwspace.uwaterloo.ca/handle/10012/13860).
+> [Sipkens, T. A. (2018). Advances in the Modeling of Time-Resolved Laser-Induced Incandescence. PhD Thesis. University of Waterloo](https://uwspace.uwaterloo.ca/handle/10012/13860).
 
 The code was developed at the University of Waterloo. Kyle Daun contributed significantly to the ideas summarized in this code. 
