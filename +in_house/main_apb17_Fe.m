@@ -20,7 +20,7 @@ load('+in_house\FeAr_sig17.mat');
 % prop = Prop({['exper_apb17_',signal.matl],...
 %     [signal.gas],[signal.matl]},opts);
 
-prop = props.exper_apb17_Fe;
+prop = props.x_apb17_Fe;
 prop = eval(['props.', [signal.gas], '(prop, opts)']);
 prop = eval(['props.', [signal.matl], '(prop, opts)']);
 
@@ -48,14 +48,15 @@ model = @smodel.evaluateIF;
 
 %-- Analysis -------------------------------------------------------------%
 tic;
-stats = Stats(model, b, opts);
-[mle,jcb] = stats.minimize(x0, opts);
+[b1, Lb, sb] = stats.setup_b(b, 'default');
+like = stats.build_like(model, b1, Lb, opts.minimize);
+[mle, jcb] = stats.minimize(x0, like, [], opts);
 disp('MLE = ');
-disp(mle);
+disp(tools.mle2struct(mle, x_fields));
 toc;
 
 figure(2);
-stats.plot_mle(mle, signal.t);
+stats.plot_mle(mle, model, b1, signal.t, sb);
 [G_po,R_po,s_po] = stats.cred_linear(jcb);
 
 
@@ -67,20 +68,28 @@ theta0 = [mle,...
 sx_pr = [inf,inf,abs(theta0(3:end)).*0.05];
 sx_pr(end-1) = sx_pr(end-1)*0.1;
 sx_pr(end) = sx_pr(end-1)*2;
+theta0 = theta0'; sx_pr = sx_pr';
 htmodel_t = HTModel(prop,theta_fields,signal.t,signal,opts);
 smodel_t = SModel(prop,theta_fields,signal.t,signal.l,signal,htmodel_t,opts);
 bModel_t = @smodel_t.evaluateI;
 AModel_t = @smodel_t.evaluateIF;
 opts.minimize = 'vector-xpr';
-stats_t = Stats(AModel_t,bModel_t,opts,'sx_pr',sx_pr,'x_pr',theta0);
-stats_t.get_min_fun;
-% [mle_theta,jcb_theta] = stats_t.minimize(theta0);
 
+[b1_t, Lb_t, sb_t] = stats.setup_b(bModel_t, 'default');
+like_t = stats.build_like(AModel_t, b1_t, Lb_t, opts.minimize);
+pr_t = stats.build_prior(theta0, diag(1 ./ sx_pr), opts.minimize);
+[mle_t, jcb_t] = stats.minimize(theta0, like_t, pr_t, opts);
 
+figure(3);
+stats.plot_mle(mle_t, AModel_t, b1_t, signal.t, sb_t);
+disp('MLE = ');
+disp(tools.mle2struct(mle_t, theta_fields));
+
+%{
 %-- Uncertainties with nuisance parameters ---------------------------------%
 jcb_theta = stats_t.jacob_est(theta0);
 [G_theta,R_theta,s_theta] = stats_t.cred_linear(jcb_theta);
-
+%}
 
 %{
 [X,Y,x,y] = stats_t.gen_grid(mle,s_po,20);
