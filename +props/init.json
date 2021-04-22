@@ -1,0 +1,38 @@
+
+{
+
+    "h": 6.62606957e-34,  // Planck"s constant [m^2.kg/s]
+    "c": 2.99792458e8,    // Speed of light in a vacuum [m/s]
+    "kb": 1.3806488e-23,  // Boltzmann constant [m^2.kg/s^2/K]
+    "R": 8.3144621,       // Universal gas constant [J/mol/K]
+
+    "phi": 0.0143877696,  // Constant for Planck"s law, phi": h*c/kb
+
+    /*-- Other empty fields to initialize ---------------------*/
+    "rho0": [],
+    "alpham": [],
+    /*---------------------------------------------------------*/
+
+    /*-- Set up opts structure -----*/
+    "opts": {
+        "rho": "default", 
+        "cp": "default", 
+        "hv": "default", 
+        "abs": "default",
+        "Em": "default", 
+        "M": "default",
+        "pv": "default",
+        "mv": "default",
+        "propmodel": "default"
+        }, 
+    /*------------------------------*/
+    
+    "if": true, 
+    "then": {
+        "a": "@(x)self.phi .* 2"
+    }, 
+    "else": {
+        "a": "@(x)self.phi .* 1"
+    }
+
+}
