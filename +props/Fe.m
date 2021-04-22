@@ -30,7 +30,7 @@ switch opts.rho
     case {'default', 'Hixson'} % (Hixson, 1990), T > 2125 K
         prop.Arho = 8171;
         prop.Brho = -0.64985;
-        prop.rho = @(T) (prop.Brho.*T+prop.Arho);
+        prop.rho = @(T) prop.Brho .* T + prop.Arho;
         
     case {'Basinski'} % (Basinksi,1955 )
         prop.rho_data = getfield(load('rho_Fe_Basinksi.mat'),'rho_data');
