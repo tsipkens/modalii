@@ -1,4 +1,8 @@
 
+% PLOT_MLE  Plot the MLE solution and data.
+%  
+%  NOTE: Smoothing is applied to data intervals.
+
 function [] = plot_mle(mle, A, b, t, sb)
 
 if ~isa(b, 'function_handle'); b = @(x) b; end
@@ -16,9 +20,9 @@ t_pl = t(:) -t(1);
 
 if 1 % plot data error bounds
     hold on;
-    % plot(t-t(1),[b0+2.*stats.sb(mle),b0-2.*stats.sb(mle)]);   
+    sb_mod = smooth(sb, 0.07);
     fill([t_pl; flipud(t_pl)], ...
-        [b0 - 2.*sb; flipud(b0 + 2.*sb)], ...
+        [b0 - 2.*sb_mod; flipud(b0 + 2.*sb_mod)], ...
         [0.9 0.9 0.9], 'LineStyle', 'none');
     % area([t_pl;flipud(t_pl)],...
     %   [b0-2.*stats.sb(mle);flipud(b0+2.*stats.sb(mle))]);  
@@ -26,7 +30,7 @@ if 1 % plot data error bounds
 end
 
 hold on;
-plot(t_pl, b0, '.-', 'markers', 5, ...
+plot(t_pl, b0, '.', 'markers', 5, ...
     'Color', [0 0.443 0.737]);
 plot(t_pl, A(mle), 'k');
 hold off;
