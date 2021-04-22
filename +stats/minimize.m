@@ -1,12 +1,13 @@
 
 function [mle,jcb] = minimize(x0, like, pr, opts)
 
-if or(nargin<2,isempty(x0))
-    x0 = ones(length(htmodel.x),1);
-end
-
+%-- Parse inputs ----------------------------------------------%
 if ~exist('pr', 'var'); pr = []; end
 if isempty(pr); pr = @(x) []; end
+
+if ~exist('opts', 'var'); opts = []; end
+if isempty(opts); opts = struct(); end
+if ~isfield(opts, 'minimize'); opts.minimize = 'default'; end
 
 if or(strcmp(opts.minimize, 'fminsearch'), ...
         strcmp(opts.minimize, 'scalar'))
@@ -14,6 +15,7 @@ if or(strcmp(opts.minimize, 'fminsearch'), ...
 else
     min_fun = @(x) [like(x); pr(x)];
 end
+%--------------------------------------------------------------%
 
 switch opts.minimize
     case {'levenberg-marquardt','default','vector','vector-xpr','vector-tpr'}
