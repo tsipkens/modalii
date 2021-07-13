@@ -1,7 +1,8 @@
 
-% FE  Define properties for iron particles
-% Author: Timothy Sipkens, 2019-11-03
-%=========================================================================%
+% FE  Define properties for iron particles, with mutliple options.
+%  
+%  AUTHOR: Timothy Sipkens, 2019-11-03
+% _________________________________________________________________________
 
 function prop = Fe(prop, opts)
 

@@ -1,7 +1,8 @@
 
-% Ge Define properties for germanium particles
-% Author: Timothy Sipkens, 2019-11-03
-%=========================================================================%
+% GE  Define properties for germanium particles
+%  
+%  AUTHOR: Timothy Sipkens, 2019-11-03
+% _________________________________________________________________________
 
 function prop = Ge(prop,opts)
 
