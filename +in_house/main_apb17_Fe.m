@@ -1,7 +1,7 @@
 
 close all;
 clear;
-clc;
+fprintf('\n\r\n\r_________________________________________________\n\r\n\r');
 
 opts.variance = 'independent';
 opts.deMethod = 'default';
@@ -20,7 +20,7 @@ load('+in_house\FeAr_sig17.mat');
 % prop = Prop({['exper_apb17_',signal.matl],...
 %     [signal.gas],[signal.matl]},opts);
 
-prop = props.exper_apb17_Fe;
+prop = props.x_apb17_Fe;
 prop = eval(['props.', [signal.gas], '(prop, opts)']);
 prop = eval(['props.', [signal.matl], '(prop, opts)']);
 
@@ -48,38 +48,51 @@ model = @smodel.evaluateIF;
 
 %-- Analysis -------------------------------------------------------------%
 tic;
-stats = Stats(model, b, opts);
-[mle,jcb] = stats.minimize(x0, opts);
-disp('MLE = ');
-disp(mle);
+[b1, Lb, sb] = stats.setup_b(b, 'default');
+like = stats.build_like(model, b1, Lb, opts.minimize);
+[mle, jcb] = stats.minimize(x0, like, [], opts);
 toc;
 
 figure(2);
-stats.plot_mle(mle, signal.t);
+stats.plot_mle(mle, model, b1, signal.t, sb);
+
 [G_po,R_po,s_po] = stats.cred_linear(jcb);
+tools.mle2table(mle, x_fields, 'SPO', s_po);
 
-
+%-{
 %-- Setup model w/ nuisance parameters -----------------------------------%
+prop0 = prop;  % save original struct
+prop = props.Props(prop);  % convert to Props
+
 theta_fields = {'dp0','alpha','Arho','Brho','Ccp','hvb','Tcr','Tg','Tb','CEmr'};
-theta0 = [mle,...
+theta0 = 0.9.*[mle,...
     prop.Arho,prop.Brho,prop.Ccp,prop.hvb,prop.Tcr,...
     prop.Tg,prop.Tb,prop.CEmr];
 sx_pr = [inf,inf,abs(theta0(3:end)).*0.05];
 sx_pr(end-1) = sx_pr(end-1)*0.1;
 sx_pr(end) = sx_pr(end-1)*2;
+theta0 = theta0'; sx_pr = sx_pr';
 htmodel_t = HTModel(prop,theta_fields,signal.t,signal,opts);
 smodel_t = SModel(prop,theta_fields,signal.t,signal.l,signal,htmodel_t,opts);
 bModel_t = @smodel_t.evaluateI;
 AModel_t = @smodel_t.evaluateIF;
 opts.minimize = 'vector-xpr';
-stats_t = Stats(AModel_t,bModel_t,opts,'sx_pr',sx_pr,'x_pr',theta0);
-stats_t.get_min_fun;
-% [mle_theta,jcb_theta] = stats_t.minimize(theta0);
 
+tic;
+[b1_t, Lb_t, sb_t] = stats.setup_b(bModel_t, 'default');
+like_t = stats.build_like(AModel_t, b1_t, Lb_t, opts.minimize);
+pr_t = stats.build_prior(theta0, diag(1 ./ sx_pr), opts.minimize);
+[mle_t, jcb_t] = stats.minimize(theta0, like_t, pr_t, opts);
+toc;
 
-%-- Uncertainties with nuisance parameters ---------------------------------%
-jcb_theta = stats_t.jacob_est(theta0);
-[G_theta,R_theta,s_theta] = stats_t.cred_linear(jcb_theta);
+figure(3);
+stats.plot_mle(mle_t, AModel_t, b1_t, signal.t, sb_t);
+
+[G_po_t,R_po_t,s_po_t] = stats.cred_linear(jcb_t);
+tools.mle2table(mle_t, theta_fields, ...
+    'SPO', s_po_t, 'SPR', sx_pr, 'X0', theta0);
+%}
+
 
 
 %{

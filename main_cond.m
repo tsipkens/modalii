@@ -1,9 +1,11 @@
 
 % MAIN_COND  A script demonstrating the different types of conduction.
-% AUHTOR: Timothy Sipkens, 2020-01-03
-% Run another script to generate a heat transfer model
-% s(e.g., in_house.main_apb17_Fe).
-%=========================================================================%
+%  
+%  Run another script to generate a heat transfer model
+%  s(e.g., in_house.main_apb17_Fe).
+%  
+%  AUTHOR: Timothy Sipkens, 2020-01-03
+% ________________________________________________________________________
 
 d_vec = logspace(log10(1e0), log10(1e7), 300);
 Tp = 2000;

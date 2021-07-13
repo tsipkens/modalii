@@ -1,5 +1,5 @@
 
-function prop = C(prop,opts)
+function prop = C(prop, opts)
 
 %-- Parse inputs ---------------------------------------------------------%
 if ~exist('prop','var'); prop = struct(); end

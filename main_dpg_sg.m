@@ -1,8 +1,8 @@
 
 % MAIN_DPG_SQ  Main script demonstrating inference of dpg and sg.
-% Timothy Sipkens, 2020-09-17
-%=========================================================================%
-
+%  
+%  AUTHOR: Timothy Sipkens, 2020-09-17
+% ________________________________________________________________________
 
 clear; close all; clc;
 addpath('cmap');
@@ -14,7 +14,7 @@ opts = [];
 opts.Em = 'default';
 % opts.abs = 'include';
 
-prop = props.exper_ldf;
+prop = props.x_ldf;
 prop = props.Ar(prop, opts);
 prop = props.C(prop, opts);
 
@@ -23,6 +23,8 @@ prop.Ti = 4150;
 prop.Tg = 298;
 
 x_fields = {'dp0', 'sigma'};
+xt = [25, log(1.5)];
+
 htmodel = HTModel(prop, x_fields, t, opts);
 smodel = SModel(prop, x_fields, t, l);
 smodel.htmodel = htmodel;
@@ -30,20 +32,28 @@ smodel.htmodel = htmodel;
 
 
 %-- Forward model --------------------------------------------------------%
+disp('Solving for temperatures ...');
 T = htmodel.de_solve(prop, (15:15:90)');
+tools.textdone(2);
 
-J = smodel.evaluateF([25, log(1.5)]);
+disp('Solving forward model ...');
+J = smodel.evaluateF(xt);
 J = J ./ max(J(:));
+tools.textdone(2);
 
+disp('Adding noise ...');
 rng(0); % for reproducible results
 J_noise = [];
 for ii=1:50
     J_noise(:,ii,:) = J + 2e-2 .* sqrt(J) .* randn(size(J)) + 1e-12;
 end
+tools.textdone(2);
 
 % Invert spectroscopy to generate "temperature data".
+disp('Inverting spectroscopy ...');
 smodel.J = J_noise;
 T_j = smodel.evaluateI([30, log(1.3)]);
+tools.textdone(2);
 %-------------------------------------------------------------------------%
 
 
@@ -68,19 +78,23 @@ b = @smodel.evaluateI;
 model = @smodel.evaluateIF;
 
 % Analysis
+disp('Solving general problem ...');
 tic;
-stats = Stats(model, b, opts);
-[mle, jcb] = stats.minimize(x0);
-disp('MLE = ');
-disp(mle);
-disp(' ');
+[b1, Lb, sb] = stats.setup_b(b, 'default');
+like_t = stats.build_like(model, b1, Lb);
+[mle, jcb] = stats.minimize(x0, like_t, []);
+tools.textdone(2);
 toc;
 
 figure(2);
-stats.plot_mle(mle);
+stats.plot_mle(mle, model, b1, t, sb);
 ylim([0,4500]);
 
+[G_po,R_po,s_po] = stats.cred_linear(jcb);
+tools.mle2table(mle, x_fields, 'SPO', s_po, 'XT', xt');
 
+
+%{
 %%
 % Evaluate likelihood on a grid for plotting.
 % Longer runtimes. 
@@ -187,6 +201,6 @@ hold off;
 %}
 
 
-
+%}
 
 

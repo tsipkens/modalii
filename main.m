@@ -1,4 +1,9 @@
 
+% MAIN  A general script to test models. 
+%  
+%  AUTHOR: Timothy Sipkens
+% ________________________________________________________________________
+
 clear;
 clc;
 addpath cmap;
@@ -11,7 +16,7 @@ opts = [];
 % opts.hv = 'constant';
 opts.Em = 'default'; %'Krishnan'; %'Mie-Krishnan';
 
-prop = props.exper_apb17_Fe;
+prop = props.x_apb17_Fe;
 prop = props.Ar(prop);
 
 prop = props.Fe(prop, opts);
