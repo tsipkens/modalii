@@ -1,8 +1,8 @@
 
 % MAIN_DPG_SQ  Main script demonstrating inference of dpg and sg.
-% Timothy Sipkens, 2020-09-17
-%=========================================================================%
-
+%  
+%  AUTHOR: Timothy Sipkens, 2020-09-17
+% ________________________________________________________________________
 
 clear; close all; clc;
 addpath('cmap');

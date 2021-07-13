@@ -1,7 +1,7 @@
 
 close all;
 clear;
-fprintf('/n/n-------------------------------------------------'); % clc;
+fprintf('\n\r\n\r_________________________________________________\n\r\n\r');
 
 opts.variance = 'independent';
 opts.deMethod = 'default';

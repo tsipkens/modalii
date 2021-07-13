@@ -1,7 +1,7 @@
 
 close all;
 clear;
-clc;
+fprintf('\n\r\n\r_________________________________________________\n\r\n\r');
 
 opts.variance = 'independent';
 opts.deMethod = 'default';
@@ -18,7 +18,7 @@ load('+in_house\AgAr_sig1.mat');
 % prop = Prop({['exper_apb17_',signal.matl],...
 %     [signal.gas],[signal.matl]},opts);
 
-prop = props.exper_apb17_Ag;
+prop = props.x_apb17_Ag;
 prop = eval(['props.', [signal.gas], '(prop, opts)']);
 prop = eval(['props.', [signal.matl], '(prop, opts)']);
 

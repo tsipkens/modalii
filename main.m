@@ -1,4 +1,9 @@
 
+% MAIN  A general script to test models. 
+%  
+%  AUTHOR: Timothy Sipkens
+% ________________________________________________________________________
+
 clear;
 clc;
 addpath cmap;
