@@ -37,7 +37,7 @@ This code contains two classes that are used to define the two heat transfer and
 
 ### 2.1 Heat transfer model (@HTModel)
 
-This class is designed to generate temperature decay curves, implementing several heat transfer submodels, shown schematically below..
+This class is designed to generate temperature decay curves, implementing several heat transfer submodels, shown schematically below.
 
 <p align="left">
   <img width="550" src="docs/heat_transfer_schematic.svg">
