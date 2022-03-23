@@ -17,6 +17,7 @@ end
 
 %-- Update x values in prop struct ---------------------------------------%
 [smodel, prop] = tools.update_prop(smodel, x);
+[htmodel, ~] = tools.update_prop(htmodel, x);
 %-------------------------------------------------------------------------%
 
 
