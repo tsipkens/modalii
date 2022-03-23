@@ -75,10 +75,10 @@ end
 switch htmodel.opts.ann % Default is none
     case {'include','Michelsen'}
         aa = [aa,'+htmodel.q_ann_Mich(prop,T,dp(mp,T),X)'];
-        htmodel.dXdt = @(t,T,mp,X) htmodel.dXdt_fun(@htmodel.Qann_Mich,prop,T,dp(mp,T),X);
+        htmodel.dXdt = @(t,T,mp,X) htmodel.dXdt_fun(@htmodel.q_ann_Mich,prop,T,dp(mp,T),X);
     case {'Sipkens'}
         aa = [aa,'+htmodel.q_ann_Sip(prop,T,dp(mp,T),X)'];
-        htmodel.dXdt = @(t,T,mp,X) htmodel.dXdt_fun(@htmodel.Qann_Sip,prop,T,dp(mp,T),X);
+        htmodel.dXdt = @(t,T,mp,X) htmodel.dXdt_fun(@htmodel.q_ann_Sip,prop,T,dp(mp,T),X);
     otherwise
         htmodel.dXdt = @(t,T,mp,X) 0;
 end
