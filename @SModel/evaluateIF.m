@@ -1,8 +1,10 @@
 
-% EVALAUTEIF  Evaluate forward and inverse model (htmodel -> J -> Teff). 
-% AUTHOR: Timothy Sipkens
-% NOTE: Used to incorporate polydispersity into forward model. 
-%=========================================================================%
+% EVALAUTEIF  Evaluate forward and inverse model (htmodel -> J -> Teff).
+%  NOTE: Used to incorporate polydispersity into forward model.
+%  
+%  T = SModel.evaluateIF(X) uses the QoI, X, to evaluate the model.
+%  
+%  AUTHOR: Timothy Sipkens
 
 function [Tout] = evaluateIF(smodel, x)
 
