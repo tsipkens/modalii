@@ -96,9 +96,11 @@ str_p00 = [repmat(' ', [1, 3-length(str_p00)]), str_p00];  % pad with necessary 
 
 
 % Format text for middle of the bar.
+fb = sprintf(strrep('\u2588', '\u', '\x'));  % full block
+lh = sprintf(strrep('\u258C', '\u', '\x'));  % left half block
 nc = ceil(pct * n_dot);  % number of completed elements
-str_p01 = repmat('█', [1, nc]);  % completed portion of bar
-if ((nc - pct * n_dot) > 0.5); str_p01(end) = '▌'; end  % allow for half blocks
+str_p01 = repmat(fb, [1, nc]);  % completed portion of bar
+if ((nc - pct * n_dot) > 0.5); str_p01(end) = lh; end  % allow for half blocks
 str_p02 = repmat(' ', [1, n_dot-nc]);  % uncompleted portion of bar
 
 
