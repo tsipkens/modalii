@@ -1,13 +1,11 @@
 
-% Q_ANN_MICH Implementation of annealing rate calculation from Michelsen, 2003. 
-% Author: Timothy Sipkens
-%=========================================================================%
+% Q_ANN_MICH Implementation of annealing rate calculation from Michelsen (2003). 
+%   
+%  AUTHOR: Timothy Sipkens
 
-function [q,dXdt] = q_ann_Mich(htmodel,prop, T, dp, X)
-
+function [q,dXdt] = q_ann_Mich(htmodel, prop, T, dp, X)
 
 dp = dp.*1e-9;  % convert to meters so everything is in SI units
-prop = htmodel.prop;
 Na = 6.0221409e23;  % Avagadro's number
 Np = dp .^ 3 .* pi .* prop.rho(T) ./ 6 ./ prop.M .* Na;  % number of atoms in nanoparticle
 Xd = 0.01;  % initial defect density

@@ -81,7 +81,7 @@ classdef HTModel
         
         
         %-- Heat transfer evaluation functions ---------------------------%
-        [Tout] = evaluate(htmodel, x); % evaluates selected model at x, outputting temperature
+        [T, mpo, Xo] = evaluate(htmodel, x);
         [Tout, dpo, mpo, Xo] = de_solve(htmodel, prop, dp); % solves ode at a specified particle size
         [htmodel, dTdt, dmdt] = de_build(htmodel); % determines governing equation and stores in dTdt
         %-----------------------------------------------------------------%
@@ -95,7 +95,7 @@ classdef HTModel
         [q, Cabs] = q_abs(htmodel, prop, T, dp); % evaluates the absorbed laser energy at specified parameters
         [q, dXdt] = q_ann_Mich(htmodel, prop, T, dp,X); % evaluates Michelsen's annealing model
         [q, dXdt] = q_ann_Sip(htmodel, prop, T, dp,X); % evaluates in house annealing model
-        [dXdt] = dXdt_fun(htmodel,q_ann,T,dp,X); % evaluates dXdt, second output from q_ann
+        [dXdt] = dXdt_fun(htmodel,q_ann,prop,T,dp,X); % evaluates dXdt, second output from q_ann
         %-----------------------------------------------------------------%
         
         

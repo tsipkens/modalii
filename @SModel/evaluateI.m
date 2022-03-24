@@ -1,9 +1,11 @@
 
 % EVALAUTEI  Bridge function to evaluate spectroscopic inverse model (J > T). 
-% AUTHOR: Timothy Sipkens
-%=========================================================================%
+%  
+%  T = SModel.evaluateI(X) uses the QoI, X, to evaluate the model.
+%  
+%  AUTHOR: Timothy Sipkens
 
-function [Tout] = evaluateI(smodel, x)
+function [T] = evaluateI(smodel, x)
 
 J = smodel.J; % local copy of stored incandescence
 
@@ -13,7 +15,7 @@ J = smodel.J; % local copy of stored incandescence
 %-------------------------------------------------------------------------%
 
 
-Tout = smodel.IModel(prop, J); % call IModel function
+T = smodel.IModel(prop, J); % call IModel function
 
 end
 

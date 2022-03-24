@@ -1,7 +1,13 @@
 
 % IMODEL  Evaluates the inverse spectroscopic model (using some form of pyrometry).
-% AUTHOR: Timothy Sipkens
-%=========================================================================%
+%  
+%  T = SModel.IModel(PROP, J) uses the properties in PROP and incandescence
+%  in J to compute temperatures for the given spectroscopic model. 
+%  
+%  NOTE: Uses SModel.opts.pyrometry to switch between evaluation methods.
+%  NOTE: Additional outputs are available. 
+%  
+%  AUTHOR: Timothy Sipkens
 
 function [Tout, Ti, Cout, s_T, out] = IModel(smodel, prop, J)
 

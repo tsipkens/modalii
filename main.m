@@ -2,10 +2,11 @@
 % MAIN  A general script to test models. 
 %  
 %  AUTHOR: Timothy Sipkens
-% ________________________________________________________________________
 
 clear;
 clc;
+close all;
+
 addpath cmap;
 tic;
 
@@ -35,19 +36,27 @@ htmodel = HTModel(prop, x_fields, t, opts);
 smodel = SModel(prop, x_fields, t, l);
 smodel.htmodel = htmodel;
 toc;
+disp('Completed setup.');
+disp(' ');
 
+disp('Getting temperature decays.');
 tic;
 T = htmodel.de_solve(prop, (15:15:90)');
 toc;
+disp(' ');
 
+disp('Computing incandescence.');
 tic;
 J = smodel.evaluateF(30);
 toc;
+disp(' ');
 
+disp('Inverting sprectroscopic model for temperature.');
 tic;
 smodel.J = J;
 T_j = smodel.evaluateI(30);
 toc;
+disp(' ');
 
 figure(2);
 plot(t, squeeze(J));
@@ -59,5 +68,3 @@ hold on;
 plot(t, T_j, 'w:');
 hold off;
 xlim([min(t), max(t)]);
-
-toc;

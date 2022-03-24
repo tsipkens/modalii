@@ -1,9 +1,13 @@
 
-% EVALAUTEF  Evaluate spectroscopic forward model (T/htmodel -> J). 
-% AUTHOR: Timothy Sipkens
-%=========================================================================%
+% EVALUATEF  Evaluate spectroscopic forward model (T/htmodel -> J). 
+%  
+%  JOUT = SModel.evaluateF(X) evaluates the spectroscopic model for
+%  a given set of QoI, X. Temperature if computed via the embedded heat 
+%  transfer model. Output is a scaled incandescence, JOUT.
+%  
+%  AUTHOR: Timothy Sipkens
 
-function [Jout,mp] = evaluateF(smodel, x)
+function [Jout, mp] = evaluateF(smodel, x)
 
 htmodel = smodel.htmodel; % embedded heat transfer model
 
@@ -13,6 +17,7 @@ end
 
 %-- Update x values in prop struct ---------------------------------------%
 [smodel, prop] = tools.update_prop(smodel, x);
+[htmodel, ~] = tools.update_prop(htmodel, x);
 %-------------------------------------------------------------------------%
 
 
@@ -43,14 +48,14 @@ if prop.sigma > 0.005 % currently models with lognormal
 %   If the distribution is narrow enough, skip integration over 
 %   size distribution and evaluate temperature directly (much faster).
 else % for monodisperse case, simply evaluate the ODE directly
-    [T,~,mp] = htmodel.de_solve(prop, prop.dp0); % solve heat transfer model at dp0
+    [T, ~, mp] = htmodel.de_solve(prop, prop.dp0); % solve heat transfer model at dp0
     
     Jout = smodel.FModel(prop, T, prop.Em); % evaluate forward model for J
-    Jout = Jout.*prop.C_J; % scale incandescence by corresponding factor
+    Jout = Jout .* prop.C_J; % scale incandescence by corresponding factor
     
-    if strcmp(smodel.opts.multicolor,'constC-mass') % scale incandescence according to mass loss
-        mpr = real(mp./mp(1));
-        Jout = bsxfun(@times,Jout,mpr);
+    if strcmp(smodel.opts.multicolor, 'constC-mass') % scale incandescence according to mass loss
+        mpr = real(mp ./ mp(1));
+        Jout = bsxfun(@times, Jout, mpr);
     end
     
 end
