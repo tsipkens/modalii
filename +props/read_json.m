@@ -4,7 +4,7 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2021-04-20
 
-function results = read_json(file)
+function s = read_json(file)
 
 fid = fopen(file);
 raw = fread(fid, inf);  % raw file contents
@@ -16,17 +16,17 @@ str = erase(erase(eraseBetween( ...
     erase(eraseBetween(str, "//", newline), "//"), ...
     "/*", "*/"), "/*"), "*/");
 
-results = jsondecode(str);
+s = jsondecode(str);
 
 % Attempt to interpret Matlab expressions.
-f_results = fields(results);
-for ii=1:length(f_results)
-    t0 = results.(f_results{ii});
+fiel = fields(s);
+for ii=1:length(fiel)
+    t0 = s.(fiel{ii});
     
     if isa(t0, 'char')
         [converted, success] = str2num(t0);
         if success
-            results.(f_results{ii}) = converted;
+            s.(fiel{ii}) = converted;
         end
     end
 end

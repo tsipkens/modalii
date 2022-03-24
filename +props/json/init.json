@@ -24,15 +24,7 @@
         "pv": "default",
         "mv": "default",
         "propmodel": "default"
-        }, 
+        }
     /*------------------------------*/
-    
-    "if": true, 
-    "then": {
-        "a": "@(x)self.phi .* 2"
-    }, 
-    "else": {
-        "a": "@(x)self.phi .* 1"
-    }
 
 }

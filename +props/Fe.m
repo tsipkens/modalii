@@ -7,7 +7,7 @@ function prop = Fe(prop, opts)
 
 %-- Parse inputs ---------------------------------------------------------%
 if ~exist('prop', 'var'); prop = []; end
-if isempty(prop); prop = prop.init(); end
+if isempty(prop); prop = props.init(); end
 
 if ~exist('opts', 'var'); opts = struct(); end
 if ~isfield(opts, 'rho'); opts.rho = 'default'; end
