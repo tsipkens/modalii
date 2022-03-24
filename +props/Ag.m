@@ -1,7 +1,6 @@
 
 % AG Define properties for silver particles
-% Author: Timothy Sipkens, 2019-11-03
-%=========================================================================%
+%  AUTHOR: Timothy Sipkens, 2019-11-03
 
 function prop = Ag(prop,opts)
 
