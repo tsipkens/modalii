@@ -18,7 +18,7 @@ tlp = prop.tlp * 1e-9; % convert from ns to s
 tlm = prop.tlm * 1e-9; % convert from ns to s
 t = t .* 1e-9; % convert from ns to s
 
-F1 = (prop.F0') * (100*100); % laser fluence, [J/m2]
+F1 = (prop.F0') .* (100*100); % laser fluence, [J/m2]
     % Note: the above includes conversion from [J/cm2]
 
 % Evaluate absorption cross section.

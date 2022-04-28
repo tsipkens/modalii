@@ -77,4 +77,4 @@ hold off;
 
 
 
-% [Fref, Tref] = fluence.calcTransition(prop);  % requires lambertw function
+[Fref, Tref] = fluence.calcTransition(prop);  % requires lambertw function

@@ -22,11 +22,19 @@ Further details will be added at a later date.
 
 Note that times are defined relative to the center of the laser pulse intensity (or the peak of the signals, if heating/absorption is not modeled). This allows modeling of the initial portion of the temperature decay for polydisperse particle size distributions. In these cases, this allows for modeling of the later portion of the signals, while ignoring anomalous cooling at the beginning of some signals (e.g., molybdenum or some carbon cases). 
 
-## 1. Upper directory and main\*.m scripts
+## 1. Data structure
+
+Data, including temperatures and incandescence intensities, are generally structured with: 
+
+1. time in the first dimension; 
+2. repeats to be used for statistics in the second dimension; and, 
+3. specific to intensities, wavelength in the third dimension.
+
+## 2. Upper directory and main\*.m scripts
 
 Throughout the program, `main*.m` scripts are used to create instances of the classes and perform the analysis of LII signals. 
 
-## 2. Classes
+## 3. Classes
 
 The typical, overall TiRe-LII analysis procedure is shown schematically below. 
 
@@ -37,7 +45,7 @@ The typical, overall TiRe-LII analysis procedure is shown schematically below.
 
 This code contains two classes that are used to define the two heat transfer and spectroscopic components of the overall TiRe-LII model. 
 
-### 2.1 Heat transfer model (@HTModel)
+### Heat transfer model (@HTModel)
 
 This class is designed to generate temperature decay curves, implementing several heat transfer submodels, shown schematically below.
 
@@ -65,7 +73,7 @@ The inputs to the instructor method are as follows:
 
 The two key methods for evaluating the heat transfer model are the `evaluate` and `de_solve` methods. The `de_solve` method solves the ODEs without altering the default physical properties. In contrast, the `evaluate` method solves the ODEs for a vector of property values given by the `x` input to the method. The latter is particularly useful in optimization scenerio.
 
-### 2.2 Spectroscopic model (@SModel)
+### Spectroscopic model (@SModel)
 
 This class is design to simulate incandescence from a temperature trace, incorporating blackbody radiation and the optical properties. Methods exist to both forward and backward (i.e. pyrometry) calculations.
 
@@ -77,7 +85,7 @@ smodel = SModel(prop, x_fields, t, l);
 
 The inputs are largely the same as the `HTModel` class, but with an added `l` argument that defines the wavelengths relevant to the experiment.
 
-## 3. Packages
+## 4. Packages
 
 Program-specific packages bundle similar functions. Packages functions are contained in folders starting with the **+** symbol and are accessed by starting the function call with the folder name (excluding the "+" symbol).
 
@@ -85,7 +93,7 @@ Program-specific packages bundle similar functions. Packages functions are conta
 
 This class contains the thermosphysical, optical, and other model parameters to be used in evaluating both the spectroscopic and heat transfer models. These parameters are also the ones that can be selected as dependent variables when creating instances of the `HTModel` and `SModel` classes. 
 
-> NOTE: This package replaces the @Prop class in previous versions to allow for more dynamic/flexible structures.
+> NOTE: This package replaces the @Prop class in previous versions to allow for more dynamic/flexible structures. Properties are now containing in MATLAB structures, coupled with the **+props** package, which replaces the method in the original class. 
 
 Some basic naming conventions are as follows: 
 

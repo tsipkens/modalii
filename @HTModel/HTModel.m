@@ -1,22 +1,22 @@
 
 % HTMODEL  Class definition for the TiRe-LII heat transfer model.
-%  The htmodel.evaluate([...]) function is then to be used to evaluate the 
+%  The htmodel.evaluate(...) function is then to be used to evaluate the 
 %  heat transfer model for the fields specified by x. 
 %  
-%  htmodel = HTModel(PROP, [], T) creates a heat transfer model using the
+%  htmodel = HTModel(PROP, [], t) creates a heat transfer model using the
 %  default options, the material and experimental properties in PROP, 
-%  and at the times specified by vector T. The model is to be evaluated by 
+%  and at the times specified by vector t. The model is to be evaluated by 
 %  providing a primary particle diameter (i.e., this is equivalent to 
 %  X = 'dp0') using htmodel.evaluate(dp0). 
 %  
-%  htmodel = HTModel(PROP, X, T) evaluates the heat transfer model, as
+%  htmodel = HTModel(PROP, X, t) evaluates the heat transfer model, as
 %  above, but allows for evaluation at the properties named in X. For
 %  example, X = {'dp0', 'alpha'} will create a model that is a funciton of
 %  primary particle size and thermal accommodation coefficient (e.g.,
 %  htmodel.evaluate([30, 0.5]) will then evaluate the heat transfer model
 %  at dp0 = 30 and alpha = 0.5. Most fields in PROP can be specified in X.
 %  
-%  htmodel = HTModel(PROP, X, T, OPTS) add an options structure that
+%  htmodel = HTModel(PROP, X, t, OPTS) add an options structure that
 %  controls the nature of the heat transfer model. For example, 
 %  OPTS.abs = 'include' will add an laser absorption mode to the model. For
 %  the list of fields, see the class properties in the HTModel.m file.

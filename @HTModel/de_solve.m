@@ -11,7 +11,6 @@
 %   dpo     Time-resolved nanoparticle diameter, same format as above, [nm]
 %   mpo     Time-resolved nanoparticle mass, same format as above, [fraction]
 %   Xo      Time-resolved anneealed fraction, same format as above, [fraction]
-%=========================================================================%
 
 function [Tout, dpo, mpo, Xo] = de_solve(htmodel, prop, dp0)
 
@@ -137,7 +136,7 @@ end
 
 dpo = ((6.*mpo) ./ (prop.rho(Tout).*pi)) .^ (1/3) .* 1e9;
     % calculate diameter over time
-mpo = mpo./mpo(1); % output relative change in particle mass over time
+mpo = mpo ./ mpo(1); % output relative change in particle mass over time
 %-------------------------------------------------------------------------%
 
 end
