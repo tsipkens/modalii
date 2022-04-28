@@ -6,7 +6,7 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2017
 
-function [Tout, Cout, s_T, out] = calcRatioPyrometry(smodel,J1,J2)
+function [To, Co, s_T, out] = calcRatioPyrometry(smodel,J1,J2)
 
 l = smodel.l;  % local copy
 if length(l) > 2  % check the number of wavelengths
@@ -18,26 +18,26 @@ Jr = J1 ./ J2;  % ratio of incandescences
 
 
 %-- Basic ratio calculation ----------------------------------------------%
-Tout = (0.0143877696 * (1/(l(2)*1e-9) - 1/(l(1)*1e-9))) ./ ...
+To = (0.0143877696 * (1/(l(2)*1e-9) - 1/(l(1)*1e-9))) ./ ...
     log(Jr .* (((l(1)/l(2))^6) / Emr)); % phi=0.0143...
-Tout = real(Tout);
+To = real(To);
     % Note: Imaginary values result from negative values in J matrices
-s_T = std(Tout,[],2);
+s_T = std(To,[],2);
 
 
 %-- Calculate scaling constant -------------------------------------------%
-Cout = bsxfun(@rdivide,J2,...
-    (smodel.blackbody(Tout,l(end)).*smodel.prop.Em(l(end),smodel.prop.dp0)./...
+Co = bsxfun(@rdivide,J2,...
+    (smodel.blackbody(To,l(end)).*smodel.prop.Em(l(end),smodel.prop.dp0)./...
     (l(end)*1e-9.*smodel.data_sc)));
 out = [];
-out.s_C = std(Cout,[],2);
+out.s_C = std(Co,[],2);
 
 
 %-- Calculate correlation ------------------------------------------------%
-ntime = length(Tout(:,1));
+ntime = length(To(:,1));
 r_TC = zeros(ntime,1);
 for ii=1:ntime
-    r_TC(ii) = corr(Cout(ii,:)',Tout(ii,:)');
+    r_TC(ii) = corr(Co(ii,:)',To(ii,:)');
 end
 out.r_TC = r_TC;
 

@@ -13,7 +13,6 @@
 function [q,Cabs] = q_abs(htmodel, prop, t, dp)
 
 dp = dp .* 1e-9; % convert to meters so everything is in SI units
-prop = htmodel.prop; % make local copy of prop struct
 tlp = prop.tlp * 1e-9; % convert from ns to s
 tlm = prop.tlm * 1e-9; % convert from ns to s
 t = t .* 1e-9; % convert from ns to s
@@ -51,7 +50,7 @@ switch htmodel.opts.laserprofile
 end
 %-------------------------------------------------------------------------%
 
-q = Cabs.*f(t); % evaluate rate of energy uptake
+q = Cabs .* f(t); % evaluate rate of energy uptake
 
 end
 
