@@ -37,15 +37,16 @@ disp(' ');
 
 
 nf = 60;
-F0_vec = linspace(0.0005, 0.35, nf);
+F0_vec = linspace(0.0005, 1, nf);
+dp = 100;
 
 T = [];  J1 = [];  J2 = [];
 disp('Computing temperature decays:');
 tools.textbar([0, nf]);
 for ii=1:length(F0_vec)
-    [T(:,ii), m(:,ii)] = htmodel.evaluate([30, F0_vec(ii), 1]);
+    [T(:,ii), m(:,ii)] = htmodel.evaluate([dp, F0_vec(ii), 1]);
 
-    Jt = smodel.evaluateF([30, F0_vec(ii), 1]);
+    Jt = smodel.evaluateF([dp, F0_vec(ii), 1]);
     J1(:,ii) = Jt(:,1,1);  % choose first wavlength
     J2(:,ii) = Jt(:,1,1);  % choose second wavlength
 
@@ -58,8 +59,15 @@ figure(1);
 cmap_sweep(nf, flipud(internet));
 plot(t, T);
 
+Tlow = 10000 * 6 * pi * prop.Eml(dp) / ...
+    (prop.l_laser * 1e-9 * prop.rho(1e3) * prop.cp(1e3)) ...
+    .* F0_vec + prop.Tg;
+
 figure(2);
 plot(F0_vec, max(T));
+hold on;
+plot(F0_vec, Tlow)
+hold off;
 
 figure(3);
 plot(F0_vec, max(J1));
