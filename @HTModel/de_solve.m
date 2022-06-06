@@ -97,7 +97,7 @@ switch htmodel.opts.deMethod
             case {'include', 'Michelsen', 'Sipkens'}
                 Xo = yo(:, 2*Nd + 1:3*Nd);
             otherwise
-                Xo = [];
+                Xo = zeros(size(Tout));
         end
         
     case 'Euler' % implementation of simple Euler integration
