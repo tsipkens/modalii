@@ -1,13 +1,11 @@
 
 # Modular analysis of LII signals (wat-lii)
 
-[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
-
-> NOTE: This code is still under construction and should be considered experimental.
+> NOTE: This code is an experimental code.
 
 This is modular program to model and analyze time-resolved laser-induced incandescence (TiRe-LII) signals, developed at the University of Waterloo.
 
-This program is built to simulate signals from various materials, including soot, silicon, germanium, iron, silver, and molybdenum. Signals are generated predominantly using absorption, conduction, and evaporation submodels, with capabilities to do other cooling modes. A typical TiRe-LII apparatus is shown below. 
+This program is built to simulate signals from various materials, including soot, silicon, germanium, iron, silver, and molybdenum. Signals are generated predominantly using absorption, conduction, and evaporation submodels, with capabilities to do other cooling modes. A typical TiRe-LII apparatus is shown below ([Sipkens, 2017][SipkensThesis]; [Sipkens et al., 2022][SipkensReview]). 
 
 <p align="left">
   <img width="500" src="docs/tirelii_schematic.svg">
@@ -36,7 +34,7 @@ Throughout the program, `main*.m` scripts are used to create instances of the cl
 
 ## 3. Classes
 
-The typical, overall TiRe-LII analysis procedure is shown schematically below. 
+The typical, overall TiRe-LII analysis procedure is shown schematically below  ([Sipkens, 2017][SipkensThesis]). 
 
 <p align="left">
   <img width="320" src="docs/models_structure.svg">
@@ -47,7 +45,7 @@ This code contains two classes that are used to define the two heat transfer and
 
 ### Heat transfer model (@HTModel)
 
-This class is designed to generate temperature decay curves, implementing several heat transfer submodels, shown schematically below.
+This class is designed to generate temperature decay curves, implementing several heat transfer submodels, shown schematically below  ([Sipkens, 2017][SipkensThesis]; [Sipkens et al., 2022][SipkensReview]).
 
 <p align="left">
   <img width="550" src="docs/heat_transfer_schematic.svg">
@@ -119,12 +117,17 @@ The data package is available to filter or otherwise process TiRe-LII signals. F
 
 ### License
 
-This software is licensed under an MIT license (see the corresponding file for details).
+This software is licensed under an GPL-3.0 license (see the corresponding file for details).
 
 ### Contributions and acknowledgements
 
 The primary author of the code is Timothy A. Sipkens, who can be emailed at  [tsipkens@uwaterloo.ca](mailto:tsipkens@uwaterloo.ca), and based around the corresponding thesis:
 
-> [Sipkens, T. A. (2018). Advances in the Modeling of Time-Resolved Laser-Induced Incandescence. PhD Thesis. University of Waterloo](https://uwspace.uwaterloo.ca/handle/10012/13860).
+> [Sipkens, T. A. (2018). Advances in the Modeling of Time-Resolved Laser-Induced Incandescence. PhD Thesis. University of Waterloo][SipkensThesis].
 
-The code was developed at the University of Waterloo. Kyle Daun contributed significantly to the ideas summarized in this code. 
+The code was developed at the University of Waterloo with modifications made during tenures at the University of British Columbia and National Research Council. Kyle Daun contributed significantly to the ideas summarized in this code. 
+
+
+[SipkensThesis]:https://uwspace.uwaterloo.ca/handle/10012/13860
+
+[SipkensReview]:https://doi.org/10.1007/s00340-022-07769-z
