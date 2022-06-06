@@ -63,10 +63,10 @@
         <path d="M1203 800.9 1215.25 800.9 1215.25 261 1239.75 261 1239.75 800.9 1252 800.9 1227.5 845Z"
             stroke="#000000" stroke-width="2" stroke-miterlimit="8" fill="#D9D9D9" fill-rule="evenodd" /><text
             font-family="Roboto Light,Roboto Light_MSFontService,sans-serif" font-weight="300" font-size="32"
-            transform="matrix(6.12323e-17 1 -1 6.12323e-17 1257.4 411)">Forward problem</text>
+            transform="matrix(6.12323e-17 1 -1 6.12323e-17 1257.4 411)">Inverse problem</text>
         <path d="M0 539.9 12.2498 539.9 12.2498 0 36.7502 0 36.7502 539.9 49 539.9 24.5003 584Z" stroke="#000000"
             stroke-width="2" stroke-miterlimit="8" fill="#D9D9D9" fill-rule="evenodd"
             transform="matrix(1 0 0 -1 585 845)" /><text
             font-family="Roboto Light,Roboto Light_MSFontService,sans-serif" font-weight="300" font-size="32"
-            transform="matrix(-1.83697e-16 -1 1 -1.83697e-16 575.513 644)">Inverse problem</text></g>
+            transform="matrix(-1.83697e-16 -1 1 -1.83697e-16 575.513 644)">Forward problem</text></g>
 </svg>
