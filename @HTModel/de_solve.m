@@ -11,7 +11,6 @@
 %   dpo     Time-resolved nanoparticle diameter, same format as above, [nm]
 %   mpo     Time-resolved nanoparticle mass, same format as above, [fraction]
 %   Xo      Time-resolved anneealed fraction, same format as above, [fraction]
-%=========================================================================%
 
 function [Tout, dpo, mpo, Xo] = de_solve(htmodel, prop, dp0)
 
@@ -52,18 +51,20 @@ end
 %   Note: Switch chooses whether to couple three ODEs to also solve to the
 %   annealed fraction or to only conisder two couples ODEs.
 switch htmodel.opts.ann % whether to solve for annealed fraction
-    case {'include','Michelsen','Sipkens'}
-        dydt = @(t,y)real([htmodel.dTdt(t,y(1:Nd),abs(y(Nd+1:2*Nd))./mass_conv,y(2*Nd+1:3*Nd)).*1e-9;...
-            htmodel.dmdt(t,y(1:Nd),abs(y(Nd+1:2*Nd))./mass_conv,y(2*Nd+1:3*Nd)).*mass_conv.*1e-9;...
-            htmodel.dXdt(t,y(1:Nd),abs(y(Nd+1:2*Nd))./mass_conv,y(2*Nd+1:3*Nd)).*1e-9]);
-        yi = [Ti;mpi;Xi];
+    case {'include', 'Michelsen', 'Sipkens'}
+        dydt = @(t, y) real( ...
+            [htmodel.dTdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv, y(2*Nd+1:3*Nd)) .* 1e-9;...
+             htmodel.dmdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv, y(2*Nd+1:3*Nd)) .* mass_conv .* 1e-9;...
+             htmodel.dXdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv, y(2*Nd+1:3*Nd)) .* 1e-9]);
+        yi = [Ti; mpi; Xi];
     otherwise
-        dydt = @(t,y)real([htmodel.dTdt(t,y(1:Nd),abs(y(Nd+1:2*Nd))./mass_conv).*1e-9;...
-            htmodel.dmdt(t,y(1:Nd),abs(y(Nd+1:2*Nd))./mass_conv).*mass_conv.*1e-9]);
+        dydt = @(t, y) real( ...
+            [htmodel.dTdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv) .* 1e-9; ...
+             htmodel.dmdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv) .* mass_conv .* 1e-9]);
                 % Reframe dydt for ode solver, added real function
                 %   added abs(y(2)) to force positive mass
                 %   .*1e-9 is to convert denominator of dydt to ns for solver 
-        yi = [Ti;mpi];
+        yi = [Ti; mpi];
 end
 %-------------------------------------------------------------------------%
 
@@ -72,7 +73,7 @@ end
 %   Note: Two solver methods are available: the built-in Runge-Kutta solver
 %   from MATLAB or a simple implementation of Euler's method. 
 switch htmodel.opts.deMethod
-    case {'default','ode23s'} % use MATLAB Runge-Kutta solver
+    case {'default', 'ode23s'} % use MATLAB Runge-Kutta solver
         
         if strcmp(htmodel.opts.abs,'include')
                 % limit step size to ensure solver sees absorption
@@ -93,7 +94,7 @@ switch htmodel.opts.deMethod
         mpo = yo(:,Nd+1:2*Nd)./mass_conv;
         
         switch htmodel.opts.ann % consider percentage annealed variable
-            case {'include','Michelsen','Sipkens'}
+            case {'include', 'Michelsen', 'Sipkens'}
                 Xo = yo(:, 2*Nd + 1:3*Nd);
             otherwise
                 Xo = [];
@@ -135,7 +136,7 @@ end
 
 dpo = ((6.*mpo) ./ (prop.rho(Tout).*pi)) .^ (1/3) .* 1e9;
     % calculate diameter over time
-mpo = mpo./mpo(1); % output relative change in particle mass over time
+mpo = mpo ./ mpo(1); % output relative change in particle mass over time
 %-------------------------------------------------------------------------%
 
 end

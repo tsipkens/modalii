@@ -1,7 +1,13 @@
 
 % SMODEL  Class for the spectroscopic model and pyrometry calculations.
-% AUTHOR: Timothy Sipkens, 2017
-%=========================================================================%
+%  
+%  smodel = SMODEL(PROP, X, t, L) generates a spectroscopic model for the
+%  parameters given in the cell, X, and for the material properties in
+%  PROP, the times in t, and the wavelengths in L. 
+%  
+%  ------------------------------------------------------------------------
+%  
+%  AUTHOR: Timothy Sipkens, 2017
 
 classdef SModel
     
@@ -25,39 +31,14 @@ classdef SModel
     
     methods
         %-- Constructor method -------------------------------------------%
-        function smodel = SModel(prop,x,t,l,varargin)
+        function smodel = SModel(prop, x, t, l, varargin)
             smodel.prop = prop;
             smodel.x = x;
             smodel.t = t;
             smodel.l = l;
             
-            %-- Parse additional innputs ---------------------%
-            ii = 1;
-            while ii<=length(varargin)
-                if isa(varargin{ii},'Signal') % derive paramters from signal
-                    smodel.J = varargin{ii}.data;
-                    ii = ii+1;
-                    
-                elseif isa(varargin{ii},'HTModel') % derive paramters from heat transfer model
-                    smodel.htmodel = varargin{ii};
-                    ii = ii+1;
-                    
-                elseif isprop(smodel,varargin{ii}) % manually set property
-                    smodel.(varargin{ii}) = varargin{ii+1};
-                    ii = ii+2; % skip an input
-                    
-                else  % incorporate opts variable
-                    aa = fieldnames(varargin{ii});
-                    bb = varargin{ii};
-                    for jj = 1:length(aa)
-                        if isfield(smodel.opts,aa{jj})
-                            smodel.opts.(aa{jj}) = bb.(aa{jj});
-                        end
-                    end
-                    ii = ii+1;
-                    
-                end
-            end
+            % Handle additional options (see function in tools package).
+            smodel = tools.parse_varargin(smodel, varargin{:});
             
             T_sc = 3000; % temperature used for scaling/stability, [K]
             smodel.data_sc = smodel.blackbody(T_sc,1064).*...
@@ -71,16 +52,16 @@ classdef SModel
         %-----------------------------------------------------------------%
         
         %-- Modeling functions -------------------------------------------%
-        [Jout] = FModel(smodel, prop, T, Em) % calculates J given T, Em is function handle
-        [Tout,Ti,Cout,s_T,s_C,r_T,resid,oth] = IModel(smodel, prop, J) % solve inverse model for temperature
-        [Tout,Cout,s_T,out] = calcSpectralFit(smodel,J) % spectral fitting with sequential inference
-        [Tout,Cout,s_T,out] = calcSpectralFit_all(smodel,J) % spectral fitting with simulatneous inference
-        [Tout,Cout,s_T,out] = calcRatioPyrometry(smodel,J1,J2) % ratio pyrometry evaluation, corr. calc. included
+        [Jo] = FModel(smodel, prop, T, Em) % calculates J given T, Em is function handle
+        [To,Ti,Co,s_T,s_C,r_T,resid,oth] = IModel(smodel, prop, J) % solve inverse model for temperature
+        [To,Co,s_T,out] = calcSpectralFit(smodel,J) % spectral fitting with sequential inference
+        [To,Co,s_T,out] = calcSpectralFit_all(smodel,J) % spectral fitting with simulatneous inference
+        [To,Co,s_T,out] = calcRatioPyrometry(smodel,J1,J2) % ratio pyrometry evaluation, corr. calc. included
         
         %-- Evaluate functions, take and update x ------------------------%
-        [Tout] = evaluateI(smodel, x) % evaluate inverse model at x, given J in SModel
-        [Tout] = evaluateIF(smodel, x) % evaluate inverse and forward model at x, given T in Smodel
-        [Jout,mp] = evaluateF(smodel, x) % evaluate forward model at x
+        [To,Co] = evaluateI(smodel, x, J) % evaluate inverse model at x, given J in SModel
+        [To,Jo] = evaluateIF(smodel, x) % evaluate inverse and forward model at x, given T in Smodel
+        [Jo,mp] = evaluateF(smodel, x) % evaluate forward model at x
         
         %-- Plotting functions -------------------------------------------%
         [] = plotI(smodel,T,C,J,n) % Plots data vs fit of inverse procedure

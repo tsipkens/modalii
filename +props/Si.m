@@ -2,8 +2,6 @@
 % SI  Define properties for silicon particles
 %  
 %  AUTHOR: Timothy Sipkens, 2019-11-03
-%  
-% _________________________________________________________________________
 
 function prop = Si(prop, opts)
 

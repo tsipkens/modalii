@@ -1,4 +1,4 @@
-function [Tout,Cout,s_T,out] = calcSpectralFit_all(smodel,J)
+function [To, Co, s_T,out] = calcSpectralFit_all(smodel,J)
 % Spectral fitting, simultaneously
 
 prop = smodel.prop;
@@ -63,18 +63,18 @@ out.resid = sqrt(sum(reshape(...
 
 switch smodel.opts.multicolor
     case {'default','priorC-smooth'}
-        Tout = mle((ntime+1):end);
-        Cout = mle(1:ntime);
+        To = mle((ntime+1):end);
+        Co = mle(1:ntime);
         out.s_T = sqrt(diag(G_T((ntime+1):end,(ntime+1):end)));
         out.s_C = sqrt(diag(G_T(1:ntime,1:ntime)));
         R_TC = corrcov(G_T);
         out.r_TC = diag(R_TC,ntime+1);
     case {'constC','constC-mass'}
-        Tout = mle(2:end);
+        To = mle(2:end);
         if strcmp('constC-mass',smodel.opts.multicolor); 
-            Cout = mle(1).*ones(ntime,1).*Mt;
+            Co = mle(1).*ones(ntime,1).*Mt;
         else
-            Cout = mle(1).*ones(ntime,1);
+            Co = mle(1).*ones(ntime,1);
         end
         s_T = sqrt(diag(G_T(2:end,2:end)));
         out.s_C = sqrt(G_T(1,1));

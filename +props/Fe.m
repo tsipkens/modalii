@@ -2,13 +2,12 @@
 % FE  Define properties for iron particles, with mutliple options.
 %  
 %  AUTHOR: Timothy Sipkens, 2019-11-03
-% _________________________________________________________________________
 
 function prop = Fe(prop, opts)
 
 %-- Parse inputs ---------------------------------------------------------%
 if ~exist('prop', 'var'); prop = []; end
-if isempty(prop); prop = prop.init(); end
+if isempty(prop); prop = props.init(); end
 
 if ~exist('opts', 'var'); opts = struct(); end
 if ~isfield(opts, 'rho'); opts.rho = 'default'; end
@@ -197,7 +196,7 @@ switch opts.Em
     case {'default', 'Emr1.1'}
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr.*1.1;
-        prop.Em = @(l,dp) (l-716)/(442-716)*(prop.Emr(442,716)-1)+1;
+        prop.Em = @(l,dp) 0.195;
         
     case {'Drude'}
         prop.omega_p = 6.78e17;

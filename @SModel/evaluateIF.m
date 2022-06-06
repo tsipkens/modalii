@@ -1,10 +1,12 @@
 
-% EVALAUTEIF  Evaluate forward and inverse model (htmodel -> J -> Teff). 
-% AUTHOR: Timothy Sipkens
-% NOTE: Used to incorporate polydispersity into forward model. 
-%=========================================================================%
+% EVALAUTEIF  Evaluate forward and inverse model (htmodel -> J -> Teff).
+%  NOTE: Used to incorporate polydispersity into forward model.
+%  
+%  T = SModel.evaluateIF(X) uses the QoI, X, to evaluate the model.
+%  
+%  AUTHOR: Timothy Sipkens
 
-function [Tout] = evaluateIF(smodel, x)
+function [To, Jo] = evaluateIF(smodel, x)
 
 htmodel = smodel.htmodel; % embedded heat transfer model
 
@@ -15,6 +17,7 @@ end
 
 %-- Update x values in prop struct ---------------------------------------%
 [smodel, prop] = tools.update_prop(smodel, x);
+[htmodel, ~] = tools.update_prop(htmodel, x);
 %-------------------------------------------------------------------------%
 
 
@@ -26,13 +29,14 @@ end
 %   distribution, and (iv) an effectively temperature must be evaluated
 %   from that incandescence.
 if prop.sigma > 0.005 % if distribution width is sufficiently large, include polydispersity
-    J = smodel.evaluateF(x); % evaluate forward model for J (includes poly.)
-    Tout = smodel.IModel(prop, J); % evaluate inverse model for T
+    Jo = smodel.evaluateF(x); % evaluate forward model for J (includes poly.)
+    To = smodel.IModel(prop, Jo); % evaluate inverse model for T
 
 %-- MONODISPERSE ---------------------------------------------------------%
 else
-    Tout = htmodel.evaluate(x); % for monodisperse case, compute temperature directly
-    
+    To = htmodel.evaluate(x); % for monodisperse case, compute temperature directly
+    Jo = [];
+
 end
 %-------------------------------------------------------------------------%
 

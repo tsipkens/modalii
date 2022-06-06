@@ -1,4 +1,4 @@
-function [Tout,Cout,s_T,out] = calcSpectralFit(smodel,J)
+function [To, Co, s_T, out] = calcSpectralFit(smodel,J)
 % Spectral fitting, sequential
 
 ntime = length(J(:,1,1)); % number of times
@@ -116,7 +116,7 @@ end
 
 switch smodel.opts.multicolor
     case {'priorC','default','priorT'}
-        Cout = beta(:,:,2);
+        Co = beta(:,:,2);
         out.r_TC = r_TC;
         out.s_C = s_C;
         out.resid = resid;
@@ -124,20 +124,20 @@ switch smodel.opts.multicolor
         out.r_TC = 0;
         out.s_C = s_C;
         out.resid = resid;
-        Cout = prop.C_J.*ones(ntime,1);
+        Co = prop.C_J.*ones(ntime,1);
     case {'constC-mass','vecC'}
         out.r_TC = 0;
         out.s_C = s_C;
         out.resid = resid;
-        Cout = prop.C_J;
+        Co = prop.C_J;
     case {'priorC-nuisance'}
-        Cout = beta(:,:,2);
+        Co = beta(:,:,2);
         out.r_TC = r_TC;
         out.s_C = s_C;
         out.resid = resid;
         out.Em = beta(:,:,3:end);
 end
-Tout = beta(:,:,1);
+To = beta(:,:,1);
 
 end
 

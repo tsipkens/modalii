@@ -1,5 +1,5 @@
 
-function prop = CO2(prop,~)
+function prop = CO2(prop, ~)
 
 %-- Parse inputs ---------------------------------------------------------%
 if ~exist('prop','var'); prop = struct(); end

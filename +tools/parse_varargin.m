@@ -6,11 +6,19 @@
 function [instance] = parse_varargin(instance, varargin)
 
 ii = 1;
-while ii<=length(varargin)  % incorporate list of properties
+while ii <= length(varargin)  % incorporate list of properties
     if isprop(instance, varargin{ii})  % manually set property
         instance.(varargin{ii}) = varargin{ii+1};
         ii = ii+2;  % skip an input
-
+        
+    elseif isa(varargin{ii}, 'Signal') % derive paramters from signal
+        instance.J = varargin{ii}.data;
+        ii = ii+1;
+        
+    elseif isa(varargin{ii}, 'HTModel') % derive paramters from heat transfer model
+        instance.htmodel = varargin{ii};
+        ii = ii+1;
+        
     else  % incorporate opts given as struct
         aa = fieldnames(varargin{ii});
         bb = varargin{ii};
@@ -24,4 +32,3 @@ while ii<=length(varargin)  % incorporate list of properties
 end
 
 end
-
