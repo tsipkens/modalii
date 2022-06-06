@@ -40,11 +40,11 @@ classdef SModel
             % Handle additional options (see function in tools package).
             smodel = tools.parse_varargin(smodel, varargin{:});
             
+            % Scale Planck's law about T_sc for stability (quantities are closer to 1).
+            % uses dp = 30 nm for data scaling (used for stability).
             T_sc = 3000; % temperature used for scaling/stability, [K]
-            smodel.data_sc = smodel.blackbody(T_sc,1064).*...
-                prop.Em(1064,30)/(1064e-9); % scale Planck's law about T_sc for stability
-                    % use dp = 30 nm for data scaling (used for stability)
-                    
+            smodel.data_sc = smodel.blackbody(T_sc, 1064) ./ (1064e-9);
+            
             tools.textheader('New spectroscopic model');
             disp(['  Pyrometry: ', smodel.opts.pyrometry]);
             tools.textheader();

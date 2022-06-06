@@ -25,11 +25,10 @@ switch smodel.opts.pyrometry
     case {'2color', 'ratio'}
         l = smodel.l;
         Emr = prop.Emr(l(1), l(2), prop.dp0); % two-colour pyrometry
-        To = smodel.calcRatioPyrometry(J(:,:,1), J(:,:,2), Emr);
+        [To, Co] = smodel.calcRatioPyrometry(J(:,:,1), J(:,:,2), Emr);
         To = real(To);
         s_T = [];
         out = [];
-        Co = [];
         
     case {'2color-scalingfactor'}
         l = smodel.l;
