@@ -25,8 +25,7 @@ switch smodel.opts.pyrometry
     case {'2color', 'ratio'}
         l = smodel.l;
         Emr = prop.Emr(l(1), l(2), prop.dp0); % two-colour pyrometry
-        To = (0.0143877696*(1/(l(2)*1e-9)-1/(l(1)*1e-9)))./...
-            log(J(:,:,1)./J(:,:,2).*(((l(1)/l(2))^6)/Emr)); % phi=0.01438
+        To = smodel.calcRatioPyrometry(J(:,:,1), J(:,:,2), Emr);
         To = real(To);
         s_T = [];
         out = [];
@@ -35,8 +34,7 @@ switch smodel.opts.pyrometry
     case {'2color-scalingfactor'}
         l = smodel.l;
         Emr = prop.Emr(l(1),l(2), prop.dp0); % two-colour pyrometry
-        To = (0.0143877696*(1/(l(2)*1e-9)-1/(l(1)*1e-9)))./...
-            log(J(:,:,1)./J(:,:,2).*(((l(1)/l(2))^6)/Emr)); % phi=0.01438
+        To = smodel.calcRatioPyrometry(J(:,:,1), J(:,:,2), Emr);
         To = real(To);
         Co = bsxfun(@times,J,1./smodel.FModel(prop, To, prop.Em));
         Co = Co(:,:,1);
@@ -46,8 +44,7 @@ switch smodel.opts.pyrometry
     case {'2color-constT'}
         l = smodel.l;
         Emr = prop.Emr(l(1),l(2), prop.dp0); % two-colour pyrometry
-        To = (0.0143877696*(1/(l(2)*1e-9)-1/(l(1)*1e-9)))./...
-            log(J(:,:,1)./J(:,:,2).*(((l(1)/l(2))^6)/Emr)); % phi=0.01438
+        To = smodel.calcRatioPyrometry(J(:,:,1), J(:,:,2), Emr);
         To = real(To);
         Co = J./smodel.FModel(1730.*ones(size(To)),prop.Em);
         Co = Co(:,1,1);
@@ -57,13 +54,13 @@ switch smodel.opts.pyrometry
     case {'2color-advanced'}  % calculate temperature, pre-averaged data
         data1 = mean(J(:,:,1),2);
         data2 = mean(J(:,:,2),2);
-        [To,Co] = smodel.calcRatioPyrometry(data1,data2);
+        [To, Co] = smodel.calcRatioPyrometry(data1, data2);
         
         nn = 1000; % used for sampling methods
-        s1 = std(J(:,:,1),[],2)./sqrt(nshots);
-        s2 = std(J(:,:,2),[],2)./sqrt(nshots);
-        datas1 = (mvnrnd(data1,s1'.^2,nn))';
-        datas2 = (mvnrnd(data2,s2'.^2,nn))';
+        s1 = std(J(:,:,1),[],2) ./ sqrt(nshots);
+        s2 = std(J(:,:,2),[],2) ./ sqrt(nshots);
+        datas1 = (mvnrnd(data1, s1'.^2,nn))';
+        datas2 = (mvnrnd(data2, s2'.^2,nn))';
         % s_C = 0.3;
         % Cs = normrnd(1,s_C,[1,nn]);
         % datas1 = bsxfun(@times,datas1,Cs);

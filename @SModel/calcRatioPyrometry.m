@@ -4,16 +4,23 @@
 %  T = SModel.calcRatioPyrometry(J1, J2) evaluates the temperature using
 %  ratio pyrometry and the optical properties embedded in SModel.
 %  
+%  T = SModel.calcRatioPyrometry(J1, J2, EMR) adds an input for the ratio
+%  of the absorption function at the two wavelengths. If excluded, the
+%  value is extracted from SModel.prop. 
+%  
 %  AUTHOR: Timothy Sipkens, 2017
 
-function [To, Co, s_T, out] = calcRatioPyrometry(smodel,J1,J2)
+function [To, Co, s_T, out] = calcRatioPyrometry(smodel, J1, J2, Emr)
 
 l = smodel.l;  % local copy
 if length(l) > 2  % check the number of wavelengths
     error('Too many wavlengths in SModel for two-color pyrometry.');
 end
 
-Emr = smodel.prop.Emr(l(1), l(2), smodel.prop.dp0); % ratio of Em at two wavelengths
+if ~exist('Emr', 'var'); Emr = []; end
+if isempty(Emr)
+    Emr = smodel.prop.Emr(l(1), l(2), smodel.prop.dp0); % ratio of Em at two wavelengths
+end
 Jr = J1 ./ J2;  % ratio of incandescences
 
 

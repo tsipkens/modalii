@@ -56,7 +56,7 @@ classdef SModel
         [To,Ti,Co,s_T,s_C,r_T,resid,oth] = IModel(smodel, prop, J) % solve inverse model for temperature
         [To,Co,s_T,out] = calcSpectralFit(smodel,J) % spectral fitting with sequential inference
         [To,Co,s_T,out] = calcSpectralFit_all(smodel,J) % spectral fitting with simulatneous inference
-        [To,Co,s_T,out] = calcRatioPyrometry(smodel,J1,J2) % ratio pyrometry evaluation, corr. calc. included
+        [To,Co,s_T,out] = calcRatioPyrometry(smodel,J1,J2,Emr) % ratio pyrometry evaluation, corr. calc. included
         
         %-- Evaluate functions, take and update x ------------------------%
         [To,Co] = evaluateI(smodel, x, J) % evaluate inverse model at x, given J in SModel

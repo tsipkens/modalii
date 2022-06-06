@@ -30,10 +30,17 @@ prop.sigma = 0;  % 0.1
 % Define models and their parameterizations.
 opts.abs = 'include';  % set opts to include absorption
 x_fields = {'dp0', 'F0', 'CEmr'};  % set models to take only diameter as inputs
+
 htmodel = HTModel(prop, x_fields, t, opts);
+
+% True SModel, used for generating signals.
 smodel = SModel(prop, x_fields, t, l);
 smodel.htmodel = htmodel;
-toc;
+
+% Simply SModel.
+smodels = SModel(prop, x_fields, t, l);
+smodels.htmodel = htmodel;
+
 disp('Completed setup.');
 disp(' ');
 
@@ -42,7 +49,7 @@ nf = 60;
 F0_vec = linspace(0.0005, 1, nf);
 dp = 100;
 
-T = [];  J1 = [];  J2 = [];
+T = [];  J1 = [];  J2 = []; Cinf = [];
 disp('Computing temperature decays:');
 tools.textbar([0, nf]);
 for ii=1:length(F0_vec)
@@ -51,6 +58,8 @@ for ii=1:length(F0_vec)
     Jt = smodel.evaluateF([dp, F0_vec(ii), 1]);
     J1(:,ii) = Jt(:,1,1);  % choose first wavlength
     J2(:,ii) = Jt(:,1,1);  % choose second wavlength
+    
+    [~, Cinf(:,ii)] = smodel.IModel(prop, Jt);  % inferred ISF
 
     tools.textbar([ii, nf]);
 end
