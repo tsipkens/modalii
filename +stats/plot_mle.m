@@ -16,12 +16,11 @@ if isa(sb, 'function_handle'); sb = sb(mle); end
 
 clf;
 b0 = b(mle);
-t_pl = t(:) -t(1);
 
 if 1 % plot data error bounds
     hold on;
     sb_mod = smooth(sb, 0.07);
-    fill([t_pl; flipud(t_pl)], ...
+    fill([t; flipud(t)], ...
         [b0 - 2.*sb_mod; flipud(b0 + 2.*sb_mod)], ...
         [0.9 0.9 0.9], 'LineStyle', 'none');
     % area([t_pl;flipud(t_pl)],...
@@ -30,9 +29,9 @@ if 1 % plot data error bounds
 end
 
 hold on;
-plot(t_pl, b0, '.', 'markers', 5, ...
+plot(t, b0, '.', 'markers', 5, ...
     'Color', [0 0.443 0.737]);
-plot(t_pl, A(mle), 'k');
+plot(t, A(mle), 'k');
 hold off;
 
 end
