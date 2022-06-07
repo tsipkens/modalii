@@ -24,9 +24,11 @@ Note that times are defined relative to the center of the laser pulse intensity 
 
 Data, including temperatures and incandescence intensities, are generally structured with: 
 
-1. time in the first dimension; 
-2. repeats to be used for statistics in the second dimension; and, 
-3. specific to intensities, wavelength in the third dimension.
+1. **time** in the first dimension, e.g., `J(:,1,1)` will be the temporally-resolved incandescence at the first wavelength; 
+2. **repeats** to be used for statistics in the second dimension; and, 
+3. specific to intensities, **wavelength** in the third dimension.
+
+While having the third dimension as wavelength is suboptimal in some respects, it consistently reserves the second dimension for repeat measurements, whether the represented quantity be incandescence, temperature, or intensity scaling factor (similar to apparent volume fraction). This has utility for uncertainty quantification. 
 
 ## 2. Upper directory and main\*.m scripts
 
