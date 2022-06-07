@@ -60,6 +60,10 @@ stats.plot_mle(mle, model, b1, signal.t, sb);
 tools.mle2table(mle, x_fields, 'SPO', s_po);
 
 %-{
+fprintf('\n\r\n\r_________________________________________________\n\r\n\r');
+disp('<strong>Including nuisance parameters...</strong>');
+disp(' ');
+
 %-- Setup model w/ nuisance parameters -----------------------------------%
 prop0 = prop;  % save original struct
 prop = props.Props(prop);  % convert to Props

@@ -1,5 +1,5 @@
 
-function prop = exper_apb17_Mo(prop,~)
+function prop = x_apb17_Mo(prop,~)
 
 if ~exist('prop', 'var'); prop = []; end
 if isempty(prop); prop = props.init(); end
