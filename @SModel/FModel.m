@@ -6,9 +6,9 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2017
 
-function [Jo] = FModel(smodel, prop, T, Em)
+function [Jo] = FModel(smodel, prop, T, Em, X)
 
-p3 = Em(smodel.l, prop.dp0) ./ ...
+p3 = Em(smodel.l, prop.dp0, X) ./ ...
     (smodel.l .* 1e-9) ./ smodel.data_sc;  % deal with signal scaling
 
 J = smodel.blackbody(T, smodel.l);  % evaluate Planck's Law

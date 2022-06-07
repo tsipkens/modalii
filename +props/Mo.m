@@ -97,12 +97,12 @@ switch opts.Em
     case {'default','Barnes'}
         prop.Em_data = getfield(load('+props/Em_Mo_Barnes.mat'),'Em_data'); % (Barnes) *check
         prop.Em_gi = griddedInterpolant(prop.Em_data(:,1),prop.Em_data(:,2),'pchip');
-        prop.Em = @(l,dp) prop.Em_gi(l);
+        prop.Em = @(l,dp,X) prop.Em_gi(l);
         prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1)./prop.Em(l2);
         prop.Eml = @(dp) prop.Em(prop.l_laser);
     case {'Mie'}
         prop.Em_gi = PlasmaMie.Mo_Mie_inter;
-        prop.Em = @(l,dp) prop.Em_gi(l,dp);
+        prop.Em = @(l,dp,X) prop.Em_gi(l,dp);
         prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1,dp)./prop.Em(l2,dp);
         prop.Eml = @(dp) prop.Em_gi(prop.l_laser,dp);
 end

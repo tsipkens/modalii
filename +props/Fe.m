@@ -196,7 +196,7 @@ switch opts.Em
     case {'default', 'Emr1.1'}
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr.*1.1;
-        prop.Em = @(l,dp) 0.195;
+        prop.Em = @(l,dp,X) 0.195;
         
     case {'Drude'}
         prop.omega_p = 6.78e17;
@@ -204,12 +204,12 @@ switch opts.Em
         % [Em_temp,n_temp,k_temp] = props.eq_drude(400:1100);
         prop.Em_data = getfield(load('Em_Fe_Drude.mat'),'Em_data');
         prop.Em_gi = griddedInterpolant(prop.Em_data(:,1),prop.Em_data(:,2),'pchip');
-        prop.Em = @(l,dp) prop.Em_gi(l);
+        prop.Em = @(l,dp,X) prop.Em_gi(l);
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1,dp)./prop.Em(l2,dp);
         
     case {'Krishnan'}
-        prop.Em = @(l,dp) ones(size(dp))*...
+        prop.Em = @(l,dp,X) ones(size(dp))*...
             (polyval([3.9751e-13,-1.6904e-9,2.7217e-6,...
             -0.0020557,0.69807],l)); % quartic fit to Krishnan data
         prop.CEmr = 1;
@@ -218,7 +218,7 @@ switch opts.Em
     case {'Shvarev'}
         prop.Em_data = getfield(load('Em_Fe_Shvarev.mat'),'Em_data');
         prop.Em_gi = griddedInterpolant(prop.Em_data(:,1),prop.Em_data(:,2),'pchip');
-        prop.Em = @(l,dp) prop.Em_gi(l);
+        prop.Em = @(l,dp,X) prop.Em_gi(l);
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1,dp)./prop.Em(l2,dp);
         
@@ -228,7 +228,7 @@ switch opts.Em
         k_gi = griddedInterpolant(Krishnan.l,Krishnan.k,'pchip','linear');
         n = @(l) n_gi(l);
         k = @(l) k_gi(l);
-        prop.Em = @(l,dp) prop.get_Mie_solution(n,k,l,dp);
+        prop.Em = @(l,dp,X) prop.get_Mie_solution(n,k,l,dp);
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1,dp)./prop.Em(l2,dp);
         

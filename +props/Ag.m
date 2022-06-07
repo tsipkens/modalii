@@ -89,7 +89,7 @@ switch opts.Em
     case {'default', 'Drude'}
         prop.Em_data = getfield(load('+props/Em_Ag_Drude.mat'),'Em_data'); % (Drude)
         prop.Em_gi = griddedInterpolant(prop.Em_data(:,1),prop.Em_data(:,2),'pchip');
-        prop.Em = @(l,dp) prop.Em_gi(l);
+        prop.Em = @(l,dp,X) prop.Em_gi(l);
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1)./prop.Em(l2);
         prop.Eml = @(dp) prop.Em(prop.l_laser,dp);

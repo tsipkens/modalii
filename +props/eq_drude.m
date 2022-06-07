@@ -4,7 +4,7 @@
 % Requires these parameters to be defined: prop.omega_p, prop.tau. 
 %=========================================================================%
 
-function [Em,n,k] = eq_drude(prop, lambda)
+function [Em,n,k] = eq_drude(prop, lambda, ~, ~)
 
 [p,q] = size(lambda);
 

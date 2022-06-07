@@ -274,37 +274,37 @@ end
 %-- Optical properties ---------------------------------------------------%
 switch opts.propmodel
     case {'Michelsen','Sipkens','Liu-MS','Melton-MS','Michelsen-C3'}
-        prop.Em = @(l,dp) 0.34.*ones(1,length(l)); % Michelsen
+        prop.Em = @(l,dp,X) 0.34.*ones(1,length(l)); % Michelsen
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr;
         prop.Eml = @(dp) 0.34;
     case 'Kock'
-        prop.Em = @(l,dp) 0.23.*ones(1,length(l)); % Michelsen
+        prop.Em = @(l,dp,X) 0.23.*ones(1,length(l)); % Michelsen
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr;
         prop.Eml = @(dp) 0.23;
     case 'Charwath'
-        prop.Em = @(l,dp) 0.179.*ones(1,length(l)); % Michelsen
+        prop.Em = @(l,dp,X) 0.179.*ones(1,length(l)); % Michelsen
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr;
         prop.Eml = @(dp) 0.179;
     case {'Liu'}
-        prop.Em = @(l,dp) 0.38.*ones(1,length(l)); % Liu, constant
+        prop.Em = @(l,dp,X) 0.38.*ones(1,length(l)); % Liu, constant
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr;
         prop.Eml = @(dp) 0.38;
     case {'default','constant'}
-        prop.Em = @(l,dp) 0.4.*ones(1,length(l)); % Liu, constant
+        prop.Em = @(l,dp,X) 0.4.*ones(1,length(l)); % Liu, constant
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr;
         prop.Eml = @(dp) 0.4;
     case 'Will'
-        prop.Em = @(l,dp) 0.26.*ones(1,length(l)); % Liu, constant
+        prop.Em = @(l,dp,X) 0.26.*ones(1,length(l)); % Liu, constant
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr;
         prop.Eml = @(dp) 0.26;
     case 'Melton'
-        prop.Em = @(l,dp) 0.18.*ones(1,length(l)); % Liu, constant
+        prop.Em = @(l,dp,X) 0.18.*ones(1,length(l)); % Liu, constant
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr;
         prop.Eml = @(dp) 0.18;

@@ -120,7 +120,7 @@ switch opts.Em
     case 'Drude' % Jellison and Lowndes? / J. Menser
         prop.omega_p = 2.644E+16;
         prop.tau = 2.385E-16;
-        prop.Em = @prop.drude;
+        prop.Em = @props.eq_drude;
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1)./prop.Em(l2);
         prop.Eml = @(dp) prop.Em(prop.l_laser,dp);

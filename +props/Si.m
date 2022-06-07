@@ -94,7 +94,7 @@ end
 switch opts.Em
     case {'default','constant'}
         prop.CEmr = 1;
-        prop.Em = @(l,dp) 1;
+        prop.Em = @(l,dp,X) 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1)./prop.Em(l2);
         prop.Eml = @(dp) prop.Em(prop.l_laser,dp);
 end

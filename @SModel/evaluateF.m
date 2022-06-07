@@ -38,11 +38,11 @@ if prop.sigma > 0.005 % currently models with lognormal
     w = w ./ sum(w);  % normalize the weight
     
     % Evaluate temperature and incandescence
-    [T, ~, mp] = htmodel.de_solve(prop, dp_x);  % solve differential equation
+    [T, ~, mp, X] = htmodel.de_solve(prop, dp_x);  % solve differential equation
     mpr = real(mp ./ mp(1,:));
     
     Jo = bsxfun(@times, w, ...
-        smodel.FModel(prop, T, prop.Em)); % evaluate forward model for J
+        smodel.FModel(prop, T, prop.Em, X)); % evaluate forward model for J
     Jo = Jo .* mpr;
     Jo = sum(Jo, 2);
     Jo = Jo .* prop.C_J; % scale incandescence for stability
@@ -53,9 +53,9 @@ if prop.sigma > 0.005 % currently models with lognormal
 %   If the distribution is narrow enough, skip integration over 
 %   size distribution and evaluate temperature directly (much faster).
 else % for monodisperse case, simply evaluate the ODE directly
-    [T, ~, mp] = htmodel.de_solve(prop, prop.dp0); % solve heat transfer model at dp0
+    [T, ~, mp, X] = htmodel.de_solve(prop, prop.dp0); % solve heat transfer model at dp0
     
-    Jo = smodel.FModel(prop, T, prop.Em); % evaluate forward model for J
+    Jo = smodel.FModel(prop, T, prop.Em, X); % evaluate forward model for J
     Jo = Jo .* prop.C_J; % scale incandescence by corresponding factor
     
     if strcmp(smodel.opts.multicolor, 'constC-mass') % scale incandescence according to mass loss

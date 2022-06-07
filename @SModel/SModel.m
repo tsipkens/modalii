@@ -52,7 +52,7 @@ classdef SModel
         %-----------------------------------------------------------------%
         
         %-- Modeling functions -------------------------------------------%
-        [Jo] = FModel(smodel, prop, T, Em) % calculates J given T, Em is function handle
+        [Jo] = FModel(smodel, prop, T, Em, X) % calculates J given T, Em is function handle
         [To,Ti,Co,s_T,s_C,r_T,resid,oth] = IModel(smodel, prop, J) % solve inverse model for temperature
         [To,Co,s_T,out] = calcSpectralFit(smodel,J) % spectral fitting with sequential inference
         [To,Co,s_T,out] = calcSpectralFit_all(smodel,J) % spectral fitting with simulatneous inference
