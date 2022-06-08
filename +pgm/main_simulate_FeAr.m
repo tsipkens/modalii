@@ -1,9 +1,37 @@
 
 clear;
 clc;
-load('+CENIDE\viridis.mat');
 
-generalErrorModel.setup_Fe;
+%-- Setup ----------------------------------------------------------------%
+opts.deMethod = 'default';
+opts.bFun = 1;
+opts.abs = 'include';
+opts.pyrometry = 'default';
+
+prop = props.x_apb17_Fe;
+prop = props.Ar(prop);
+prop = props.Fe(prop);
+
+% prop = Prop({'CENIDE.experGulder.mat','C.mat','N2.mat'},opts);
+prop.F0 = 0.05;
+prop.Ti = prop.Tg;
+
+dt = 5;
+t = [0:dt:3500]';
+l = [500];
+x_fields = {};
+htmodel = HTModel(prop,x_fields,t,opts);
+smodel = SModel(prop,x_fields,t,l,opts);
+
+[Texact, ~, m_exact] = htmodel.de_solve(prop, prop.dp0);
+Cpre = 500 .* m_exact ./ m_exact(1); % Sublimation effect
+J = bsxfun(@times, Cpre, ...
+    smodel.FModel(prop, Texact, prop.Em));
+Jmax = 100;
+J = J./max(J).*Jmax;
+%-------------------------------------------------------------------------%
+
+
 scale = 1;
 J = J./max(J).*100;
 
@@ -19,7 +47,7 @@ tau = 0.15722; % percent variation, i.e. ~ 0.1 = 10%
 
 x0 = [theta,gamma,tau];
 
-[S,S_E,S_std,S_ss] = generalErrorModel.simulate_noise(J.*theta,theta,gamma,tau,nn); % generate neasured signals
+[S,S_E,S_std,S_ss] = pgm.simulate_noise(J.*theta,theta,gamma,tau,nn); % generate neasured signals
 % [T,T_E,T_std] = generalErrorModel.simulate_noise2(J.*theta,theta,sigma,tau,5000); % generate neasured signals
 
 [S_poly,S_poly_var] = polyfit(S_E,S_std.^2,2);

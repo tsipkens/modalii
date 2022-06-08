@@ -8,6 +8,9 @@
 
 function [Jo] = FModel(smodel, prop, T, Em, X)
 
+if ~exist('X', 'var'); X = []; end
+if isempty(X); X = 0; end
+
 p3 = Em(smodel.l, prop.dp0, X) ./ ...
     (smodel.l .* 1e-9) ./ smodel.data_sc;  % deal with signal scaling
 p3 = permute(p3, [1,3,2]);
