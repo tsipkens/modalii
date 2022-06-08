@@ -68,7 +68,7 @@ switch opts.hv
         prop.n = 0.38;
         prop.hvA = @()(prop.hvb*1e6)./...
             ((1-prop.Tb/prop.Tcr).^0.38); % Watson eqn. constant
-        prop.hv = @prop.watson;
+        prop.hv = @(T) props.eq_watson(prop, T);
     case {'constant'}
         prop.hv = @(T) prop.hvb*1e6;
     case {'Jan'}
@@ -81,24 +81,24 @@ prop.C = log(prop.Pref)+(prop.hvb*1e6)./prop.Rs./prop.Tb; % Constant for C-C Eqn
 switch opts.pv
     case {'default','Kelvin-CC'}
         prop.gamma = @(dp,T) 607e-3+(T-prop.Tm).*0.14e-3; % (Ida and Guthrie, book)
-        prop.pv = @(T,dp,hv) prop.eq_kelvin(T,dp,hv);
+        prop.pv = @(T,dp,hv) props.eq_kelvin(prop,T,dp,hv);
     case {'Tolman-CC'}
         ... % enter additional parameters
-        prop.gamma = @(dp,T) prop.eq_tolman(dp,T);
-        prop.pv = @(T,dp,hv) prop.eq_kelvin(T,dp,hv);
+        prop.gamma = @(dp,T) props.eq_tolman(prop,dp,T);
+        prop.pv = @(T,dp,hv) props.eq_kelvin(prop,T,dp,hv);
     case {'CC'}
-        prop.pv = @(T,dp,hv) prop.eq_claus_clap(T,dp,hv);
+        prop.pv = @(T,dp,hv) props.eq_claus_clap(prop,T,dp,hv);
     case {'Antoine','Jan'}
         prop.C1 = 16149;
         prop.C2 = 11.7288;
-        prop.pv = @(T,dp,hv) prop.eq_antoine(T,dp,hv);
+        prop.pv = @(T,dp,hv) props.eq_antoine(prop,T,dp,hv);
 end
 
 
 %-- Optical properties ---------------------------------------------------%
 switch opts.Em
     case {'default','quartic'}
-        prop.Em = @(l,dp) polyval([3.6567e-14,-2.5074e-10,6.2787e-07,...
+        prop.Em = @(l,dp,X) polyval([3.6567e-14,-2.5074e-10,6.2787e-07,...
             -0.00069181,0.30026],l); % quartic fit to Jellison and Hodgson
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1)./prop.Em(l2);

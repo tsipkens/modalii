@@ -1,14 +1,14 @@
 
 % Q_ABS  Rate of laser energy input from the laser. 
-% AUTHOR: Timothy Sipkens, 2018-12-17
 % 
-% INPUTS:
+%  INPUTS:
 %   t   Time, [ns]
 %   dp	Nanoparticle diameter, [nm]
 %
-% OUTPUTS:
+%  OUTPUTS:
 %   q	Rate of laser energy uptake by the nanoparticle, [W]
-%=========================================================================%
+%  
+%  AUTHOR: Timothy Sipkens, 2018-12-17
 
 function [q,Cabs] = q_abs(htmodel, prop, t, dp)
 

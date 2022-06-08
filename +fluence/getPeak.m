@@ -23,14 +23,14 @@
 function [T_fun, T_high, T_low] = getPeak(prop, opts, n, Tref, Fref)
 
 %-- Handle inputs --------------------------------------------------------%
-if nargin<2
-    opts = 'default';
-end
-if nargin<3
-    n = -10; % power in interpolation function
-end
+if ~exist('opts', 'var'); opts = []; end % control format of function (e.g., dimless)
+if isempty(opts); opts = 'default'; end
+
+if ~exist('n', 'var'); n = []; end % power in interpolation function
+if isempty(n); n = -10; end
+
 if nargin<5 % check if Tref and Fref were not included
-    [Tref, Fref] = fluenceModel.calcTransitionPoint(prop);
+    [Tref, Fref] = fluence.calcTransition(prop);
         % get transition/reference fluence and temperature
 end
 %-------------------------------------------------------------------------%

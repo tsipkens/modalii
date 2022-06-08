@@ -16,7 +16,7 @@ dp = dp .* 1e-9; % convert to meters so everything is in SI units
 prop = htmodel.prop;
 
 if isempty(prop.gamma)
-	prop.gamma = @prop.tolmanEqn;
+	prop.gamma = @props.eq_tolman;
 end
 
 if isempty(prop.alpham)

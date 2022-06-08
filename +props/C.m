@@ -17,7 +17,7 @@ prop.phi = prop.h*prop.c/prop.kb;
 prop.M = 0.01201;
 
 switch opts.propmodel % Density in kg/m^3
-    case {'default','Michelsen','Michelsen-C3'}
+    case {'default','Michelsen','Michelsen-C3','simplified'}
         prop.Arho = 1;
         prop.Brho = 1;
         prop.rho = @(T) (prop.Arho.*2.303-prop.Brho.*7.3106e-5.*T).*1000; % Michelsen
@@ -52,7 +52,7 @@ switch opts.propmodel % Specific heat in J/(kg K)
                 (3.6700e-11.*T.^4)-(1.9485e-14.*T.^5)+(4.1802e-18.*T.^6),...
             2.9497e-1+(2.9614e-3.*T)-(2.1232e-6.*T.^2)+(8.1901e-10.*T.^3)-...
                 (1.7516e-13.*T.^4)+(1.9628e-17.*T.^5)-(8.9817e-22.*T.^6));
-    case {'Kock','default'}
+    case {'Kock','default','simplified'}
         prop.Ccp = 1;
         prop.cp = @(T) prop.Ccp.*1000.*(1.878+1.082e-4.*T-1.5149e5./T.^2);
     case {'Charwath','constant'}
@@ -69,7 +69,7 @@ end
 
 %-- Conduction properties ------------------------------------------------%
 switch opts.propmodel % Specific heat in J/(kg K)
-    case {'Liu','default'}
+    case {'Liu','default','simplified'}
         prop.alpha = 0.37; % Liu
     case {'Sipkens','Liu-MS','Melton-MS'}
         alpha_vec = [0.3,0.37,0.28,0.23,0.3,0.3,0.23,0.37,0.3,0.275,0.35];
@@ -104,7 +104,7 @@ switch opts.propmodel % Molar mass in kg/mol
         prop.C = log(prop.Pref)+(prop.hvb*1e6)./prop.Rs./prop.Tb; % Constant for C-C Eqn. 
         prop.gamma = @(dp,T) 0.18; % (Shih, 2013)
         prop.alpham = @(T) 1;
-        prop.pv = @prop.kelvinEqn;
+        prop.pv = @props.eq_kelvin;
         
     case {'constant'} % same as Kock model, different form
         prop.Mv = prop.M*3;
@@ -132,7 +132,7 @@ switch opts.propmodel % Molar mass in kg/mol
         prop.Tb = 3000; % artificial, reference temperature
         prop.hvb = prop.hv(prop.Tb)/1e6;
         prop.C = log(prop.Pref)+(prop.hvb*1e6)./prop.Rs./prop.Tb; % Constant for C-C Eqn. 
-        prop.pv = @prop.clausClap;
+        prop.pv = @props.eq_claus_clap;
         
     case {'Liu','Will','Liu-MS'}
         prop.Mv = prop.M*3;
@@ -175,11 +175,6 @@ switch opts.propmodel % Molar mass in kg/mol
             % for compatibility with fluence curve code
         
     case {'Sipkens','default'}
-%         prop.c0 = 1975;
-%         prop.c1 = 250;
-%         prop.c2 = 0.012;
-%         prop.c3 = 4200;
-%         prop.c4 = 250;
         prop.c0 = 2036;
         prop.c1 = 375;
         prop.c2 = 0.013;
@@ -212,7 +207,8 @@ switch opts.propmodel % Molar mass in kg/mol
             7.3563e+05.*(T<1000))./Mv(T); % 4765 K: triple point estimate, Leider, 1973
         prop.alpham = @(T) 1;
         
-        % Clausius-Clapeyron equation, Kelvin equation
+        % Clausius-Clapeyron equation, Kelvin equation.
+        % NOTE: prop.hvb is molar, not kJ/kg.
         prop.Tb = 3000;
         prop.hvb = prop.hv(prop.Tb)*Mv(prop.Tb)/1e6;
         prop.Pref = 101325*6.07e-4;%*1.68;%103.4; % Leider et al., Table 3
@@ -293,7 +289,7 @@ switch opts.propmodel
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr;
         prop.Eml = @(dp) 0.38;
-    case {'default','constant'}
+    case {'default','constant','simplified'}
         prop.Em = @(l,dp,X) 0.4.*ones(1,length(l)); % Liu, constant
         prop.CEmr = 1;
         prop.Emr = @(l1,l2,dp) prop.CEmr;

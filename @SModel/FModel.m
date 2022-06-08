@@ -10,12 +10,13 @@ function [Jo] = FModel(smodel, prop, T, Em, X)
 
 p3 = Em(smodel.l, prop.dp0, X) ./ ...
     (smodel.l .* 1e-9) ./ smodel.data_sc;  % deal with signal scaling
+p3 = permute(p3, [1,3,2]);
 
 J = smodel.blackbody(T, smodel.l);  % evaluate Planck's Law
 
 % Multiply Planck's Law by necessary values 
 % to return incandescence.
-Jo = bsxfun(@times, J, reshape(p3, 1, 1, []));
+Jo = J .* p3;
 
 end
 
