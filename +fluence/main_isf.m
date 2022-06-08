@@ -25,10 +25,10 @@ prop = prop0;  % copy to simple model, prior to changes
 
 %-- Change true model parameters -----------------------------------------%
 % Case 1.
-% prop0.Em = @(l,dp) 0.8 .* ones(1,length(l));
+% prop0.Em = @(l,dp,X) 0.8 .* ones(1,length(l));
 
 % Case 2: Annealing.
-%-{
+%{
 opts.ann = 'Sipkens';
 bet0 = 28.72;  % soot
 zet0 = 0.83;
@@ -43,7 +43,10 @@ prop0.Emr = @(l1,l2,dp) prop0.CEmr.*prop0.Em(l1,dp,0)./prop0.Em(l2,dp,0);
 % See loop below.
 
 % Case 4.
-% See loop below.
+prop0.Ti = 298;
+prop0.Tg = prop0.Ti;
+prop = prop0;
+% + See loop below.
 %-------------------------------------------------------------------------%
 
 % Define models and their parameterizations.
@@ -78,17 +81,17 @@ for ii=1:length(F0_vec)
     
     Jt = smodel.evaluateF([dp, F0_vec(ii), 1]);
     Jt = Jt .* m(:,ii) ./ m(1,ii); % scale by particle mass loss
-    
+
     % For Case 3.
     %{
-    Jt = Jt + smodel.evaluateF([dp, 0, 1]);
-    %}
-
-    % For Case 4.
-    %{
-    tg = 5;
+    tg = 2;  % [2,5]
     Jt = sum(permute(Jt, [2,1,3]) .* normpdf(t - t' + tg, 0, tg), 2) ./ ...
         sum(normpdf(t - t', 0, tg), 2);
+    %}
+    
+    % For Case 4.
+    %-{
+    Jt = Jt + smodel.evaluateF([dp, 0, 1]);
     %}
     
     J1(:,ii) = Jt(:,1,1);  % choose first wavlength
