@@ -50,7 +50,7 @@ tau = 0.3;%0.12; % percent variation, i.e. ~ 0.1 = 10%
 
 x0 = [theta,gamma,tau];
 
-[S,S_E,S_std,S_ss] = pgm.simulate_noise(J.*theta,theta,gamma,tau,nn); % generate neasured signals
+[S,S_E,S_std,S_ss] = pgm.add_noise(J.*theta,theta,gamma,tau,nn); % generate neasured signals
 % [T,T_E,T_std] = generalErrorModel.simulate_noise2(J.*theta,theta,sigma,tau,5000); % generate neasured signals
 
 [S_poly,S_poly_var] = polyfit(S_E,S_std.^2,2);
