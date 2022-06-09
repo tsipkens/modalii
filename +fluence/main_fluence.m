@@ -57,7 +57,7 @@ end
 
 
 %%
-%{
+%-{
 figure(1);
 cmap_sweep(nf, flipud(internet));
 plot(t, T);
@@ -81,7 +81,7 @@ plot(F0_vec, Tfun(F0_vec), 'k', 'LineWidth', 1.2); % plot overall fluence curve
 hold off;
 ylim([prop.Tg, 5500]);
 
-%{
+%-{
 figure(3);
 plot(F0_vec, max(J1));
 hold on;
