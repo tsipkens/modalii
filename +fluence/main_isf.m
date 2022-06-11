@@ -114,13 +114,17 @@ end
 %-{
 % For Case 5.
 Jn1 = J1;  Jn2 = J2;
-sF0_1 = 0.;
-sF0_2 = 0.02; % 0.05; % 1e-3;
+sF0_1 = 0.2;
+sF0_2 = 0.005; % 0.02; % 0.05; % 1e-3;
 disp('Convolving fluence responses (simulating uneven fluence):');
 tools.textbar([0, nf]);
 for ii=1:length(F0_vec)
     sF0 = sF0_1 * F0_vec(ii) + sF0_2;
-    if (F0_vec(ii) - 3 * sF0) < 0
+    if F0_vec(ii) < 0.01
+        Ct(:,ii) = NaN;
+        Cinf(:,ii) = NaN;
+        continue;
+    elseif (F0_vec(ii) - 3 * sF0) < 0
         Ct(:,ii) = NaN;
         Cinf(:,ii) = NaN;
         continue;
