@@ -16,15 +16,17 @@ opts.Em = 'default'; %'Krishnan'; %'Mie-Krishnan';
 prop0 = props.x_ldf;
 prop0 = props.Ar(prop0);
 
-prop0 = props.C(prop0, opts); prop0.Ti = 1730;
+prop0 = props.C(prop0, opts);
 
+prop0.Ti = 298;  % for cold soot
 prop0.Tg = prop0.Ti;
+
 prop0.sigma = 0;  % 0.1
 
 prop = prop0;  % copy to simple model, prior to changes
 
 %-- Change true model parameters -----------------------------------------%
-% Case 1.
+% Case 1: Simple doubling of E(m).
 % prop0.Em = @(l,dp,X) 0.8 .* ones(1,length(l));
 
 % Case 2: Annealing.
@@ -43,10 +45,12 @@ prop0.Emr = @(l1,l2,dp) prop0.CEmr.*prop0.Em(l1,dp,0)./prop0.Em(l2,dp,0);
 % See loop below.
 
 % Case 4.
-prop0.Ti = 298;
+%{
+prop0.Ti = 1730;  % fot hot soot
 prop0.Tg = prop0.Ti;
 prop = prop0;
 % + See loop below.
+%}
 %-------------------------------------------------------------------------%
 
 % Define models and their parameterizations.
@@ -68,7 +72,7 @@ disp(' ');
 
 [~, prompt] = min(abs(t - 20));
 
-nf = 60;
+nf = 200;
 % nf = 20;
 F0_vec = linspace(0.0005, 0.35, nf);
 dp = 40;
@@ -82,20 +86,20 @@ for ii=1:length(F0_vec)
     Jt = smodel.evaluateF([dp, F0_vec(ii), 1]);
     Jt = Jt .* m(:,ii) ./ m(1,ii); % scale by particle mass loss
 
-    % For Case 3.
+    % For Case 3: Time response.
     %{
     tg = 2;  % [2,5]
     Jt = sum(permute(Jt, [2,1,3]) .* normpdf(t - t' + tg, 0, tg), 2) ./ ...
         sum(normpdf(t - t', 0, tg), 2);
     %}
     
-    % For Case 4.
-    %-{
+    % For Case 4: Background luminance.
+    %{
     Jt = Jt + smodel.evaluateF([dp, 0, 1]);
     %}
     
     J1(:,ii) = Jt(:,1,1);  % choose first wavlength
-    J2(:,ii) = Jt(:,1,1);  % choose second wavlength
+    J2(:,ii) = Jt(:,1,2);  % choose second wavlength
     
     [~, ~, Ct(:,ii)] = smodel.IModel(prop0, Jt);  % inferred ISF (not necessarily true)
     
@@ -107,6 +111,41 @@ end
 
 
 %%
+%-{
+% For Case 5.
+Jn1 = J1;  Jn2 = J2;
+sF0_1 = 0.;
+sF0_2 = 0.02; % 0.05; % 1e-3;
+disp('Convolving fluence responses (simulating uneven fluence):');
+tools.textbar([0, nf]);
+for ii=1:length(F0_vec)
+    sF0 = sF0_1 * F0_vec(ii) + sF0_2;
+    if (F0_vec(ii) - 3 * sF0) < 0
+        Ct(:,ii) = NaN;
+        Cinf(:,ii) = NaN;
+        continue;
+    end
+
+    pf = normpdf(F0_vec, F0_vec(ii), sF0);
+    pf = pf ./ sum(pf);  % scale PDF
+
+    Jn1(:,ii) = sum(J1 .* pf, 2);
+    Jn2(:,ii) = sum(J2 .* pf, 2);
+    Jt = cat(3, Jn1(:,ii), Jn2(:,ii));
+    
+    [~, ~, Ct(:,ii)] = smodel.IModel(prop0, Jt);  % inferred ISF (not necessarily true)
+    
+    % Js = smodels.evaluateF([dp, F0_vec(ii), 1]);
+    [~, ~, Cinf(:,ii)] = smodels.IModel(prop, Jt);  % inferred ISF
+
+    
+    tools.textbar([ii, nf]);
+end
+srel = sF0 ./ F0_vec;
+%}
+
+
+
 cm = flipud(internet);
 
 figure(1);
@@ -145,4 +184,6 @@ plot(F0_vec, Cinf(prompt, :));
 hold on;
 plot(F0_vec, Ct(prompt, :));
 hold off
+ylim([0, 1.1]);
+xlim([0, max(F0_vec)]);
 

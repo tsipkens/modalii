@@ -62,7 +62,7 @@ figure(2);
 plot(t, squeeze(J));
 
 figure(1);
-cmap_sweep(6, flipud(fgreen));  % apply colormap for lines
+cmap_sweep(6, flipud(fmviz));  % apply colormap for lines
 plot(t, T);
 hold on;
 plot(t, T_j, 'w:');
