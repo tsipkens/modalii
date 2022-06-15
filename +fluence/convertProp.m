@@ -6,7 +6,7 @@
 
 function prop = convertProp(prop_old)
 
-Trep = prop_old.Tg .* 1.5; % representative temperature
+Trep = 2250; % prop_old.Tg .* 1.5; % representative temperature
 
 %-- Experimental parameters ----------------------------------------------%
 prop.Tg = prop_old.Tg; % gas temperature, K
