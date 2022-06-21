@@ -13,14 +13,14 @@ opts = [];
 % opts.hv = 'constant';
 opts.Em = 'default'; %'Krishnan'; %'Mie-Krishnan';
 
-% prop = props.x_apb17_Fe;
-prop = props.x_ldf;
+prop = props.x_apb17_Fe;
+% prop = props.x_ldf;
 prop = props.Ar(prop);
 prop.Ti = 298;
 
-% prop = props.Fe(prop, opts);
+prop = props.Fe(prop, opts);
 % prop = props.Ge(prop, opts); prop.Ti = 1675;
-prop = props.C(prop, opts); prop.Ti = 1675;
+% prop = props.C(prop, opts); prop.Ti = 1675;  % also scaling of prop.M below
 
 prop.F0 = 0.15; % in [J/cm2]
 prop.Tg = prop.Ti;
@@ -37,7 +37,7 @@ disp('Completed setup.');
 disp(' ');
 
 
-nf = 60;
+nf = 130;
 F0_vec = linspace(0.0005, 2, nf);
 dp = 30;
 prop.dp0 = dp;
@@ -64,7 +64,7 @@ plot(t, T);
 %}
 
 propt = prop;
-propt.hvb = prop.hvb / prop.M;  % convert from molar
+% propt.hvb = prop.hvb / prop.M;  % FOR SOOT: convert from molar
 Tlow1 = 10000 * 6 * pi * prop.Eml(dp) / ...
     (prop.l_laser * 1e-9 * prop.rho(prop.Tg) * prop.cp(prop.Tg)) ...
     .* F0_vec + prop.Tg;
@@ -81,8 +81,21 @@ plot(F0_vec, Tfun(F0_vec), 'k', 'LineWidth', 1.2); % plot overall fluence curve
 hold off;
 ylim([prop.Tg, 5500]);
 
-%-{
+
 figure(3);
+plot(F0_vec ./ Fref, max(T));
+hold on;
+plot(F0_vec ./ Fref, Tlow1, 'r');
+plot(F0_vec ./ Fref, Tlow(F0_vec));
+plot(F0_vec ./ Fref, Thigh(F0_vec));
+plot(F0_vec ./ Fref, Tfun(F0_vec), 'k', 'LineWidth', 1.2); % plot overall fluence curve
+hold off;
+ylim([prop.Tg, 5500]);
+xlim([0, 3]);
+
+
+%{
+figure(4);
 plot(F0_vec, max(J1));
 hold on;
 plot(F0_vec, max(J1 .* m ./ m(1,:)));

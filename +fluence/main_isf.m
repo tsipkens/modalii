@@ -27,7 +27,7 @@ prop = prop0;  % copy to simple model, prior to changes
 
 %-- Change true model parameters -----------------------------------------%
 % Case 1: Simple doubling of E(m).
-% prop0.Em = @(l,dp,X) 0.8 .* ones(1,length(l));
+prop0.Em = @(l,dp,X) 0.8 .* ones(1,length(l));
 
 % Case 2: Annealing.
 %{
@@ -46,6 +46,7 @@ prop0.Emr = @(l1,l2,dp) prop0.CEmr.*prop0.Em(l1,dp,0)./prop0.Em(l2,dp,0);
 
 % Case 4.
 %{
+% Keep this commented for Tg = 298 K (cold soot) case.
 prop0.Ti = 1730;  % fot hot soot
 prop0.Tg = prop0.Ti;
 prop = prop0;
@@ -111,7 +112,7 @@ end
 
 
 %%
-%-{
+%{
 % For Case 5.
 Jn1 = J1;  Jn2 = J2;
 sF0_1 = 0.2;
