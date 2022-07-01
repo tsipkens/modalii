@@ -27,7 +27,7 @@ prop = prop0;  % copy to simple model, prior to changes
 
 %-- Change true model parameters -----------------------------------------%
 % Case 1: Simple doubling of E(m).
-prop0.Em = @(l,dp,X) 0.8 .* ones(1,length(l));
+% prop0.Em = @(l,dp,X) 0.8 .* ones(1,length(l));
 
 % Case 2: Annealing.
 %{
@@ -52,6 +52,9 @@ prop0.Tg = prop0.Ti;
 prop = prop0;
 % + See loop below.
 %}
+
+% Case 5.
+% See below loop. 
 %-------------------------------------------------------------------------%
 
 % Define models and their parameterizations.
@@ -64,7 +67,7 @@ htmodel = HTModel(prop0, x_fields, t, opts);
 smodel = SModel(prop0, x_fields, t, l);
 smodel.htmodel = htmodel;
 
-% Simply SModel.
+% Simple SModel.
 smodels = SModel(prop, x_fields, t, l);
 smodels.htmodel = htmodel;
 
@@ -109,12 +112,13 @@ for ii=1:length(F0_vec)
     
     tools.textbar([ii, nf]);
 end
+disp(' ');
+Jn1 = J1;  Jn2 = J2;  % copy over to temporary arrayJJ1
 
 
 %%
-%{
+%-{
 % For Case 5.
-Jn1 = J1;  Jn2 = J2;
 sF0_1 = 0.2;
 sF0_2 = 0.005; % 0.02; % 0.05; % 1e-3;
 disp('Convolving fluence responses (simulating uneven fluence):');
@@ -132,11 +136,11 @@ for ii=1:length(F0_vec)
     end
 
     pf = normpdf(F0_vec, F0_vec(ii), sF0);
-    pf = pf ./ sum(pf);  % scale PDF
-
-    Jn1(:,ii) = sum(J1 .* pf, 2);
-    Jn2(:,ii) = sum(J2 .* pf, 2);
-    Jt = cat(3, Jn1(:,ii), Jn2(:,ii));
+    pf = pf ./ sum(pf);  % scale PDF, so that ISF for signals ideally equals one
+    
+    J1(:,ii) = sum(Jn1 .* pf, 2);
+    J2(:,ii) = sum(Jn2 .* pf, 2);
+    Jt = cat(3, J1(:,ii), J2(:,ii));
     
     [~, ~, Ct(:,ii)] = smodel.IModel(prop0, Jt);  % inferred ISF (not necessarily true)
     
@@ -167,22 +171,27 @@ hold on;
 plot(F0_vec, Tlow)
 hold off;
 
+% Peak.
 figure(3);
 plot(F0_vec, max(J1));
 hold on;
-plot(F0_vec, max(J1 .* m ./ m(1,:)));
+plot(F0_vec, max(Jn1 .* m ./ m(1,:)));
 hold off;
+title('Peak incandescence v. fluence');
 
+% Constant time from peak laser energy.
 np = 400;
 figure(4);
 plot(F0_vec, J1(np,:));
 hold on;
-plot(F0_vec, (J1(np,:) .* m(np,:) ./ m(1,:)));
+plot(F0_vec, (Jn1(np,:) .* m(np,:) ./ m(1,:)));
 hold off;
+title(['Incandescence at ', num2str(np), ' ns v. fluence']);
 
 figure(5);
 cmap_sweep(nf, cm);
 plot(t, X);
+title('Annealed fraction');
 
 figure(6);
 plot(F0_vec, Cinf(prompt, :));
