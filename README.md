@@ -30,6 +30,8 @@ Data, including temperatures and incandescence intensities, are generally struct
 
 While having the third dimension as wavelength is suboptimal in some respects, it consistently reserves the second dimension for repeat measurements, whether the represented quantity be incandescence, temperature, or intensity scaling factor (similar to apparent volume fraction). This has utility for uncertainty quantification. 
 
+Note that the **repeats** dimension can also be used to store fluence-resolved temperature and incandescence curves in the absence of repeat data (or when signals are pre-averaged).
+
 ## 2. Upper directory and main\*.m scripts
 
 Throughout the program, `main*.m` scripts are used to create instances of the classes and perform the analysis of LII signals. 

@@ -113,25 +113,25 @@ for ii=1:length(F0_vec)
     tools.textbar([ii, nf]);
 end
 disp(' ');
-Jn1 = J1;  Jn2 = J2;  % copy over to temporary arrayJJ1
+Jn1 = J1;  Jn2 = J2;  % copy over to temporary array, in case modified below
 
 
 %%
 %-{
 % For Case 5.
-sF0_1 = 0.2;
-sF0_2 = 0.005; % 0.02; % 0.05; % 1e-3;
+% LII workshop: (0.2, 0.005)
+sF0_1 = 0.;
+sF0_2 = 0.05;
 disp('Convolving fluence responses (simulating uneven fluence):');
 tools.textbar([0, nf]);
 for ii=1:length(F0_vec)
     sF0 = sF0_1 * F0_vec(ii) + sF0_2;
-    if F0_vec(ii) < 0.01
-        Ct(:,ii) = NaN;
+    if or(or(F0_vec(ii) < 0.01, ...
+            (F0_vec(ii) - 2 * sF0) < 0), ...
+            (F0_vec(ii) + 2 * sF0) > F0_vec(end))
         Cinf(:,ii) = NaN;
-        continue;
-    elseif (F0_vec(ii) - 3 * sF0) < 0
-        Ct(:,ii) = NaN;
-        Cinf(:,ii) = NaN;
+
+        tools.textbar([ii, nf]);
         continue;
     end
 
@@ -141,8 +141,6 @@ for ii=1:length(F0_vec)
     J1(:,ii) = sum(Jn1 .* pf, 2);
     J2(:,ii) = sum(Jn2 .* pf, 2);
     Jt = cat(3, J1(:,ii), J2(:,ii));
-    
-    [~, ~, Ct(:,ii)] = smodel.IModel(prop0, Jt);  % inferred ISF (not necessarily true)
     
     % Js = smodels.evaluateF([dp, F0_vec(ii), 1]);
     [~, ~, Cinf(:,ii)] = smodels.IModel(prop, Jt);  % inferred ISF
@@ -194,9 +192,9 @@ plot(t, X);
 title('Annealed fraction');
 
 figure(6);
-plot(F0_vec, Cinf(prompt, :));
+plot(F0_vec, Ct(prompt, :), 'r');
 hold on;
-plot(F0_vec, Ct(prompt, :));
+plot(F0_vec, Cinf(prompt, :), 'k');
 hold off
 ylim([0, 1.1]);
 xlim([0, max(F0_vec)]);
