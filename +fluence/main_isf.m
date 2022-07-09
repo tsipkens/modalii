@@ -23,6 +23,10 @@ prop0.Tg = prop0.Ti;
 
 prop0.sigma = 0;  % 0.1
 
+propt = prop0;
+propt.hvb = prop0.hvb / prop0.M;  % FOR SOOT: convert from molar
+[Tref, Fref] = fluence.calcTransition(propt)
+
 prop = prop0;  % copy to simple model, prior to changes
 
 %-- Change true model parameters -----------------------------------------%
@@ -76,9 +80,9 @@ disp(' ');
 
 [~, prompt] = min(abs(t - 20));
 
-nf = 200;
-% nf = 20;
-F0_vec = linspace(0.0005, 0.35, nf);
+% F0_vec = linspace(0.0005, 0.35, 200);  % for draft manuscript figure (v1.0)
+F0_vec = linspace(0.0005, 0.45, 300);
+nf = length(F0_vec);
 dp = 40;
 
 T = [];  J1 = [];  J2 = []; Cinf = []; Ct = [];
@@ -121,7 +125,7 @@ Jn1 = J1;  Jn2 = J2;  % copy over to temporary array, in case modified below
 % For Case 5.
 % LII workshop: (0.2, 0.005)
 sF0_1 = 0.;
-sF0_2 = 0.05;
+sF0_2 = 0.01;
 disp('Convolving fluence responses (simulating uneven fluence):');
 tools.textbar([0, nf]);
 for ii=1:length(F0_vec)
@@ -130,6 +134,8 @@ for ii=1:length(F0_vec)
             (F0_vec(ii) - 2 * sF0) < 0), ...
             (F0_vec(ii) + 2 * sF0) > F0_vec(end))
         Cinf(:,ii) = NaN;
+        J1(:,ii) = NaN;
+        J2(:,ii) = NaN;
 
         tools.textbar([ii, nf]);
         continue;
@@ -144,7 +150,6 @@ for ii=1:length(F0_vec)
     
     % Js = smodels.evaluateF([dp, F0_vec(ii), 1]);
     [~, ~, Cinf(:,ii)] = smodels.IModel(prop, Jt);  % inferred ISF
-
     
     tools.textbar([ii, nf]);
 end
@@ -195,7 +200,82 @@ figure(6);
 plot(F0_vec, Ct(prompt, :), 'r');
 hold on;
 plot(F0_vec, Cinf(prompt, :), 'k');
+xline(Fref);
 hold off
 ylim([0, 1.1]);
 xlim([0, max(F0_vec)]);
+
+
+
+
+%%
+%-{
+% Inversion to correct for non-uniformity.
+% Not currently working very well.
+
+% Generate A matrix.
+flnan = isnan(J1(1,:));
+A = [];
+for ii=1:length(F0_vec)
+    if flnan(ii); continue; end
+
+    pf = normpdf(F0_vec, F0_vec(ii), sF0);
+    pf = pf ./ sum(pf);  % scale PDF, so that ISF for signals ideally equals one
+
+    A = [A; pf(~flnan)];
+end
+
+disp('Performing inversion...')
+%{
+Ji1 = ones(size(J1(prompt, :)));
+Ji1(find(~flnan)) = tools.exp_dist(A, J1(prompt, ~flnan)', 0.5, sF0_2, F0_vec(~flnan))';
+Ji2 = ones(size(J2(prompt, :)));
+Ji2(find(~flnan)) = tools.exp_dist(A, J2(prompt, ~flnan)', 0.5, sF0_2, F0_vec(~flnan))';
+tools.textdone(); disp(' ');
+%}
+
+%-{
+Ji1 = NaN(size(J1(prompt, :)));
+L1 = diag(1 ./ sqrt(J1(prompt, ~flnan)));
+Ji1(find(~flnan)) = tools.tikhonov(L1 * A, L1 * J1(prompt, ~flnan)', 2.5, 1, 0)';
+Ji2 = NaN(size(J2(prompt, :)));
+L2 = diag(1 ./ sqrt(J2(prompt, ~flnan)));
+Ji2(find(~flnan)) = tools.tikhonov(L2 * A, L2 * J2(prompt, ~flnan)', 2.5, 1, 0)';
+tools.textdone(); disp(' ');
+%}
+
+disp('Recomputing ISFs:');
+Ci = [];
+tools.textbar([0, nf]);
+for ii=1:length(F0_vec)
+    if flnan(ii)
+        Ci(:,ii) = NaN;
+        tools.textbar([ii, nf]);
+        continue;
+    end
+
+    Jt = cat(3, Ji1(:,ii), Ji2(:,ii));
+    
+    % Js = smodels.evaluateF([dp, F0_vec(ii), 1]);
+    [~, ~, Ci(:,ii)] = smodels.IModel(prop, Jt);  % inferred ISF
+    
+    tools.textbar([ii, nf]);
+end
+
+figure(6);
+hold on;
+plot(F0_vec, Ci);
+hold off;
+
+figure(7);
+plot(F0_vec, Jn1(prompt, :));
+hold on;
+plot(F0_vec, Ji1);
+plot(F0_vec, Jn2(prompt, :));
+plot(F0_vec, Ji2);
+hold off;
+set(gca, 'Yscale', 'log');
+ylim([1e-10, inf]);
+%}
+
 
