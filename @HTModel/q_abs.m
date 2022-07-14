@@ -26,17 +26,18 @@ Cabs = pi ^ 2 .* (dp .^ 3) ./ (prop.l_laser*1e-9) .* ...
 
 
 %-- Setup laser profile as function handle, f(t) -------------------------%
-switch htmodel.opts.laserprofile
+switch htmodel.opts.abs
     case {'tophat','square'} % square laser profile
         f = @(t) F1.*(heaviside(t - (tlm - tlp/2))...
             -heaviside(t - (tlm + tlp/2))) ./ (tlp);
         
-    case {'Gaussian','normal','default'} % Gaussian temporal laser profile
+    case {'Gaussian','normal','include'} % Gaussian temporal laser profile
         sigma = tlp ./ (2 * sqrt(2 * log(2))); % makes tlp the FWHM of the pulse
+        
         % tlm = sigma; % --> changed for model selection work?
+        % was sigma = 5e-9
+        
         f = @(t) F1 .* normpdf(t, tlm, sigma);
-            % tlp is FWHM of the Gaussian profile
-            % was sigma = 5e-9
             
     case {'lognormal'}
         Sk = 0.9282; % based on logn fit to Michelsen, 2007 profile

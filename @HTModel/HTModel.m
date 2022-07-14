@@ -41,9 +41,8 @@ classdef HTModel
             'cond', 'free-molecular',...  % conduction model
             'evap', 'free-molecular',...  % evaporation model
             'rad', 'none',...  % radiation model
-            'abs', 'none',...  % absorption model
+            'abs', 'none',...  % absorption model (also temporal shape of laser profile)
             'ann', 'none',...  % annealing model
-            'laserprofile', 'default',...  % temporal shape of laser profile
             'polydispersity', 0,...  % whether to incorporate polydispersity
             'deMethod', 'default'...  % ODE sovler method
             );
@@ -72,7 +71,11 @@ classdef HTModel
             tools.textheader('New heat transfer model');
             disp(['  Conduction:  ', htmodel.opts.cond]);
             disp(['  Evaporation: ', htmodel.opts.evap]);
-            disp(['  Absorption:  ', htmodel.opts.abs]);
+            if strcmp(htmodel.opts.abs, 'include')
+                disp(['  Absorption:  ', htmodel.opts.abs, ' (Gaussian)']);
+            else
+                disp(['  Absorption:  ', htmodel.opts.abs]);
+            end
             disp(['  Radiation:   ', htmodel.opts.rad]);
             disp(['  Annealing:   ', htmodel.opts.ann]);
             tools.textheader();

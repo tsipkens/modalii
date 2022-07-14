@@ -28,24 +28,24 @@ aa = '@(t,T,mp,X)('; % temperature component of the ODE
 
 
 %-- Conduction model -----------------------------------------------------%
-switch htmodel.opts.cond % Default is free molecular regime
+switch htmodel.opts.cond  % default is free molecular regime
     case 'exp'
         htmodel.opts.deMethod = 'none';
     case 'none'
-        % Do nothing.
-    otherwise % Free molecular regime
+        % Don't add anything.
+    otherwise  % free molecular regime
         aa = [aa,'-htmodel.q_cond(prop,T,dp(mp,T))'];
 end
 %-------------------------------------------------------------------------%
 
 
 %-- Evaporation model ----------------------------------------------------%
-switch htmodel.opts.evap % Deafult is free molecular regime
+switch htmodel.opts.evap %  Default is free molecular regime
     case 'none'
-        % Do nothing.
-    case 'mult' % Free molecular regimes, multiple species
+        % Don't add anything.
+    case 'mult'  % free molecular regimes, multiple species
         aa = [aa,'-htmodel.q_evapm(prop,T,dp(mp,T))'];
-    otherwise % Free molecular regime, one species
+    otherwise  % free molecular regime, one species
         aa = [aa,'-htmodel.q_evap(prop,T,dp(mp,T))'];
 end
 %-------------------------------------------------------------------------%
@@ -53,20 +53,20 @@ end
 
 %-- Radiative model ------------------------------------------------------%
 switch htmodel.opts.rad % Default is none
-    case {'include'}
-        aa = [aa,'-htmodel.q_rad(prop,T,dp(mp,T))'];
+    case {'none'}
+        % Don't add anything (default).
     otherwise
-        % Do nothing.
+        aa = [aa,'-htmodel.q_rad(prop,T,dp(mp,T))'];
 end
 %-------------------------------------------------------------------------%
 
 
 %-- Abrsorption model ----------------------------------------------------%
 switch htmodel.opts.abs % Default is none
-    case {'include'}
-        aa = [aa,'+htmodel.q_abs(prop,t,dp(mp,T))'];
+    case {'none'}
+        % Don't add anything.
     otherwise
-        % Do nothing. 
+        aa = [aa,'+htmodel.q_abs(prop,t,dp(mp,T))'];
 end
 %-------------------------------------------------------------------------%
 
