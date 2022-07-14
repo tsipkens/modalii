@@ -81,7 +81,9 @@ disp(' ');
 [~, prompt] = min(abs(t - 20));
 
 % F0_vec = linspace(0.0005, 0.35, 200);  % for draft manuscript figure (v1.0)
-F0_vec = linspace(-0.05, 0.45, 300);
+F0_vec = linspace(0, 0.5, 200);
+F0_vec = linspace(0, 0.5, 2e3);
+DF0_vec = F0_vec(2:end) - F0_vec(1:(end-1));  DF0_vec = [DF0_vec, DF0_vec(end)];
 nf = length(F0_vec);
 dp = 40;
 
@@ -121,32 +123,36 @@ for ii=1:length(F0_vec)
 end
 disp(' ');
 Jn1 = J1;  Jn2 = J2;  % copy over to temporary array, in case modified below
+F0m_vec = F0_vec;  % copy for plotting if not set below
 
 
 %%
 %-{
 % For Case 5.
 % LII workshop: (0.2, 0.005)
-sF0_1 = 0.12;
+sF0_1 = 0.15;
 sF0_2 = 0.0;
+F0m_vec = linspace(0.001, max(F0_vec), 200);
+nfm = length(F0m_vec);
+J1 = [];  J2 = []; Cinf = [];
 disp('Convolving fluence responses (simulating uneven fluence):');
-tools.textbar([0, nf]);
-for ii=1:length(F0_vec)
-    F0 = F0_vec(ii);
-    F0 = max(F0, 0);  % if negative fluences, zero them
+tools.textbar([0, nfm]);
+for ii=1:length(F0m_vec)
+    F0m = F0m_vec(ii);
+    F0m = max(F0m, 0);  % if negative fluences, zero them
 
-    sF0 = sF0_1 * F0 + sF0_2;
-    if or((F0_vec(ii) - 2 * sF0) < F0_vec(1), ...
-            (F0_vec(ii) + 2 * sF0) > F0_vec(end))
+    sF0 = sF0_1 * F0m + sF0_2;
+    if or((F0m - 2 * sF0) < F0_vec(1), ...
+            (F0m + 2 * sF0) > F0_vec(end))
         Cinf(:,ii) = NaN;
         J1(:,ii) = NaN;
         J2(:,ii) = NaN;
 
-        tools.textbar([ii, nf]);
+        tools.textbar([ii, nfm]);
         continue;
     end
 
-    pf = normpdf(F0_vec, F0_vec(ii), sF0);
+    pf = normpdf(F0_vec, F0m, sF0) .* DF0_vec;
     pf = pf ./ sum(pf);  % scale PDF, so that ISF for signals ideally equals one
     
     J1(:,ii) = sum(Jn1 .* pf, 2);
@@ -156,7 +162,7 @@ for ii=1:length(F0_vec)
     % Js = smodels.evaluateF([dp, F0_vec(ii), 1]);
     [~, ~, Cinf(:,ii)] = smodels.IModel(prop, Jt);  % inferred ISF
     
-    tools.textbar([ii, nf]);
+    tools.textbar([ii, nfm]);
 end
 srel = sF0 ./ F0_vec;
 %}
@@ -181,18 +187,18 @@ hold off;
 
 % Peak.
 figure(3);
-plot(F0_vec, max(J1));
+plot(F0m_vec, max(J1));
 hold on;
-plot(F0_vec, max(Jn1 .* m ./ m(1,:)));
+plot(F0_vec, max(Jn1), 'k--');
 hold off;
 title('Peak incandescence v. fluence');
 
 % Constant time from peak laser energy.
 np = 400;
 figure(4);
-plot(F0_vec, J1(np,:));
+plot(F0m_vec, J1(np,:));
 hold on;
-plot(F0_vec, (Jn1(np,:) .* m(np,:) ./ m(1,:)));
+plot(F0_vec, Jn1(np,:));
 hold off;
 title(['Incandescence at ', num2str(np), ' ns v. fluence']);
 
@@ -204,11 +210,11 @@ title('Annealed fraction');
 figure(6);
 plot(F0_vec, Ct(prompt, :), 'r');
 hold on;
-plot(F0_vec, Cinf(prompt, :), 'k');
+plot(F0m_vec, Cinf(prompt, :), 'k');
 xline(Fref);
 hold off
 ylim([0, 1.1]);
-xlim([0, max(F0_vec)]);
+xlim([0, max(F0m_vec)]);
 
 
 
