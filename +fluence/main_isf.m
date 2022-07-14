@@ -81,7 +81,7 @@ disp(' ');
 [~, prompt] = min(abs(t - 20));
 
 % F0_vec = linspace(0.0005, 0.35, 200);  % for draft manuscript figure (v1.0)
-F0_vec = linspace(0.0005, 0.45, 300);
+F0_vec = linspace(-0.05, 0.45, 300);
 nf = length(F0_vec);
 dp = 40;
 
@@ -89,9 +89,12 @@ T = [];  J1 = [];  J2 = []; Cinf = []; Ct = [];
 disp('Computing temperature decays:');
 tools.textbar([0, nf]);
 for ii=1:length(F0_vec)
-    [T(:,ii), m(:,ii), X(:,ii)] = htmodel.evaluate([dp, F0_vec(ii), 1]);
+    F0 = F0_vec(ii);
+    F0 = max(F0, 0);  % if negative fluences, zero them
     
-    Jt = smodel.evaluateF([dp, F0_vec(ii), 1]);
+    [T(:,ii), m(:,ii), X(:,ii)] = htmodel.evaluate([dp, F0, 1]);
+    
+    Jt = smodel.evaluateF([dp, F0, 1]);
     Jt = Jt .* m(:,ii) ./ m(1,ii); % scale by particle mass loss
 
     % For Case 3: Time response.
@@ -124,14 +127,16 @@ Jn1 = J1;  Jn2 = J2;  % copy over to temporary array, in case modified below
 %-{
 % For Case 5.
 % LII workshop: (0.2, 0.005)
-sF0_1 = 0.;
-sF0_2 = 0.01;
+sF0_1 = 0.12;
+sF0_2 = 0.0;
 disp('Convolving fluence responses (simulating uneven fluence):');
 tools.textbar([0, nf]);
 for ii=1:length(F0_vec)
-    sF0 = sF0_1 * F0_vec(ii) + sF0_2;
-    if or(or(F0_vec(ii) < 0.01, ...
-            (F0_vec(ii) - 2 * sF0) < 0), ...
+    F0 = F0_vec(ii);
+    F0 = max(F0, 0);  % if negative fluences, zero them
+
+    sF0 = sF0_1 * F0 + sF0_2;
+    if or((F0_vec(ii) - 2 * sF0) < F0_vec(1), ...
             (F0_vec(ii) + 2 * sF0) > F0_vec(end))
         Cinf(:,ii) = NaN;
         J1(:,ii) = NaN;
@@ -209,7 +214,7 @@ xlim([0, max(F0_vec)]);
 
 
 %%
-%-{
+%{
 % Inversion to correct for non-uniformity.
 % Not currently working very well.
 
@@ -242,7 +247,7 @@ Ji2 = NaN(size(J2(prompt, :)));
 L2 = diag(1 ./ sqrt(J2(prompt, ~flnan)));
 Ji2(find(~flnan)) = tools.tikhonov(L2 * A, L2 * J2(prompt, ~flnan)', 2.5, 1, 0)';
 tools.textdone(); disp(' ');
-%}
+
 
 disp('Recomputing ISFs:');
 Ci = [];
