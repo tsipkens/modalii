@@ -22,9 +22,10 @@ prop = props.Fe(prop, opts);
 % prop = props.Ge(prop, opts); prop.Ti = 1675;
 % prop = props.C(prop, opts); prop.Ti = 1675;  % also scaling of prop.M below
 
-prop.F0 = 0.15; % in [J/cm2]
+prop.F0 = 0.25; % in [J/cm2]
 prop.Tg = prop.Ti;
 prop.sigma = 0;  % 0.1
+prop.Em = @(l,dp,X) 0.05;
 
 % Define models and their parameterizations.
 opts.abs = 'include';  % set opts to include absorption
@@ -38,8 +39,8 @@ disp(' ');
 
 
 nf = 130;
-F0_vec = linspace(0.0005, 2, nf);
-dp = 30;
+F0_vec = linspace(0.0005, 5, nf);
+dp = 10;
 prop.dp0 = dp;
 
 T = [];  J1 = [];  J2 = [];
@@ -72,26 +73,28 @@ Tlow1 = 10000 * 6 * pi * prop.Eml(dp) / ...
 [Tfun, Tlow, Thigh] = fluence.getPeak(propt, [], [], Tref, Fref);
 
 figure(2);
-plot(F0_vec, max(T));
+plot(F0_vec, max(T), 'k', 'LineWidth', 1.2);
 hold on;
 plot(F0_vec, Tlow1, 'r');
 plot(F0_vec, Tlow(F0_vec));
 plot(F0_vec, Thigh(F0_vec));
-plot(F0_vec, Tfun(F0_vec), 'k', 'LineWidth', 1.2); % plot overall fluence curve
+plot(F0_vec, Tfun(F0_vec)); % plot overall fluence curve
 hold off;
-ylim([prop.Tg, 5500]);
+ylim([prop.Tg, 7500]);
 
 
 figure(3);
-plot(F0_vec ./ Fref, max(T));
+plot(F0_vec ./ Fref, max(T), 'k', 'LineWidth', 1.2);  % simulated
 hold on;
 plot(F0_vec ./ Fref, Tlow1, 'r');
 plot(F0_vec ./ Fref, Tlow(F0_vec));
 plot(F0_vec ./ Fref, Thigh(F0_vec));
-plot(F0_vec ./ Fref, Tfun(F0_vec), 'k', 'LineWidth', 1.2); % plot overall fluence curve
+plot(F0_vec ./ Fref, Tfun(F0_vec));  % plot overall fluence curve
 hold off;
-ylim([prop.Tg, 5500]);
+ylim([prop.Tg, 7500]);
 xlim([0, 3]);
+
+figure(2);
 
 
 %{
