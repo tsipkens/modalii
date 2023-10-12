@@ -7,9 +7,6 @@ function j = write_json(prop, file)
 
 if ~exist('file', 'var'); file = []; end
 
-% Remove options, as not useful universally. 
-prop = rmfield(prop, 'opts');
-
 f = fieldnames(prop);
 
 % Convert function handles to strings for saving. 

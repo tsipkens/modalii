@@ -35,8 +35,8 @@ Xi = 0.*ones(Nd,1); % initial annealed fraction, [fraction]
 
 %-- Starting point exception ---------------------------------------------%
 %   Note: This is included to allow fitting to only part of a signal, 
-%   while still allowing for polydispersity effects (see Mo in Sipkens et al.
-%   2017).
+%   while still allowing for polydispersity effects (see Mo in Sipkens
+%    et al. 2017).
 if htmodel.t(1)>0.1 % gives initial condition at t=0 rather than t=t(1)
     t = [0;htmodel.t];
     opts_tadd = 1;
@@ -51,7 +51,7 @@ end
 %   Note: Switch chooses whether to couple three ODEs to also solve to the
 %   annealed fraction or to only conisder two couples ODEs.
 switch htmodel.opts.ann % whether to solve for annealed fraction
-    case {'include', 'Michelsen', 'Sipkens'}
+    case {'include'}
         dydt = @(t, y) real( ...
             [htmodel.dTdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv, y(2*Nd+1:3*Nd)) .* 1e-9;...
              htmodel.dmdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv, y(2*Nd+1:3*Nd)) .* mass_conv .* 1e-9;...
