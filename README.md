@@ -1,9 +1,9 @@
 
-# Modular analysis of LII signals (wat-lii)
+# MODUlar LII Modeler (moduliim)
 
 > NOTE: This code is an experimental code.
 
-This is modular program to model and analyze time-resolved laser-induced incandescence (TiRe-LII) signals, developed at the University of Waterloo.
+This is modular program to model and analyze time-resolved laser-induced incandescence (TiRe-LII) signals, initially developed at the University of Waterloo with extensions added subsequently.
 
 This program is built to simulate signals from various materials, including soot, silicon, germanium, iron, silver, and molybdenum. Signals are generated predominantly using absorption, conduction, and evaporation submodels, with capabilities to do other cooling modes. A typical TiRe-LII apparatus is shown below ([Sipkens, 2017][SipkensThesis]; [Sipkens et al., 2022][SipkensReview]). 
 
