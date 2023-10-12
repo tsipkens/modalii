@@ -1,5 +1,5 @@
 
-# MODular LII Modeler (modliim)
+# MODUlar LII Modeler (moduliim)
 
 > NOTE: This code is an experimental code.
 
