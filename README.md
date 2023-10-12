@@ -1,5 +1,5 @@
 
-# Modular analysis of LII signals (wat-lii)
+# MODular LII Modeler (modliim)
 
 > NOTE: This code is an experimental code.
 
