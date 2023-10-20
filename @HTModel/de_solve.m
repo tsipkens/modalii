@@ -63,6 +63,7 @@ switch htmodel.opts.ann % whether to solve for annealed fraction
                 %   added abs(y(2)) to force positive mass
                 %   .*1e-9 is to convert denominator of dydt to ns for solver 
         yi = [Ti; mpi];
+
     otherwise
         dydt = @(t, y) real( ...
             [htmodel.dTdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv, y(2*Nd+1:3*Nd)) .* 1e-9;...
@@ -71,7 +72,6 @@ switch htmodel.opts.ann % whether to solve for annealed fraction
         yi = [Ti; mpi; Xi];
 end
 %-------------------------------------------------------------------------%
-
 
 %-- Solve ODE ------------------------------------------------------------%
 %   Note: Two solver methods are available: the built-in Runge-Kutta solver
@@ -83,8 +83,8 @@ switch htmodel.opts.deMethod
             opts = [];
         else
             % limit step size to ensure solver sees absorption
-            opts.MaxStep = (prop.tlp)/2;
-        end 
+            opts.MaxStep = 20 .* prop.tlp;
+        end
         
         [~,yo] = ode23s(dydt,t,yi,opts); % primary solver
         

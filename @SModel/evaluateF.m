@@ -58,10 +58,9 @@ else % for monodisperse case, simply evaluate the ODE directly
     Jo = smodel.FModel(prop, T, prop.Em, X); % evaluate forward model for J
     Jo = Jo .* prop.C_J; % scale incandescence by corresponding factor
     
-    if strcmp(smodel.opts.multicolor, 'constC-mass') % scale incandescence according to mass loss
-        mpr = real(mp ./ mp(1));
-        Jo = bsxfun(@times, Jo, mpr);
-    end
+    % Incorporate mass loss (i.e., a reduction in volume fraction).
+    mpr = real(mp ./ mp(1));
+    Jo = bsxfun(@times, Jo, mpr);
     
 end
 %-------------------------------------------------------------------------%

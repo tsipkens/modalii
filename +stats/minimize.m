@@ -31,6 +31,7 @@ switch opts.minimize
             lb = [];
             ub = [];
         end
+
         [mle,~,~,~,~,~,jcb] = lsqnonlin(min_fun,x0,lb,ub,options);
         
     case {'trust-region-reflective','trr'}
@@ -41,6 +42,7 @@ switch opts.minimize
             options = optimset('MaxFunEvals',10000,'Display','off',...
                 'Algorithm','trust-region-reflective');
         end
+
         [mle,~,~,~,~,~,jcb] = lsqnonlin(min_fun,x0,[],[],options);
         
     case {'fminsearch','scalar'}
@@ -49,6 +51,7 @@ switch opts.minimize
         else
             options = optimset('MaxFunEvals',10000);
         end
+        
         mle = fminsearch(min_fun,x0,options);
         jcb = stats.jacob_est(mle);
         
