@@ -17,12 +17,7 @@ opts = [];
 % opts.hv = 'constant';
 opts.Em = 'default'; %'Krishnan'; %'Mie-Krishnan';
 
-prop = props.x_apb17_Fe;
-prop = props.Ar(prop);
-
-prop = props.Fe(prop, opts);
-% prop = props.Ag(prop, opts);
-% prop = props.C(prop, opts);
+prop = props.get({'x_apb17', 'Ar', 'Fe'}, [], opts);
 
 prop.F0 = 0.15; % in [J/cm2]
 prop.Ti = 298;

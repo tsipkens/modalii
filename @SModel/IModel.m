@@ -24,7 +24,7 @@ switch smodel.opts.pyrometry
     % Does not currently output scaling factor. 
     case {'2color', 'ratio'}
         l = smodel.l;
-        Emr = prop.Emr(l(1), l(2), prop.dp0); % two-colour pyrometry
+        Emr = prop.Emr(l(1), l(2), prop.dp0, prop); % two-colour pyrometry
         [To, Co] = smodel.calcRatioPyrometry(J(:,:,1), J(:,:,2), Emr);
         To = real(To);
         s_T = [];
@@ -32,7 +32,7 @@ switch smodel.opts.pyrometry
         
     case {'2color-scalingfactor'}
         l = smodel.l;
-        Emr = prop.Emr(l(1),l(2), prop.dp0); % two-colour pyrometry
+        Emr = prop.Emr(l(1),l(2), prop.dp0, prop); % two-colour pyrometry
         To = smodel.calcRatioPyrometry(J(:,:,1), J(:,:,2), Emr);
         To = real(To);
         Co = bsxfun(@times,J,1./smodel.FModel(prop, To, prop.Em));
@@ -42,7 +42,7 @@ switch smodel.opts.pyrometry
         
     case {'2color-constT'}
         l = smodel.l;
-        Emr = prop.Emr(l(1),l(2), prop.dp0); % two-colour pyrometry
+        Emr = prop.Emr(l(1),l(2), prop.dp0, prop); % two-colour pyrometry
         To = smodel.calcRatioPyrometry(J(:,:,1), J(:,:,2), Emr);
         To = real(To);
         Co = J./smodel.FModel(1730.*ones(size(To)),prop.Em);

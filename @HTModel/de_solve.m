@@ -24,12 +24,16 @@ Ti = prop.Ti .* ones(Nd,1); % initial temperature, [K]
 
 %-- Initial mass ----%
 if isempty(prop.rho0)
-	prop.rho0 = prop.rho(prop.Tg);
+	prop.rho0 = prop.rho(prop.Tg,prop);
 end
 mass_conv = 1e21; % added for stability, converts mass to attogram (ag)
 mpi = (prop.rho0 .* (dp0.*1e-9).^3 .* (pi/6)) .* mass_conv; % inital mass, [ag]
 
-Xi = 0.*ones(Nd,1); % initial annealed fraction, [fraction]
+if isfield(prop, 'Xi')
+    Xi = prop.Xi .* ones(Nd, 1);
+else
+    Xi = ones(Nd, 1);  % initial annealed fraction, [fraction]
+end
 %-------------------------------------------------------------------------%
 
 
@@ -51,13 +55,7 @@ end
 %   Note: Switch chooses whether to couple three ODEs to also solve to the
 %   annealed fraction or to only conisder two couples ODEs.
 switch htmodel.opts.ann % whether to solve for annealed fraction
-    case {'include'}
-        dydt = @(t, y) real( ...
-            [htmodel.dTdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv, y(2*Nd+1:3*Nd)) .* 1e-9;...
-             htmodel.dmdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv, y(2*Nd+1:3*Nd)) .* mass_conv .* 1e-9;...
-             htmodel.dXdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv, y(2*Nd+1:3*Nd)) .* 1e-9]);
-        yi = [Ti; mpi; Xi];
-    otherwise
+    case {'none'}
         dydt = @(t, y) real( ...
             [htmodel.dTdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv) .* 1e-9; ...
              htmodel.dmdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv) .* mass_conv .* 1e-9]);
@@ -65,6 +63,12 @@ switch htmodel.opts.ann % whether to solve for annealed fraction
                 %   added abs(y(2)) to force positive mass
                 %   .*1e-9 is to convert denominator of dydt to ns for solver 
         yi = [Ti; mpi];
+    otherwise
+        dydt = @(t, y) real( ...
+            [htmodel.dTdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv, y(2*Nd+1:3*Nd)) .* 1e-9;...
+             htmodel.dmdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv, y(2*Nd+1:3*Nd)) .* mass_conv .* 1e-9;...
+             htmodel.dXdt(t, y(1:Nd), abs(y(Nd+1:2*Nd))./mass_conv, y(2*Nd+1:3*Nd)) .* 1e-9]);
+        yi = [Ti; mpi; Xi];
 end
 %-------------------------------------------------------------------------%
 
@@ -75,11 +79,11 @@ end
 switch htmodel.opts.deMethod
     case {'default', 'ode23s'} % use MATLAB Runge-Kutta solver
         
-        if strcmp(htmodel.opts.abs,'include')
-                % limit step size to ensure solver sees absorption
-            opts.MaxStep = (prop.tlp)/2;
-        else
+        if strcmp(htmodel.opts.abs, 'none')
             opts = [];
+        else
+            % limit step size to ensure solver sees absorption
+            opts.MaxStep = (prop.tlp)/2;
         end 
         
         [~,yo] = ode23s(dydt,t,yi,opts); % primary solver
@@ -94,26 +98,26 @@ switch htmodel.opts.deMethod
         mpo = yo(:,Nd+1:2*Nd)./mass_conv;
         
         switch htmodel.opts.ann % consider percentage annealed variable
-            case {'include', 'Michelsen', 'Sipkens'}
-                Xo = yo(:, 2*Nd + 1:3*Nd);
+            case {'none'}
+                Xo = Xi' .* ones(size(Tout));
             otherwise
-                Xo = zeros(size(Tout));
+                Xo = yo(:, 2*Nd + 1:3*Nd);
         end
         
     case 'Euler' % implementation of simple Euler integration
         dt = 0.2;
         t_eval = t(1):dt:t(end);
-        T_eval = zeros(length(t_eval),1);
-        m_eval = zeros(length(t_eval),1);
-        X_eval = zeros(length(t_eval),1);
+        T_eval = zeros(length(t_eval), 1);
+        m_eval = zeros(length(t_eval), 1);
+        X_eval = zeros(length(t_eval), 1);
         T_eval(1) = yi(1);
         m_eval(1) = yi(2);
         X_eval(1) = yi(3);
         for ii=2:length(t_eval)
-            dydt_ii = dydt(t_eval(ii),[T_eval(ii-1),m_eval(ii-1),X_eval(ii-1)]);
-            T_eval(ii) = T_eval(ii-1)+dydt_ii(1).*dt;
-            m_eval(ii) = m_eval(ii-1)+dydt_ii(2).*dt;
-            X_eval(ii) = X_eval(ii-1)+dydt_ii(3).*dt;
+            dydt_ii = dydt(t_eval(ii), [T_eval(ii-1),m_eval(ii-1),X_eval(ii-1)]);
+            T_eval(ii) = T_eval(ii-1) + dydt_ii(1).*dt;
+            m_eval(ii) = m_eval(ii-1) + dydt_ii(2).*dt;
+            X_eval(ii) = X_eval(ii-1) + dydt_ii(3).*dt;
         end
         
         Tout = interp1(t_eval,T_eval,t);
@@ -134,7 +138,7 @@ if opts_tadd==1 % remove added initial point that was added if t(1)>0
     Xo = Xo(2:end,:);
 end
 
-dpo = ((6.*mpo) ./ (prop.rho(Tout).*pi)) .^ (1/3) .* 1e9;
+dpo = ((6.*mpo) ./ (prop.rho(Tout,prop).*pi)) .^ (1/3) .* 1e9;
     % calculate diameter over time
 mpo = mpo ./ mpo(1); % output relative change in particle mass over time
 %-------------------------------------------------------------------------%

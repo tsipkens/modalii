@@ -10,7 +10,10 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2018-12-17
 
-function [q,Cabs] = q_abs(htmodel, prop, t, dp)
+function [q, Cabs, f] = q_abs(htmodel, prop, t, dp, X)
+
+if ~exist('X', 'var'); X = []; end
+if isempty(X); X = ones(size(dp)); end
 
 dp = dp .* 1e-9; % convert to meters so everything is in SI units
 tlp = prop.tlp * 1e-9; % convert from ns to s
@@ -22,7 +25,7 @@ F1 = (prop.F0') .* (100*100); % laser fluence, [J/m2]
 
 % Evaluate absorption cross section.
 Cabs = pi ^ 2 .* (dp .^ 3) ./ (prop.l_laser*1e-9) .* ...
-    prop.Eml(dp * 1e9);
+    prop.Eml(dp * 1e9, X, prop);
 
 
 %-- Setup laser profile as function handle, f(t) -------------------------%
@@ -31,7 +34,7 @@ switch htmodel.opts.abs
         f = @(t) F1.*(heaviside(t - (tlm - tlp/2))...
             -heaviside(t - (tlm + tlp/2))) ./ (tlp);
         
-    case {'Gaussian','normal','include'} % Gaussian temporal laser profile
+    case {'gaussian','normal','include'} % Gaussian temporal laser profile
         sigma = tlp ./ (2 * sqrt(2 * log(2))); % makes tlp the FWHM of the pulse
         
         % tlm = sigma; % --> changed for model selection work?

@@ -27,7 +27,7 @@ l_max = min(2.5 .* max(l_peak), 5000);
 dl = (l_max-l_min) / (nl-1);
 l = (l_min:dl:l_max)'; % wavelengths to integrate over
 
-Cabs = pi ^ 2 * (dp) ^ 3 ./ (l .* 1e-9) .* max(prop.Em(l, dp), 0); % absorption cross section
+Cabs = pi ^ 2 * (dp) ^ 3 ./ (l .* 1e-9) .* max(prop.Em(l, dp, X, prop), 0); % absorption cross section
 rad = bsxfun(@times, Cabs, blackbody(T, l)); % Cabs*Ibl
 
 q = nansum(bsxfun(@times, rad, dl .* 1e-9)); % integrate over wavelength

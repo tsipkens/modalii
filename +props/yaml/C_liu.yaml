@@ -1,0 +1,55 @@
+# Sensible energy properties. 
+M: 0.01201
+Tm: 1811
+Arho: 1
+Brho: -0.64985
+rho: '@(T,prop)prop.Arho.*1.9*1000.*ones(size(T))'
+Ccp: 1
+Dcp: 1
+cp: >-
+  @(T,prop)prop.Ccp.*1000.*props.iif(T<1200,-9.7768e-4+(2.7943e-4.*T)+(1.4554e-5.*T.^2)-(3.4432e-8.*T.^3)+(3.6700e-11.*T.^4)-(1.9485e-14.*T.^5)+(4.1802e-18.*T.^6),2.9497e-1+(2.9614e-3.*T)-(2.1232e-6.*T.^2)+(8.1901e-10.*T.^3)-(1.7516e-13.*T.^4)+(1.9628e-17.*T.^5)-(8.9817e-22.*T.^6))
+
+# Conduction model.
+alpha: 0.37
+ct: '@(prop)sqrt(8*prop.kb*prop.Tg/(pi*prop.mg))'
+
+# Parameters for sublimation model.
+c0: 17.179
+c1: 0.00068654
+c2: 0.0000029962
+c3: -8.5954e-10
+c4: 1.0486e-13
+b0: 205398
+b1: 736.6
+b2: -0.40713
+b3: 0.00011992
+b4: -1.7946e-8
+b5: 1.0717e-12
+a0: -122.96
+a1: 0.090558
+a2: -0.000027637
+a3: 4.1754e-9
+a4: -2.4875e-13
+
+# Sublimation model.
+alpham: '@(T,prop)0.77'
+Mv: '@(T,prop)(prop.c0+prop.c1.*T+prop.c2.*T.^2+prop.c3.*T.^3+prop.c4.*T.^4)./1000'
+mv: '@(T,prop)prop.Mv(T,prop).*1.660538782e-24'
+Rs: 230.76497640854845
+Tb: 3901.365838587284
+hvb: 24.65456153696253
+Tcr: 9340
+n: 0.38
+hvA: '@(prop)(prop.hvb*1e6)./((1-prop.Tb/prop.Tcr).^prop.n)'
+hv: >-
+  @(T,prop)(prop.b0+(prop.b1.*T)+(prop.b2.*T.^2)+(prop.b3.*T.^3)+(prop.b4.*T.^4)+(prop.b5.*T.^5))./(prop.mv(T,prop)./1.660538782e-24)
+gamma0: 1.865
+Pref: 101325
+C: 24.57414309825269
+gamma: '@(dp,T,prop)prop.gamma0'
+pv: >-
+  @(T,dp,hv,prop)101325.*exp(prop.a0+(prop.a1.*T)+(prop.a2.*T.^2)+(prop.a3.*T.^3)+(prop.a4.*T.^4))
+CEmr: 1
+Emr: '@(l1,l2,dp,prop)prop.CEmr'
+Em: '@(l,dp,X,prop)0.38.*ones(1,length(l))'
+Eml: '@(dp,X,prop)prop.Em(prop.l_laser,dp,X)'

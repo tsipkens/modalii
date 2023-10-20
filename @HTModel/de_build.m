@@ -15,7 +15,7 @@
 function [htmodel, dTdt, dmdt] = de_build(htmodel)
 
 prop = htmodel.prop; % make local copy of material properties
-dp = @(mp,T) 1e9.*(6.*mp./(pi.*prop.rho(T))).^(1/3); % output in nm
+dp = @(mp,T) 1e9.*(6.*mp./(pi.*prop.rho(T,prop))).^(1/3); % output in nm
 
 
 %-- Mass component of the ODE --------------------------------------------%
@@ -66,19 +66,26 @@ switch htmodel.opts.abs % Default is none
     case {'none'}
         % Don't add anything.
     otherwise
-        aa = [aa,'+htmodel.q_abs(prop,t,dp(mp,T))'];
+        switch htmodel.opts.ann
+            case 'none'
+                aa = [aa,'+htmodel.q_abs(prop,t,dp(mp,T))'];  % don't include X
+            otherwise
+                aa = [aa,'+htmodel.q_abs(prop,t,dp(mp,T),X)'];
+        end
 end
 %-------------------------------------------------------------------------%
 
 
 %-- Annealing model ------------------------------------------------------%
 switch htmodel.opts.ann % Default is none
-    case {'include','Michelsen'}
-        aa = [aa,'+htmodel.q_ann_Mich(prop,T,dp(mp,T),X)'];
-        htmodel.dXdt = @(t,T,mp,X) htmodel.dXdt_fun(@htmodel.q_ann_Mich,prop,T,dp(mp,T),X);
-    case {'Sipkens'}
-        aa = [aa,'+htmodel.q_ann_Sip(prop,T,dp(mp,T),X)'];
-        htmodel.dXdt = @(t,T,mp,X) htmodel.dXdt_fun(@htmodel.q_ann_Sip,prop,T,dp(mp,T),X);
+    case {'include', 'michelsen'}
+        aa = [aa,'+htmodel.q_ann_mich(prop,T,dp(mp,T),X)'];
+        htmodel.dXdt = @(t,T,mp,X) ...
+            htmodel.dXdt_fun(@htmodel.q_ann_mich,prop,T,dp(mp,T),X);
+    case {'sipkens'}
+        aa = [aa,'+htmodel.q_ann_sip(prop,T,dp(mp,T),X)'];
+        htmodel.dXdt = @(t,T,mp,X) ...
+            htmodel.dXdt_fun(@htmodel.q_ann_sip,prop,T,dp(mp,T),X);
     otherwise
         htmodel.dXdt = @(t,T,mp,X) 0;
 end
@@ -86,7 +93,7 @@ end
 
 
 %-- Finish and evaluate --------------------------------------------------%
-aa = [aa,')./(prop.cp(T).*mp)'];
+aa = [aa,')./(prop.cp(T,prop).*mp)'];
 dTdt = eval(aa);
 htmodel.dTdt = dTdt;
 %-------------------------------------------------------------------------%

@@ -20,22 +20,22 @@ if nargin<4
 end
 
 if opts_rad
-    q = [q_cond(htmodel, prop, T, dp)' q_evap(htmodel, prop, T, dp)'-(J_evap(htmodel, prop, T, dp).*T.*htmodel.prop.cp(T))' ...
+    q = [q_cond(htmodel, prop, T, dp)' q_evap(htmodel, prop, T, dp)'-(J_evap(htmodel, prop, T, dp).*T.*htmodel.prop.cp(T, prop))' ...
         q_rad(htmodel, prop, T, dp)'];
 else
-    q = [q_cond(htmodel, prop, T, dp)' q_evap(htmodel, prop, T, dp)'-(J_evap(htmodel, prop, T, dp).*T.*htmodel.prop.cp(T))'];
+    q = [q_cond(htmodel, prop, T, dp)' q_evap(htmodel, prop, T, dp)'-(J_evap(htmodel, prop, T, dp).*T.*htmodel.prop.cp(T, prop))'];
 end
 
 %-- Plot modes -----------------------------------------------------------%
 h = semilogy(T,q);
 
 hold on; % plot vertical lines about transition points
-fun1 = @(T)(q_cond(htmodel, prop, T, dp)-q_evap(htmodel, prop, T, dp)+(J_evap(htmodel, prop, T, dp).*T.*htmodel.prop.cp(T)));
+fun1 = @(T)(q_cond(htmodel, prop, T, dp)-q_evap(htmodel, prop, T, dp)+(J_evap(htmodel, prop, T, dp).*T.*htmodel.prop.cp(T, prop)));
 t1 = fzero(fun1,3000);
 plot([t1,t1],ylim,'k--');
 
 if opts_rad
-    fun2 = @(T)(q_evap(htmodel, prop, T, dp)-(J_evap(htmodel, prop, T, dp).*T.*htmodel.prop.cp(T))-q_rad(htmodel, prop, T, dp));
+    fun2 = @(T)(q_evap(htmodel, prop, T, dp)-(J_evap(htmodel, prop, T, dp).*T.*htmodel.prop.cp(T, prop))-q_rad(htmodel, prop, T, dp));
     t2 = fzero(fun2,3000);
     plot([t2,t2],ylim,'k--');
     legend('q_{cond}','q_{evap}','q_{rad}');

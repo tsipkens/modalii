@@ -30,15 +30,15 @@ switch opts.rho
     case {'default', 'Hixson'} % (Hixson, 1990), T > 2125 K
         prop.Arho = 8171;
         prop.Brho = -0.64985;
-        prop.rho = @(T) prop.Brho .* T + prop.Arho;
+        prop.rho = @(T,prop) prop.Brho .* T + prop.Arho;
         
     case {'Basinski'} % (Basinksi,1955 )
         prop.rho_data = getfield(load('rho_Fe_Basinksi.mat'),'rho_data');
         prop.rho_gi = griddedInterpolant(prop.rho_data(:,1),prop.rho_data(:,2),'pchip');
-        prop.rho = @(T) prop.rho_gi(T);
+        prop.rho = @(T,prop) prop.rho_gi(T);
         
     case {'Mills'}
-        prop.rho = @(T)...
+        prop.rho = @(T,prop)...
             props.iif(and(T>=0,T<293),7871.6.*(T./T),...
             props.iif(and(T>=293,T<1184),7874./(1+3.*(14.5e-6).*(T-273-20)),...
             props.iif(and(T>=1184,T<1667),7650-0.51.*(T-273-911),...
@@ -48,11 +48,11 @@ switch opts.rho
     case 'noSlope'
         prop.Arho = 6350; % 7874
         prop.Brho = 0;
-        prop.rho = @(T) (prop.Brho.*T+prop.Arho);
+        prop.rho = @(T,prop) (prop.Brho.*T+prop.Arho);
         
     case 'constant'
         prop.Arho = 6350; % 7874
-        prop.rho = @(T) prop.Arho;
+        prop.rho = @(T,prop) prop.Arho;
         
 end
 
@@ -60,7 +60,7 @@ switch opts.cp
     case {'default', 'mixed'}
         prop.Ccp = 1;
         prop.Dcp = 1; % update in the future, originally zero for APB paper
-        prop.cp = @(T) prop.Ccp.*(props.iif(T>=prop.Tm,(46.632.*ones(1,length(T))),... % liquid iron, (Desai, 1986)
+        prop.cp = @(T,prop) prop.Ccp.*(props.iif(T>=prop.Tm,(46.632.*ones(1,length(T))),... % liquid iron, (Desai, 1986)
             props.iif(T>=1667,(-12.38+3.161e-2.*T),... % delta iron, (Cezairliyan and McClure, 1974)
             (17.64+1.232e-2.*T)))./prop.M)... % gamma iron, (Cezairliyan and McClure, 1974)
             ; % given in J/(kg K)
@@ -68,7 +68,7 @@ switch opts.cp
     case 'Desai'
         prop.Ccp = 1;
         prop.Dcp = 1;
-        prop.cp = @(T) (props.iif(T>=prop.Tm,(prop.Ccp.*46.632.*ones(1,length(T))),... % liquid iron, (Desai, 1986)
+        prop.cp = @(T,prop) (props.iif(T>=prop.Tm,(prop.Ccp.*46.632.*ones(1,length(T))),... % liquid iron, (Desai, 1986)
             props.iif(T>=1667,(prop.Ccp.*40.368+prop.Dcp.*3.2194e-2.*(T-1667)),... % delta iron, (Desai, 1986)
             (prop.Ccp.*33.803+prop.Dcp.*9.1605e-3.*(T-1181))))./prop.M)... % gamma iron, (Desai, 1986)
             ; % given in J/(kg K)
@@ -76,14 +76,14 @@ switch opts.cp
     case 'noSlope'
         prop.Ccp = 1; % 7874
         prop.Dcp = 0;
-        prop.cp = @(T) prop.Ccp.*(props.iif(T>=prop.Tm,(46.632.*ones(1,length(T))),... % liquid iron, (Desai, 1986)
+        prop.cp = @(T,prop) prop.Ccp.*(props.iif(T>=prop.Tm,(46.632.*ones(1,length(T))),... % liquid iron, (Desai, 1986)
             props.iif(T>=1667,(-12.38+3.161e-2.*T),... % delta iron, (Cezairliyan and McClure, 1974)
             (17.64+1.232e-2.*T)))./prop.M)... % gamma iron, (Cezairliyan and McClure, 1974)
             ; % given in J/(kg K)
         
     case 'constant'
         prop.Ccp = 1;
-        prop.cp = @(T) prop.Ccp.*46.632./prop.M; % given in J/(kg K)
+        prop.cp = @(T,prop) prop.Ccp.*46.632./prop.M; % given in J/(kg K)
 end
 
 
@@ -96,6 +96,7 @@ prop.ct = @(prop) sqrt(8 * prop.kb * prop.Tg / (pi * prop.mg));
 
 %-- Evaporation properties -----------------------------------------------%
 prop.mv = prop.M.*1.660538782e-24;
+prop.Mv = prop.M;
 prop.Rs = prop.R./prop.M;
 
 prop.Tb = 3134; % (Dean, Lange's Handbook of Chemisty) *check
@@ -106,25 +107,25 @@ switch opts.hv
         prop.n = 0.38; % Watson
         prop.hvA = @()(prop.hvb*1e6)./...
             ((1-prop.Tb/prop.Tcr).^prop.n); % Watson eqn. constant
-        prop.hv = @(T) props.eq_watson(prop, T);
+        prop.hv = @(T,prop) props.eq_watson(prop, T);
         
     case {'Roman'}
         prop.Tcr = 9340; % (Young and Alder) (ALT: Beutl et al.)
         prop.n = 0.38; % Watson/Roman
         prop.beta = 0.371;
-        prop.hv = @(T) (prop.hvb*1e6).*exp((prop.n-prop.beta).*...
+        prop.hv = @(T,prop) (prop.hvb*1e6).*exp((prop.n-prop.beta).*...
             ((T-prop.Tb)./(prop.Tcr-prop.Tb))).*...
             (((prop.Tcr-T)./(prop.Tcr-prop.Tb)).^prop.n);
         
     case {'Meyra'}
         prop.Tcr = 9340; % (Young and Alder) (ALT: Beutl et al.)
         prop.n = 0.38; % Watson/Roman
-        prop.hv = @(T) (prop.hvb*1e6).*...
+        prop.hv = @(T,prop) (prop.hvb*1e6).*...
             (((prop.Tcr-T)./(prop.Tcr-prop.Tb))...p
             .^((prop.n^2).*((prop.Tcr-T)./(prop.Tcr-prop.Tb))+prop.n));
         
     case {'constant'}
-        prop.hv = @(T) prop.hvb*1e6;
+        prop.hv = @(T,prop) prop.hvb*1e6;
 end
 
 prop.gamma0 = 1.865; % (Keene et al, 1988)
@@ -133,16 +134,16 @@ prop.C = log(prop.Pref)+(prop.hvb*1e6)./prop.Rs./prop.Tb; % constant for C-C Eqn
 switch opts.pv
     case {'default', 'Kelvin-CC'}
         % prop.gamma = @(dp,T)(prop.gamma0-0.35*1e-3*(T-1823)); % (Keene et al, 1988)
-        prop.gamma = @(dp,T) prop.gamma0;
-        prop.pv = @(T,dp,hv) props.eq_kelvin(prop, T, dp, hv);
+        prop.gamma = @(dp,T,prop) prop.gamma0;
+        prop.pv = @(T,dp,hv,prop) props.eq_kelvin(prop, T, dp, hv);
         
     case {'Tolman-CC'}
         ... % enter additional parameters
         % prop.gammaT = @(T)(prop.gamma0-0.35*1e-3*(T-1823)); % (Keene et al, 1988)
-        prop.gammaT = @(T) prop.gamma0;
+        prop.gammaT = @(T,prop) prop.gamma0;
         prop.delta = 0.126; % atomic diameter
-        prop.gamma = @(dp,T) props.eq_tolman(prop, T, dp);
-        prop.pv = @(T,dp,hv) props.eq_kelvin(prop, T, dp, hv);
+        prop.gamma = @(dp,T,prop) props.eq_tolman(prop, T, dp);
+        prop.pv = @(T,dp,hv,prop) props.eq_kelvin(prop, T, dp, hv);
         
     case {'CC'}
         prop.pv = @(T,dp,hv) props.eq_claus_clap(prop, T, dp, hv);
@@ -151,21 +152,21 @@ switch opts.pv
         prop.C1 = prop.hvb*1e6./prop.Rs;
         pv0 = exp(prop.C-prop.C1./T);
         prop.pv = pv0.*exp((4*prop.gamma0)./...
-            ((dp).*prop.rho(T).*prop.Rs.*T));
+            ((dp).*prop.rho(T,prop).*prop.Rs.*T));
         
     case {'Antoine-alt'}
         prop.C1 = prop.hvb*1e6./prop.Rs;
         prop.C2 = 1;
         pv0 = exp(prop.C-prop.C1./(T+prop.C2));
         prop.pv = pv0.*exp((4*prop.gamma0)./...
-            ((dp).*prop.rho(T).*prop.Rs.*T));
+            ((dp).*prop.rho(T,prop).*prop.Rs.*T));
         
     case {'Rankine-Kirchoff-alt'}
         prop.C1 = prop.hvb*1e6./prop.Rs;
         prop.C2 = 1;
         pv0 = exp(prop.C-prop.C1./T+prop.C2.*log(T));
         prop.pv = pv0.*exp((4*prop.gamma0)./...
-            ((dp).*prop.rho(T).*prop.Rs.*T));
+            ((dp).*prop.rho(T,prop).*prop.Rs.*T));
         
     case {'Nernst-alt'}
         prop.C1 = prop.hvb*1e6./prop.Rs;
@@ -173,7 +174,7 @@ switch opts.pv
         prop.C3 = 1;
         pv0 = exp(prop.C-prop.C1./T+prop.C2.*log(T)+prop.C3.*T);
         prop.pv = pv0.*exp((4*prop.gamma0)./...
-            ((dp).*prop.rho(T).*prop.Rs.*T));
+            ((dp).*prop.rho(T,prop).*prop.Rs.*T));
         
     case {'CRC-alt'}
         prop.C1 = prop.hvb*1e6./prop.Rs;
@@ -182,12 +183,12 @@ switch opts.pv
         prop.C4 = 1;
         pv0 = exp(prop.C-prop.C1./T+prop.C2.*log(T)+prop.C3./(T.^3));
         prop.pv = pv0.*exp((4*prop.gamma0)./...
-            ((dp).*prop.rho(T).*prop.Rs.*T));
+            ((dp).*prop.rho(T,prop).*prop.Rs.*T));
         
     case {'Kelvin-Antoine'}
         prop.gamma = @(dp,T) prop.gamma0;
         pv0 = props.eq_antoine(prop, T, dp, hv);  % Clausius-Clapeyron equation
-        prop.pv = pv0.*exp((4*prop.gamma(dp,T))./((dp).*prop.rho(T).*prop.Rs.*T));
+        prop.pv = pv0.*exp((4*prop.gamma(dp,T,prop))./((dp).*prop.rho(T,prop).*prop.Rs.*T));
             % Evaluate the Kelvin Eqn.
 end
 
@@ -195,8 +196,8 @@ end
 switch opts.Em
     case {'default', 'Emr1.1'}
         prop.CEmr = 1;
-        prop.Emr = @(l1,l2,dp) prop.CEmr.*1.1;
-        prop.Em = @(l,dp,X) 0.195;
+        prop.Emr = @(l1,l2,dp,prop) prop.CEmr.*1.1;
+        prop.Em = @(l,dp,X,prop) 0.195;
         
     case {'Drude'}
         prop.omega_p = 6.78e17;
@@ -204,23 +205,23 @@ switch opts.Em
         % [Em_temp,n_temp,k_temp] = props.eq_drude(400:1100);
         prop.Em_data = getfield(load('Em_Fe_Drude.mat'),'Em_data');
         prop.Em_gi = griddedInterpolant(prop.Em_data(:,1),prop.Em_data(:,2),'pchip');
-        prop.Em = @(l,dp,X) prop.Em_gi(l);
+        prop.Em = @(l,dp,X,prop) prop.Em_gi(l);
         prop.CEmr = 1;
-        prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1,dp)./prop.Em(l2,dp);
+        prop.Emr = @(l1,l2,dp,prop) prop.CEmr.*prop.Em(l1,dp)./prop.Em(l2,dp);
         
     case {'Krishnan'}
-        prop.Em = @(l,dp,X) ones(size(dp))*...
+        prop.Em = @(l,dp,X,prop) ones(size(dp))*...
             (polyval([3.9751e-13,-1.6904e-9,2.7217e-6,...
             -0.0020557,0.69807],l)); % quartic fit to Krishnan data
         prop.CEmr = 1;
-        prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1,dp)./prop.Em(l2,dp);
+        prop.Emr = @(l1,l2,dp,prop) prop.CEmr.*prop.Em(l1,dp)./prop.Em(l2,dp);
         
     case {'Shvarev'}
         prop.Em_data = getfield(load('Em_Fe_Shvarev.mat'),'Em_data');
         prop.Em_gi = griddedInterpolant(prop.Em_data(:,1),prop.Em_data(:,2),'pchip');
-        prop.Em = @(l,dp,X) prop.Em_gi(l);
+        prop.Em = @(l,dp,X,prop) prop.Em_gi(l);
         prop.CEmr = 1;
-        prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1,dp)./prop.Em(l2,dp);
+        prop.Emr = @(l1,l2,dp,prop) prop.CEmr.*prop.Em(l1,dp)./prop.Em(l2,dp);
         
     case 'Mie-Krishnan'
         load('prop.Fe_opt_prop.mat');
@@ -228,13 +229,13 @@ switch opts.Em
         k_gi = griddedInterpolant(Krishnan.l,Krishnan.k,'pchip','linear');
         n = @(l) n_gi(l);
         k = @(l) k_gi(l);
-        prop.Em = @(l,dp,X) prop.get_Mie_solution(n,k,l,dp);
+        prop.Em = @(l,dp,X,prop) prop.get_Mie_solution(n,k,l,dp,prop);
         prop.CEmr = 1;
-        prop.Emr = @(l1,l2,dp) prop.CEmr.*prop.Em(l1,dp)./prop.Em(l2,dp);
+        prop.Emr = @(l1,l2,dp,prop) prop.CEmr.*prop.Em(l1,dp,prop)./prop.Em(l2,dp,prop);
         
 end
 % prop.Eml = @(dp) 0.07; % representative of (Sipkens et al., APB, 2017)
-prop.Eml = @(dp) prop.Em(prop.l_laser,dp);
+prop.Eml = @(dp,X,prop)prop.Em(prop.l_laser,dp,X);
 
 
 %-- Particle size and signal properties ----------------------------------%

@@ -30,7 +30,7 @@ end
 
 if ~exist('Emr', 'var'); Emr = []; end
 if isempty(Emr)
-    Emr = smodel.prop.Emr(l(1), l(2), smodel.prop.dp0); % ratio of Em at two wavelengths
+    Emr = smodel.prop.Emr(l(1), l(2), smodel.prop.dp0, smodel.prop); % ratio of Em at two wavelengths
 end
 %-------------------------------------------------------------------------%
 
@@ -51,7 +51,7 @@ s_T = std(To,[],2);
 %-- Calculate scaling constant -------------------------------------------%
 %   NOTE: Does not account for annealing.
 Co = bsxfun(@rdivide,J2,...
-    (smodel.blackbody(To,l(end)) .* smodel.prop.Em(l(end),smodel.prop.dp0,0) ./ ...
+    (smodel.blackbody(To,l(end)) .* smodel.prop.Em(l(end), smodel.prop.dp0, 1) ./ ...
     (l(end)*1e-9.*smodel.data_sc)));
 out = [];
 out.s_C = std(Co,[],2);

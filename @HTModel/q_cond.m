@@ -61,7 +61,7 @@ function [q] = q_fm(prop, T, dp, Tg)
 prop.alpha = min(max(prop.alpha, 0), 1); % added to force constraints
 q = ((prop.alpha * prop.Pg * prop.ct(prop) * pi .* ...
     (dp .^ 2) ./ (8 * Tg)) .* ...
-    prop.gamma2(T) .* (T - Tg));
+    prop.gamma2(T, prop) .* (T - Tg));
 
 end
 
@@ -72,7 +72,7 @@ end
 %   REQUIRES: prop.k (conductivity) to be specified for the gas.
 function [q] = q_cont(prop, T, dp, Tg)
 
-q = 2 .* pi .* dp .* integral(@(T) prop.k(T), Tg, T);
+q = 2 .* pi .* dp .* integral(@(T) prop.k(T, prop), Tg, T);
 
 end
 
@@ -86,7 +86,7 @@ end
 function lambda = get_mfp(prop, T)
 
 rho = prop.mg * prop.Pg ./ (prop.kb .* prop.Tg);
-lambda = prop.mu(T) / rho / sqrt(2*prop.kb .* prop.Tg / (pi * prop.mg));
+lambda = prop.mu(T, prop) / rho / sqrt(2*prop.kb .* prop.Tg / (pi * prop.mg));
 
 end
 

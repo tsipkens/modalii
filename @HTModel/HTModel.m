@@ -3,6 +3,10 @@
 %  The htmodel.evaluate(...) function is then to be used to evaluate the 
 %  heat transfer model for the fields specified by x. 
 %  
+%  PROP is required as it contain the default properties on which the heat
+%  transfer model is build, with these quantities staying static during
+%  evaluation. 
+%  
 %  htmodel = HTModel(PROP, [], t) creates a heat transfer model using the
 %  default options, the material and experimental properties in PROP, 
 %  and at the times specified by vector t. The model is to be evaluated by 
@@ -95,15 +99,15 @@ classdef HTModel
         [q, J, hv, pv] = q_evap(htmodel, prop, T, dp); % evaluates evaporation at the specified parameters
         [J] = Jevap(htmodel, prop, T, dp); % evaluates rate of mass loss at the specified parameters
         [q, rad] = q_rad(htmodel, prop, T, dp); % evaluates radiation at the specified parameters
-        [q, Cabs] = q_abs(htmodel, prop, T, dp); % evaluates the absorbed laser energy at specified parameters
-        [q, dXdt] = q_ann_Mich(htmodel, prop, T, dp,X); % evaluates Michelsen's annealing model
-        [q, dXdt] = q_ann_Sip(htmodel, prop, T, dp,X); % evaluates in house annealing model
+        [q, Cabs, f] = q_abs(htmodel, prop, T, dp, X); % evaluates the absorbed laser energy at specified parameters
+        [q, dXdt] = q_ann_mich(htmodel, prop, T, dp,X); % evaluates Michelsen's annealing model
+        [q, dXdt] = q_ann_sip(htmodel, prop, T, dp,X); % evaluates in house annealing model
         [dXdt] = dXdt_fun(htmodel,q_ann,prop,T,dp,X); % evaluates dXdt, second output from q_ann
         %-----------------------------------------------------------------%
         
         
         %-- Plotting functions -------------------------------------------%
-        [q, h] = sig_q(htmodel,T,dp,opts_rad); % evaluates the different modes at the specified parameters
+        [q, h] = sig_q(htmodel,prop,T,dp,opts_rad); % evaluates the different modes at the specified parameters
         %-----------------------------------------------------------------%
         
     end

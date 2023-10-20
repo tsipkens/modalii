@@ -10,13 +10,9 @@ addpath('cmap');
 t = 0:2:2500; % time, laser pulse centered at t = 0
 l = [442, 716]; % measurement wavelengths
 
-opts = [];
-opts.Em = 'default';
-% opts.abs = 'include';
+opts = struct();
 
-prop = props.x_ldf;
-prop = props.Ar(prop, opts);
-prop = props.C(prop, opts);
+prop = props.get({'x_ldf', 'N2', 'C_sipkens'});
 
 prop.F0 = 0.15; % in [J/cm2]
 prop.Ti = 4150;

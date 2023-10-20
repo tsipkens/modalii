@@ -14,6 +14,8 @@ if ~exist('sb', 'var'); sb = []; end
 if isempty(sb); sb = 0 .* b(mle); end
 if isa(sb, 'function_handle'); sb = sb(mle); end
 
+if size(t,2) > size(t,1); t = t'; end
+
 clf;
 b0 = b(mle);
 
