@@ -2,7 +2,7 @@
 	path = cmap
 	url = https://github.com/tsipkens/cmap
 	branch = master
-[submodule "+pgm"]
-	path = +pgm
+[submodule "pgm"]
+	path = pgm
 	url = https://github.com/tsipkens/pgm-error
 	branch = master
